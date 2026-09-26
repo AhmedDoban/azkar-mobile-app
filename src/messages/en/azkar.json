@@ -1,0 +1,20 @@
+{
+  "greeting": "Remember Me; I will remember you",
+  "featured": "Daily Adhkar",
+  "allCategories": "More Adhkar",
+  "searchPlaceholder": "Search categories",
+  "itemsCount_one": "{{count}} dhikr",
+  "itemsCount_other": "{{count}} adhkar",
+  "remaining": "{{count}} left",
+  "done": "Done",
+  "completed": "All done — may Allah accept from you",
+  "progress": "{{done}} of {{total}}",
+  "reset": "Reset",
+  "favoritesEmpty": "No favorites yet",
+  "favoritesHint": "Tap the heart on any category, dhikr or hadith to keep it here.",
+  "noResults": "No categories match your search",
+  "saveZikr": "Save to favorites",
+  "savedAdhkar": "Saved adhkar",
+  "favoriteCategories": "Categories",
+  "savedHadiths": "Saved Hadiths"
+}

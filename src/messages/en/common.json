@@ -1,0 +1,17 @@
+{
+  "tabs": {
+    "azkar": "Azkar",
+    "hadith": "Hadith",
+    "qibla": "Qibla",
+    "favorites": "Favorites",
+    "settings": "Settings"
+  },
+  "loading": "Loading...",
+  "retry": "Try again",
+  "search": "Search",
+  "clear": "Clear",
+  "share": "Share",
+  "somethingWrong": "Something went wrong",
+  "copy": "Copy",
+  "copied": "Copied"
+}

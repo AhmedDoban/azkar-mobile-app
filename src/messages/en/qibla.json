@@ -1,0 +1,22 @@
+{
+  "locating": "Finding your location...",
+  "permissionTitle": "We need your location",
+  "permissionHint": "To find the qibla direction accurately, allow the app to access your location.",
+  "allow": "Allow access",
+  "openSettings": "Open Settings",
+  "error": "Couldn't find your location",
+  "errorHint": "Make sure location services are on, then try again.",
+  "facing": "You're facing the qibla",
+  "turnRight": "Turn right {{deg}}°",
+  "turnLeft": "Turn left {{deg}}°",
+  "noCompass": "The qibla is {{deg}}° from north",
+  "hint": "Hold your phone flat and turn until the arrow points at the Kaaba",
+  "direction": "Qibla direction",
+  "fromNorth": "{{deg}}° from north",
+  "km": "{{value}} km",
+  "calibrate": "Move your phone in a figure 8 to calibrate the compass",
+  "north": "N",
+  "east": "E",
+  "south": "S",
+  "west": "W"
+}

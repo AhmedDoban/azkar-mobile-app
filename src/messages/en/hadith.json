@@ -1,0 +1,17 @@
+{
+  "dailyHadith": "Hadith of the Day",
+  "searchPlaceholder": "Search hadith (Arabic words)",
+  "searchHint": "Search the Dorar encyclopedia by typing Arabic words from the hadith.",
+  "dorarResults": "Results from Dorar",
+  "collection": "Sahih Collection",
+  "offlineResults": "Results from the offline collection",
+  "narrator": "Narrator",
+  "scholar": "Scholar",
+  "source": "Source",
+  "number": "Number",
+  "grade": "Grade",
+  "noResults": "No hadith found",
+  "dorarError": "Couldn't reach Dorar. Showing matches from the offline collection.",
+  "hadithNo": "No. {{number}}",
+  "saveHadith": "Save to favorites"
+}

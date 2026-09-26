@@ -1,0 +1,28 @@
+{
+  "language": "Language",
+  "appearance": "Appearance",
+  "system": "System",
+  "light": "Light",
+  "dark": "Dark",
+  "textSize": "Adhkar text size",
+  "data": "Data",
+  "resetProgress": "Reset counters",
+  "resetProgressDone": "Counters have been reset",
+  "sources": "Sources",
+  "sourcesText": "Adhkar and supplications from the Quran and Sunnah. Hadith search by Dorar.net.",
+  "arabicOnHint": "Turn off to switch to English",
+  "arabicOffHint": "Turn on to switch to Arabic",
+  "reading": "Reading settings",
+  "hapticOnComplete": {
+    "title": "Haptic when complete",
+    "hint": "A strong vibration when a dhikr's count reaches 0"
+  },
+  "hapticOnTap": {
+    "title": "Haptic on every tap",
+    "hint": "A light tick each time you tap a card"
+  },
+  "hideCompleted": {
+    "title": "Hide completed cards",
+    "hint": "A card fades away once its count reaches 0"
+  }
+}

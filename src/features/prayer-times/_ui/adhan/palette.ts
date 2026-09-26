@@ -1,0 +1,40 @@
+// Deep green-teal scene built from the brand teal (#18766f). Dark mode sinks it
+// towards the navy canvas so it doesn't glare at night.
+export const ADHAN_PALETTE = {
+  light: {
+    bgTop: "#0d3b36",
+    bgBottom: "#0a2c29",
+    archTop: "#0b302c",
+    archBottom: "#145a52",
+    outline: "rgba(255,255,255,0.32)",
+    pattern: "#ffffff",
+    mint: "#e9f7f3",
+    mintDeep: "#9fd3c9",
+    lanternTop: "#c6ebe4",
+    lanternBottom: "#5c9f95",
+    lanternWindow: "#1a4943",
+    text: "#ffffff",
+    textMuted: "rgba(233,247,243,0.72)",
+    button: "#ffffff",
+    buttonText: "#0d3b36",
+  },
+  dark: {
+    bgTop: "#08191c",
+    bgBottom: "#061315",
+    archTop: "#081c1e",
+    archBottom: "#0f3b37",
+    outline: "rgba(255,255,255,0.22)",
+    pattern: "#ffffff",
+    mint: "#d8ece7",
+    mintDeep: "#7fb8ae",
+    lanternTop: "#aad6ce",
+    lanternBottom: "#3f7f76",
+    lanternWindow: "#12302d",
+    text: "#ece9dd",
+    textMuted: "rgba(236,233,221,0.66)",
+    button: "#ece9dd",
+    buttonText: "#0b1a20",
+  },
+} as const;
+
+export type AdhanPalette = (typeof ADHAN_PALETTE)["light" | "dark"];

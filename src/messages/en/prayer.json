@@ -1,0 +1,28 @@
+{
+  "title": "Prayer Times",
+  "next": "Next prayer",
+  "hours": "{{count}}h",
+  "minutes": "{{count}}m",
+  "now": "now",
+  "error": "Couldn't load prayer times",
+  "names": {
+    "Fajr": "Fajr",
+    "Sunrise": "Sunrise",
+    "Dhuhr": "Dhuhr",
+    "Jumuah": "Jumu'ah",
+    "Asr": "Asr",
+    "Maghrib": "Maghrib",
+    "Isha": "Isha"
+  },
+  "am": "AM",
+  "pm": "PM",
+  "remaining": "{{time}} remaining",
+  "adhanTime": "It's time for",
+  "adhanCall": "Come to prayer, come to success",
+  "dismiss": "Dismiss",
+  "reminderOn": "Adhan reminder on",
+  "reminderOff": "Adhan reminder off",
+  "notificationTitle": "Time for {{prayer}}",
+  "notificationBody": "Come to prayer, come to success",
+  "permissionDenied": "Allow notifications in Settings to get adhan reminders"
+}
