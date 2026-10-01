@@ -121,7 +121,14 @@ export default function CategoryContent({
                 Easing.out(Easing.cubic),
               )}
             >
-              <ZikrCard categoryId={categoryId} zikr={zikr} />
+              <ZikrCard
+                categoryId={categoryId}
+                zikr={zikr}
+                position={{
+                  index: category.items.indexOf(zikr) + 1,
+                  total: category.items.length,
+                }}
+              />
             </Animated.View>
           ))}
       </Screen>

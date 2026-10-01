@@ -6,8 +6,9 @@ import useThemeColors from "@/hooks/useThemeColors";
 import { Locale } from "@/i18n/config";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Linking, StyleSheet, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import useCityName from "./_components/useCityName";
 import usePrayerLabels from "./_components/usePrayerLabels";
 import usePrayerSchedule, { toMinutes } from "./_components/usePrayerSchedule";
 import ArchWindow from "./_ui/ArchWindow";
@@ -29,35 +30,43 @@ export default function PrayerTimesCard() {
   const locale = i18n.language as Locale;
   const colors = useThemeColors();
   const { label } = usePrayerLabels();
-  const { data, prayers, next, now, isFriday, isLoading, isError, refetch } =
+  const { day, prayers, next, now, isFriday, status, retry } =
     usePrayerSchedule();
   const [size, setSize] = useState({ w: 0, h: 0 });
+  const city = useCityName(day?.city);
 
-  if (isLoading) return <PrayerTimesCardSkeleton />;
+  if (status === "loading") return <PrayerTimesCardSkeleton />;
 
-  if (isError || !data || !next) {
+  if (!day || !next) {
+    const denied = status === "denied";
     return (
       <PressableScale
-        onPress={refetch}
+        onPress={denied ? () => Linking.openSettings() : retry}
         className="flex-row items-center justify-center gap-3 rounded-3xl border border-line bg-surface p-5"
       >
-        <Icon name="wifiOff" size={16} tintColor={colors.orange} />
-        <AppText className="text-main-gray">{t("error")}</AppText>
+        <Icon
+          name={denied ? "location" : "wifiOff"}
+          size={16}
+          tintColor={colors.orange}
+        />
+        <AppText className="shrink text-main-gray">
+          {t(denied ? "locationNeeded" : "error")}
+        </AppText>
         <AppText weight="bold" className="text-main">
-          {t("common:retry")}
+          {t(denied ? "openSettings" : "common:retry")}
         </AppText>
       </PressableScale>
     );
   }
 
-  const hijri = data.date.date_hijri;
+  const hijri = day.hijri;
   const comma = locale === "ar" ? "،" : ",";
 
   const current = now.getHours() * 60 + now.getMinutes();
   const passed = prayers.filter((p) => p.status === "passed");
   const previous = passed.length
     ? toMinutes(passed[passed.length - 1].time)
-    : toMinutes(data.prayer_times.Isha) - DAY;
+    : toMinutes(day.yesterdayIsha) - DAY;
   const target = current + next.minutesLeft;
   const progress = (current - previous) / Math.max(1, target - previous);
 
@@ -77,8 +86,8 @@ export default function PrayerTimesCard() {
       <Svg width="100%" height="100%" style={StyleSheet.absoluteFill}>
         <Defs>
           <LinearGradient id="prayerCard" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor="#23604f" />
-            <Stop offset="1" stopColor="#0d3630" />
+            <Stop offset="0" stopColor={colors.brand.mid} />
+            <Stop offset="1" stopColor={colors.brand.deep} />
           </LinearGradient>
         </Defs>
         <Rect width="100%" height="100%" fill="url(#prayerCard)" />
@@ -113,16 +122,20 @@ export default function PrayerTimesCard() {
                 style={{ opacity: 0.85 }}
                 numberOfLines={1}
               >
-                {`${hijri.weekday[locale]}${comma} ${hijri.day} ${hijri.month[locale]} ${hijri.year}`}
+                {`${hijri.weekday[locale]}${comma} ${hijri.day} ${hijri.monthName[locale]} ${hijri.year}`}
               </AppText>
-              <Icon name="location" size={12} tintColor="#ffffff" />
-              <AppText
-                className="shrink text-xs text-white"
-                style={{ opacity: 0.85 }}
-                numberOfLines={1}
-              >
-                {data.region}
-              </AppText>
+              {city ? (
+                <>
+                  <Icon name="location" size={12} tintColor="#ffffff" />
+                  <AppText
+                    className="shrink text-xs text-white"
+                    style={{ opacity: 0.85 }}
+                    numberOfLines={1}
+                  >
+                    {city}
+                  </AppText>
+                </>
+              ) : null}
             </View>
 
             <NextPrayerHeader

@@ -1,5 +1,4 @@
 import { useFonts } from "expo-font";
-import { Amiri_400Regular, Amiri_700Bold } from "@expo-google-fonts/amiri";
 
 export default function useAppFonts() {
   const [loaded, error] = useFonts({
@@ -7,8 +6,7 @@ export default function useAppFonts() {
     "SpaceGrotesk-Bold": require("@/assets/fonts/SpaceGrotesk-Bold.ttf"),
     LamaSans: require("@/assets/fonts/LamaSans-Regular.ttf"),
     "LamaSans-ExtraBold": require("@/assets/fonts/LamaSans-ExtraBold.ttf"),
-    Amiri: Amiri_400Regular,
-    "Amiri-Bold": Amiri_700Bold,
+    Hafs: require("@/assets/fonts/Hafs.ttf"),
   });
 
   return loaded || !!error;

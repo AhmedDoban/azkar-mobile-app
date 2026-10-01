@@ -40,7 +40,7 @@ export default function AdhanSoundCard({
       style={{
         borderWidth: selected ? 2 : 1,
         borderColor: selected ? colors.accent : palette.border,
-        backgroundColor: selected ? colors.accentSoft : palette.card,
+        backgroundColor: selected ? palette.activeFill : palette.card,
       }}
     >
       {onPreview ? (

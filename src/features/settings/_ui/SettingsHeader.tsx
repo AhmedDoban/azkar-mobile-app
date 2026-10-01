@@ -1,5 +1,6 @@
 import AppText from "@/components/ui/AppText";
 import PageHeader from "@/components/ui/PageHeader";
+import useThemeColors from "@/hooks/useThemeColors";
 import Constants from "expo-constants";
 import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
@@ -14,6 +15,7 @@ const GLASS = {
 
 export default function SettingsHeader() {
   const { t } = useTranslation(["common", "settings", "azkar"]);
+  const colors = useThemeColors();
 
   return (
     <View className="gap-4">
@@ -26,8 +28,8 @@ export default function SettingsHeader() {
         <Svg width="100%" height="100%" style={StyleSheet.absoluteFill}>
           <Defs>
             <LinearGradient id="settingsCard" x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0" stopColor="#23604f" />
-              <Stop offset="1" stopColor="#0d3630" />
+              <Stop offset="0" stopColor={colors.brand.mid} />
+              <Stop offset="1" stopColor={colors.brand.deep} />
             </LinearGradient>
           </Defs>
           <Rect width="100%" height="100%" fill="url(#settingsCard)" />

@@ -7,7 +7,6 @@
   "textSize": "Adhkar text size",
   "data": "Data",
   "resetProgress": "Reset counters",
-  "sources": "Sources",
   "reading": "Reading settings",
   "hapticOnComplete": {
     "title": "Haptic when complete",
@@ -20,32 +19,6 @@
   "hideCompleted": {
     "title": "Hide completed cards",
     "hint": "A card fades away once its count reaches zero"
-  },
-  "source": {
-    "quran": {
-      "title": "The Holy Quran",
-      "hint": "Uthmani script text, with an English translation"
-    },
-    "adhkar": {
-      "title": "Adhkar & duas",
-      "hint": "From the Quran and the Sunnah"
-    },
-    "hadith": {
-      "title": "Hadith",
-      "hint": "Sahih al-Bukhari and Sahih Muslim"
-    },
-    "dorar": {
-      "title": "Hadith search",
-      "hint": "Hadith encyclopedia – Dorar.net"
-    },
-    "prayer": {
-      "title": "Prayer times",
-      "hint": "Prayer times API by quran.yousefheiba.com"
-    },
-    "qibla": {
-      "title": "Qibla direction",
-      "hint": "Calculated on your device from your location"
-    }
   },
   "cancel": "Cancel",
   "clearCache": "Clear cache",
@@ -79,7 +52,6 @@
   },
   "version": "Version {{version}}",
   "adhanSound": "Adhan sound",
-  "adhanHint": "Plays when a prayer time begins",
   "previewAdhan": "Listen",
   "stopAdhan": "Stop",
   "sounds": {
@@ -96,5 +68,50 @@
     "customNotice": "Plays in the app; notifications use the default adhan"
   },
   "changeFile": "Change file",
-  "quranSize": "Quran font size"
+  "quranSize": "Quran font size",
+  "prayerTimes": "Prayer times",
+  "prayerLocation": "Location",
+  "locationUnknown": "Location not set yet",
+  "savedLocation": "Saved location",
+  "updateLocation": "Update",
+  "prayerMethod": "Calculation method",
+  "hanafiAsr": {
+    "title": "Hanafi Asr",
+    "hint": "Asr starts later, when an object's shadow is twice its length"
+  },
+  "methods": {
+    "auto": "Automatic for your region",
+    "UmmAlQura": "Umm al-Qura, Makkah",
+    "Egyptian": "Egyptian General Authority of Survey",
+    "MuslimWorldLeague": "Muslim World League",
+    "Karachi": "University of Islamic Sciences, Karachi",
+    "Dubai": "Dubai",
+    "Kuwait": "Kuwait",
+    "Qatar": "Qatar",
+    "NorthAmerica": "ISNA, North America",
+    "MoonsightingCommittee": "Moonsighting Committee",
+    "Singapore": "Singapore",
+    "Turkey": "Diyanet, Turkey",
+    "Tehran": "Institute of Geophysics, Tehran"
+  },
+  "groups": {
+    "general": "General",
+    "worship": "Worship",
+    "data": "Data"
+  },
+  "theme": "Theme",
+  "readingOptions": "Reading options",
+  "appColor": "App color",
+  "palettes": {
+    "emerald": "Emerald",
+    "teal": "Teal",
+    "ocean": "Ocean",
+    "indigo": "Indigo",
+    "violet": "Violet",
+    "rose": "Rose",
+    "ruby": "Ruby",
+    "amber": "Amber",
+    "olive": "Olive",
+    "slate": "Slate"
+  }
 }

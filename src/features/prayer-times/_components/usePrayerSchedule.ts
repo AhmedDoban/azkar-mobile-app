@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
-import { today } from "@/store/Slices/AzkarSlice";
-import { useGetPrayerTimesQuery } from "@/store/Slices/PrayerTimesSlice";
-import {
-  PrayerName,
-  PrayerTimesResponse,
-  REMINDER_PRAYERS,
-} from "../_data/types";
+import { useAppSelector } from "@/store/Store";
+import { useEffect, useMemo, useState } from "react";
+import { addDays, PrayerConfig, prayerClock } from "../_data/calculate";
+import { toHijri } from "../_data/hijri";
+import { PrayerName, REMINDER_PRAYERS } from "../_data/types";
+import usePrayerLocation from "./usePrayerLocation";
 
 const MINUTE = 60_000;
 
@@ -36,6 +34,7 @@ export const toMinutes = (hhmm: string) => {
 };
 
 export type PrayerStatus = "passed" | "next" | "upcoming";
+export type PrayerClock = Record<PrayerName, string>;
 
 export interface ScheduledPrayer {
   name: PrayerName;
@@ -44,29 +43,61 @@ export interface ScheduledPrayer {
 }
 
 export function getNextPrayer(
-  times: PrayerTimesResponse["prayer_times"],
+  times: PrayerClock,
+  tomorrow: PrayerClock,
   now: Date,
 ) {
   const current = now.getHours() * 60 + now.getMinutes();
   const upcoming = REMINDER_PRAYERS.find((p) => toMinutes(times[p]) > current);
-  const name = upcoming ?? "Fajr";
-  const target = toMinutes(times[name]) + (upcoming ? 0 : 24 * 60);
-  return { name, time: times[name], minutesLeft: target - current };
+  if (upcoming) {
+    return {
+      name: upcoming,
+      time: times[upcoming],
+      minutesLeft: toMinutes(times[upcoming]) - current,
+    };
+  }
+  return {
+    name: "Fajr" as const,
+    time: tomorrow.Fajr,
+    minutesLeft: toMinutes(tomorrow.Fajr) + 24 * 60 - current,
+  };
 }
 
-export function getPrayerStartingNow(
-  times: PrayerTimesResponse["prayer_times"],
-  now: Date,
-) {
+export function getPrayerStartingNow(times: PrayerClock, now: Date) {
   const current = now.getHours() * 60 + now.getMinutes();
   return REMINDER_PRAYERS.find((p) => toMinutes(times[p]) === current) ?? null;
 }
 
+export function usePrayerConfig(): PrayerConfig | null {
+  const location = useAppSelector((s) => s.settings.prayerLocation);
+  const method = useAppSelector((s) => s.settings.prayerMethod);
+  const asr = useAppSelector((s) => s.settings.asrMethod);
+  return useMemo(
+    () => (location ? { location, method, asr } : null),
+    [location, method, asr],
+  );
+}
+
 export default function usePrayerSchedule() {
   const now = useNow();
-  const query = useGetPrayerTimesQuery(today());
-  const times = query.data?.prayer_times;
-  const next = times ? getNextPrayer(times, now) : null;
+  const { status, retry } = usePrayerLocation();
+  const config = usePrayerConfig();
+  const dayKey = now.toDateString();
+
+  const day = useMemo(() => {
+    if (!config) return null;
+    const today = new Date(now);
+    return {
+      times: prayerClock(config, today),
+      tomorrow: prayerClock(config, addDays(today, 1)),
+      yesterdayIsha: prayerClock(config, addDays(today, -1)).Isha,
+      hijri: toHijri(today),
+      city: config.location.city,
+    };
+  }, [config, dayKey]);
+
+  const times = day?.times;
+  const next = day ? getNextPrayer(day.times, day.tomorrow, now) : null;
   const current = now.getHours() * 60 + now.getMinutes();
 
   const prayers: ScheduledPrayer[] = times
@@ -83,7 +114,9 @@ export default function usePrayerSchedule() {
     : [];
 
   return {
-    ...query,
+    day,
+    status: config ? ("ready" as const) : status,
+    retry,
     now,
     prayers,
     next,

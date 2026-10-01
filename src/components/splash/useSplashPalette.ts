@@ -17,5 +17,8 @@ const DARK = {
 };
 
 export default function useSplashPalette() {
-  return useThemeColors().isDark ? DARK : LIGHT;
+  const { isDark, brand } = useThemeColors();
+  return isDark
+    ? { ...DARK, main: brand.bright }
+    : { ...LIGHT, main: brand.main };
 }

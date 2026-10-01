@@ -1,6 +1,6 @@
-import { View } from "react-native";
 import AppText from "@/components/ui/AppText";
-import { cn } from "@/lib/utils";
+import { View } from "react-native";
+import useHadithColors from "../_components/useHadithColors";
 
 export default function MetaChip({
   label,
@@ -11,19 +11,22 @@ export default function MetaChip({
   value: string;
   tone?: "muted" | "main";
 }) {
+  const p = useHadithColors();
+
   return (
     <View
-      className={cn(
-        "flex-row gap-1 rounded-full px-3 py-1.5",
-        tone === "main" ? "bg-main-soft" : "bg-surface-muted",
-      )}
+      className="flex-row gap-1 rounded-full px-3 py-1.5"
+      style={{ backgroundColor: p.chip }}
     >
       {label ? (
-        <AppText className="text-xs text-main-gray">{label}:</AppText>
+        <AppText className="text-xs" style={{ color: p.muted }}>
+          {label}:
+        </AppText>
       ) : null}
       <AppText
         weight="bold"
-        className={cn("text-xs", tone === "main" ? "text-main" : "text-ink")}
+        className="text-xs"
+        style={{ color: tone === "main" ? p.accent : p.ink }}
       >
         {value}
       </AppText>

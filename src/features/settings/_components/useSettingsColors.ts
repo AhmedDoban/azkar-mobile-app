@@ -6,13 +6,15 @@ const DARK = {
   title: "#929292",
   subtitle: "#929292",
   track: "#2a2a2a",
-  switchOn: "#2f8f72",
   danger: "#e57373",
+  activeFill: "#222222",
 };
 
 export default function useSettingsColors() {
   const colors = useThemeColors();
-  if (colors.isDark) return { isDark: true as const, ...DARK };
+  if (colors.isDark) {
+    return { isDark: true as const, ...DARK, switchOn: colors.brand.mid };
+  }
   return {
     isDark: false as const,
     card: colors.surface,
@@ -22,5 +24,6 @@ export default function useSettingsColors() {
     track: colors.surfaceMuted,
     switchOn: colors.main,
     danger: colors.orange,
+    activeFill: colors.brand.soft,
   };
 }

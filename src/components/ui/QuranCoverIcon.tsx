@@ -31,7 +31,7 @@ export default function QuranCoverIcon({
       <Text
         x={12.5}
         y={8.6}
-        fontFamily="Amiri-Bold"
+        fontFamily="Hafs"
         fontSize={5.6}
         textAnchor="middle"
         fill={color}
@@ -41,7 +41,7 @@ export default function QuranCoverIcon({
       <Text
         x={12.5}
         y={14.2}
-        fontFamily="Amiri-Bold"
+        fontFamily="Hafs"
         fontSize={5.6}
         textAnchor="middle"
         fill={color}

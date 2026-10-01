@@ -1,7 +1,6 @@
 {
-  "title": "Prayer Times",
   "next": "Next prayer",
-  "error": "Couldn't load prayer times",
+  "error": "Couldn't find your location to calculate prayer times",
   "names": {
     "Fajr": "Fajr",
     "Sunrise": "Sunrise",
@@ -23,5 +22,7 @@
   "permissionDenied": "Allow notifications in Settings to get adhan reminders",
   "left": "Left",
   "hour": "hr",
-  "minute": "min"
+  "minute": "min",
+  "locationNeeded": "Allow location access to calculate prayer times",
+  "openSettings": "Settings"
 }

@@ -14,12 +14,11 @@ export type MushafPageData = {
   free: number;
 };
 
-const MARK = "۝";
 const SURAH_KEY = 1e7;
 const DIACRITICS = /[ً-ٰٟۖ-ۭ]/g;
 
 export const verseText = (verse: Surah["verses"][number]) =>
-  `${verse.text} ${MARK}${toArabicDigits(verse.id)}`;
+  `${verse.text} ${toArabicDigits(verse.id)}`;
 
 export const surahText = (surah: Surah) =>
   surah.verses.map(verseText).join(" ");
@@ -36,7 +35,7 @@ export function verseOffset(surah: Surah, ayah: number) {
   return 0;
 }
 
-const marksIn = (text: string) => text.split(MARK).length - 1;
+const marksIn = (text: string) => text.match(/[٠-٩]+/g)?.length ?? 0;
 
 export const visibleLength = (text: string) =>
   text.replace(DIACRITICS, "").length;

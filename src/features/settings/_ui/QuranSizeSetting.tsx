@@ -67,7 +67,7 @@ export default function QuranSizeSetting() {
           }}
           numberOfLines={2}
         >
-          {`ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ ۝${toArabicDigits(2)}`}
+          {`ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ ${toArabicDigits(2)}`}
         </AppText>
         <View className="rounded-full bg-accent-soft px-3 py-1">
           <AppText weight="bold" className="text-sm text-accent">

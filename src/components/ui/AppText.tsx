@@ -1,5 +1,6 @@
 import useDirection from "@/hooks/useDirection";
 import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 import { Text, TextProps } from "react-native";
 
 type Props = TextProps & {
@@ -15,10 +16,29 @@ const FONTS = {
     ltr: { regular: "font-space", bold: "font-space-bold" },
   },
   quran: {
-    rtl: { regular: "font-amiri", bold: "font-amiri-bold" },
-    ltr: { regular: "font-amiri", bold: "font-amiri-bold" },
+    rtl: { regular: "font-hafs", bold: "font-hafs" },
+    ltr: { regular: "font-hafs", bold: "font-hafs" },
   },
 } as const;
+
+// Hafs draws Arabic punctuation as a filled circle and has no Latin
+// punctuation, so these marks use the UI font instead.
+const PUNCTUATION = /([،؛؟.,:!"«»-]+)/;
+
+function withPunctuation(children: ReactNode) {
+  if (typeof children !== "string" || !PUNCTUATION.test(children)) {
+    return children;
+  }
+  return children.split(PUNCTUATION).map((part, i) =>
+    i % 2 ? (
+      <Text key={i} style={{ fontFamily: "LamaSans" }}>
+        {part}
+      </Text>
+    ) : (
+      part
+    ),
+  );
+}
 
 export default function AppText({
   className,
@@ -26,6 +46,7 @@ export default function AppText({
   variant = "ui",
   arabic,
   style,
+  children,
   ...props
 }: Props) {
   const { isRTL } = useDirection();
@@ -40,6 +61,8 @@ export default function AppText({
       )}
       style={[{ writingDirection: rtl ? "rtl" : "ltr" }, style]}
       {...props}
-    />
+    >
+      {variant === "quran" ? withPunctuation(children) : children}
+    </Text>
   );
 }

@@ -27,7 +27,7 @@ export default function VerseResultRow({ verse }: { verse: VerseMatch }) {
           style={{ textAlign: ar ? undefined : "right" }}
           numberOfLines={3}
         >
-          {`${verse.text} ۝${toArabicDigits(verse.ayah)}`}
+          {`${verse.text} ${toArabicDigits(verse.ayah)}`}
         </AppText>
         {ar ? null : (
           <AppText className="text-xs text-main-gray" numberOfLines={2}>

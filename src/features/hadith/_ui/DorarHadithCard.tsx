@@ -1,49 +1,74 @@
-import { View } from "react-native";
-import { useTranslation } from "react-i18next";
 import AppText from "@/components/ui/AppText";
 import useArabicTextStyle from "@/hooks/useArabicTextStyle";
+import { useTranslation } from "react-i18next";
+import { View } from "react-native";
 import { savedDorar } from "../_components/hadithKey";
+import useHadithColors from "../_components/useHadithColors";
 import { DorarHadith } from "../_components/parseDorar";
+import HadithDivider from "./HadithDivider";
 import GradeBadge from "./GradeBadge";
 import HadithActions from "./HadithActions";
+import HadithNumberMark from "./HadithNumberMark";
+import HadithPaper from "./HadithPaper";
 import MetaChip from "./MetaChip";
 
 export default function DorarHadithCard({ hadith }: { hadith: DorarHadith }) {
   const { t } = useTranslation("hadith");
+  const p = useHadithColors();
   const textStyle = useArabicTextStyle(0.85);
 
   const meta = [
     { label: t("narrator"), value: hadith.narrator },
     { label: t("scholar"), value: hadith.scholar },
-    { label: t("source"), value: hadith.source },
-    { label: t("number"), value: hadith.number },
   ].filter((m): m is { label: string; value: string } => !!m.value);
 
   return (
-    <View className="gap-4 overflow-hidden rounded-3xl border border-line bg-surface p-5">
-      <AppText variant="quran" style={textStyle} selectable>
+    <HadithPaper>
+      {hadith.source || hadith.number ? (
+        <View className="flex-row items-center gap-2">
+          {hadith.number ? <HadithNumberMark value={hadith.number} /> : null}
+          {hadith.source ? (
+            <AppText
+              weight="bold"
+              className="flex-1 text-sm"
+              style={{ color: p.accent }}
+              numberOfLines={2}
+            >
+              {hadith.source}
+            </AppText>
+          ) : null}
+        </View>
+      ) : null}
+
+      <AppText variant="quran" style={[textStyle, { color: p.ink }]} selectable>
         {hadith.text}
       </AppText>
 
-      <View className="gap-3 border-t border-line pt-4">
+      <HadithDivider accent={p.accent} line={p.line} />
+
+      <View className="gap-3">
         {hadith.grade ? (
           <GradeBadge label={t("grade")} grade={hadith.grade} />
         ) : null}
-        <View className="flex-row flex-wrap gap-2">
-          {meta.map((m) => (
-            <MetaChip key={m.label} label={m.label} value={m.value} />
-          ))}
-        </View>
+        {meta.length ? (
+          <View className="flex-row flex-wrap gap-2">
+            {meta.map((m) => (
+              <MetaChip key={m.label} label={m.label} value={m.value} />
+            ))}
+          </View>
+        ) : null}
       </View>
 
-      <View className="flex-row justify-end">
+      <View className="flex-row justify-center">
         <HadithActions
           text={[hadith.text, hadith.narrator, hadith.source, hadith.grade]
             .filter(Boolean)
             .join("\n")}
           saved={savedDorar(hadith)}
+          tint={p.accent}
+          buttonClassName="bg-transparent"
         />
       </View>
-    </View>
+    </HadithPaper>
   );
 }

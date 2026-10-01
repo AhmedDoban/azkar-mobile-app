@@ -9,16 +9,22 @@ import {
   syncPrayerNotifications,
 } from "./_components/prayerNotifications";
 import usePrayerLabels from "./_components/usePrayerLabels";
-import usePrayerSchedule from "./_components/usePrayerSchedule";
+import usePrayerSchedule, {
+  usePrayerConfig,
+} from "./_components/usePrayerSchedule";
+import { addDays, prayerDates } from "./_data/calculate";
 import { PrayerName, REMINDER_PRAYERS } from "./_data/types";
 import AdhanSplash from "./AdhanSplash";
+
+const ALERT_DAYS = 7;
 
 configurePrayerNotifications();
 
 export default function AdhanReminder() {
   const { t, i18n } = useTranslation("prayer");
   const { label } = usePrayerLabels();
-  const { data, startingNow } = usePrayerSchedule();
+  const { day, startingNow } = usePrayerSchedule();
+  const config = usePrayerConfig();
   const reminders = useAppSelector((s) => s.settings.prayerReminders);
   const sound = useAppSelector((s) => s.settings.adhanSound);
   const [active, setActive] = useState<PrayerName | null>(null);
@@ -48,23 +54,31 @@ export default function AdhanReminder() {
     [],
   );
 
-  const times = data?.prayer_times;
+  const dayKey = day ? new Date().toDateString() : null;
   useEffect(() => {
-    if (!times) return;
+    if (!config) return;
+    const start = new Date();
+    const alerts = Array.from({ length: ALERT_DAYS }, (_, offset) =>
+      prayerDates(config, addDays(start, offset)),
+    ).flatMap((dates) =>
+      REMINDER_PRAYERS.filter((prayer) => reminders[prayer] !== false).map(
+        (prayer) => ({ prayer, date: dates[prayer] }),
+      ),
+    );
     syncPrayerNotifications({
-      times,
-      reminders,
+      alerts,
       sound,
-      title: (prayer) => t("notificationTitle", { prayer: label(prayer) }),
+      title: (prayer, date) =>
+        t("notificationTitle", { prayer: label(prayer, date.getDay() === 5) }),
       body: t("notificationBody"),
     });
-  }, [times, reminders, sound, i18n.language]);
+  }, [config, dayKey, reminders, sound, i18n.language]);
 
   return (
     <AdhanSplash
       prayer={active}
       sound={sound}
-      time={active && times ? times[active] : undefined}
+      time={active && day ? day.times[active] : undefined}
       onClose={() => setActive(null)}
     />
   );

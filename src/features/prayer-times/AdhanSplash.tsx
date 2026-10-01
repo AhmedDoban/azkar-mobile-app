@@ -85,7 +85,7 @@ export default function AdhanSplash({
             >
               <AppText
                 weight="bold"
-                className="font-amiri-bold text-3xl leading-[48px]"
+                className="font-hafs text-3xl leading-[48px]"
                 style={{ textAlign: "center", color: p.text }}
               >
                 {t("adhanTime")}
@@ -102,7 +102,7 @@ export default function AdhanSplash({
               <CrescentDivider color={p.text} />
               <AppText
                 weight="bold"
-                className="font-amiri-bold text-5xl leading-[72px]"
+                className="font-hafs text-5xl leading-[72px]"
                 style={{ textAlign: "center", color: p.text }}
               >
                 {label(prayer)}

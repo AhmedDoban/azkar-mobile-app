@@ -26,8 +26,6 @@ type Props = {
   accessibilityLabel?: string;
 };
 
-const DARK_FILL = "#2f8f72";
-
 export default function GlassSlider({
   value,
   min,
@@ -142,7 +140,10 @@ export default function GlassSlider({
         >
           <Animated.View
             className="absolute bottom-0 top-0 rounded-full bg-accent"
-            style={[fillStyle, colors.isDark && { backgroundColor: DARK_FILL }]}
+            style={[
+              fillStyle,
+              colors.isDark && { backgroundColor: colors.brand.mid },
+            ]}
           />
         </View>
 
@@ -182,7 +183,7 @@ export default function GlassSlider({
                       ? "#ffffff"
                       : "rgba(255,255,255,0.92)",
                     borderWidth: colors.isDark ? 2 : 1,
-                    borderColor: colors.isDark ? DARK_FILL : colors.line,
+                    borderColor: colors.isDark ? colors.brand.mid : colors.line,
                     borderRadius: THUMB_H / 2,
                   },
                 ]}

@@ -12,7 +12,7 @@ export default function PageNumber({ page }: { page: number }) {
       style={{ borderColor: c.frame, backgroundColor: c.frameFill }}
     >
       <AppText
-        variant="quran"
+        arabic
         weight="bold"
         className="text-lg"
         style={{ color: c.ink }}

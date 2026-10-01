@@ -11,6 +11,16 @@ import {
   DEFAULT_ADHAN,
   isAdhanSound,
 } from "@/features/prayer-times/_data/adhanSounds";
+import type { PrayerLocation } from "@/features/prayer-times/_data/calculate";
+import { toCityName } from "@/features/prayer-times/_data/cityName";
+import {
+  AsrMethod,
+  isAsrMethod,
+  isPrayerMethod,
+  PrayerMethodSetting,
+} from "@/features/prayer-times/_data/methods";
+
+import { DEFAULT_PALETTE, isPaletteId, PaletteId } from "@/constants/palettes";
 
 export type ThemePreference = "system" | "light" | "dark";
 export type TextSize = number;
@@ -46,11 +56,15 @@ const DEFAULT_READING: ReadingSettings = {
 export interface SettingsState {
   locale: Locale;
   theme: ThemePreference;
+  palette: PaletteId;
   textSize: TextSize;
   quranSize: number;
   prayerReminders: Partial<Record<PrayerName, boolean>>;
   adhanSound: AdhanSoundId;
   customAdhan: CustomAdhan | null;
+  prayerLocation: PrayerLocation | null;
+  prayerMethod: PrayerMethodSetting;
+  asrMethod: AsrMethod;
   reading: ReadingSettings;
 }
 
@@ -59,11 +73,15 @@ export const defaultSettings = (
 ): SettingsState => ({
   locale,
   theme: "system",
+  palette: DEFAULT_PALETTE,
   textSize: TEXT_SIZE.default,
   quranSize: QURAN_SIZE.default,
   prayerReminders: Object.fromEntries(REMINDER_PRAYERS.map((p) => [p, true])),
   adhanSound: DEFAULT_ADHAN,
   customAdhan: null,
+  prayerLocation: null,
+  prayerMethod: "auto",
+  asrMethod: "auto",
   reading: { ...DEFAULT_READING },
 });
 
@@ -78,6 +96,9 @@ export const SettingsSlice = createSlice({
     },
     setTheme(state, action: PayloadAction<ThemePreference>) {
       state.theme = action.payload;
+    },
+    setPalette(state, action: PayloadAction<PaletteId>) {
+      state.palette = action.payload;
     },
     setTextSize(state, action: PayloadAction<TextSize>) {
       state.textSize = clampTextSize(action.payload);
@@ -102,19 +123,46 @@ export const SettingsSlice = createSlice({
       state.customAdhan = action.payload;
       state.adhanSound = "custom";
     },
+    setPrayerLocation(state, action: PayloadAction<PrayerLocation>) {
+      state.prayerLocation = action.payload;
+    },
+    setPrayerMethod(state, action: PayloadAction<PrayerMethodSetting>) {
+      state.prayerMethod = action.payload;
+    },
+    setAsrMethod(state, action: PayloadAction<AsrMethod>) {
+      state.asrMethod = action.payload;
+    },
     resetSettings(state) {
-      return defaultSettings(state.locale);
+      return {
+        ...defaultSettings(state.locale),
+        prayerLocation: state.prayerLocation,
+      };
     },
     hydrateSettings(state, action: PayloadAction<Partial<SettingsState>>) {
       return {
         ...state,
         ...action.payload,
         textSize: clampTextSize(action.payload.textSize ?? state.textSize),
+        palette: isPaletteId(action.payload.palette)
+          ? action.payload.palette
+          : state.palette,
         quranSize: clampQuranSize(action.payload.quranSize ?? state.quranSize),
-        adhanSound: isAdhanSound(action.payload.adhanSound)
+              adhanSound: isAdhanSound(action.payload.adhanSound)
           ? action.payload.adhanSound
           : state.adhanSound,
         customAdhan: action.payload.customAdhan ?? state.customAdhan,
+        prayerLocation: action.payload.prayerLocation
+          ? {
+              ...action.payload.prayerLocation,
+              city: toCityName(action.payload.prayerLocation.city),
+            }
+          : state.prayerLocation,
+        prayerMethod: isPrayerMethod(action.payload.prayerMethod)
+          ? action.payload.prayerMethod
+          : state.prayerMethod,
+        asrMethod: isAsrMethod(action.payload.asrMethod)
+          ? action.payload.asrMethod
+          : state.asrMethod,
         prayerReminders: {
           ...state.prayerReminders,
           ...action.payload.prayerReminders,
@@ -128,11 +176,15 @@ export const SettingsSlice = createSlice({
 export const {
   setLocale,
   setTheme,
+  setPalette,
   setTextSize,
   setQuranSize,
   togglePrayerReminder,
   setAdhanSound,
   setCustomAdhan,
+  setPrayerLocation,
+  setPrayerMethod,
+  setAsrMethod,
   setReadingOption,
   resetSettings,
   hydrateSettings,

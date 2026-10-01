@@ -7,6 +7,8 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useWindowDimensions, View } from "react-native";
 import { normalize180 } from "../_data/qibla";
+import useCityName from "@/features/prayer-times/_components/useCityName";
+import type { CityName } from "@/features/prayer-times/_data/cityName";
 import Compass from "./Compass";
 
 const ALIGNED_WITHIN = 5;
@@ -18,13 +20,14 @@ export default function QiblaView({
   bearing,
   distance,
 }: {
-  city: string | null;
+  city: CityName | null;
   heading: number | null;
   accuracy: number;
   bearing: number;
   distance: number;
 }) {
   const { t } = useTranslation("qibla");
+  const cityName = useCityName(city);
   const colors = useThemeColors();
   const { width } = useWindowDimensions();
   const size = Math.min(width - 72, 300);
@@ -51,14 +54,14 @@ export default function QiblaView({
   return (
     <View className="gap-6">
       <View className="gap-6 px-1">
-        {city ? (
+        {cityName ? (
           <View className="flex-row items-center justify-center gap-1">
             <Icon name="location" size={12} tintColor={colors.gray} />
             <AppText
               className="shrink text-xs text-main-gray"
               numberOfLines={1}
             >
-              {city}
+              {cityName}
             </AppText>
           </View>
         ) : null}

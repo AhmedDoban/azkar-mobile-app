@@ -8,7 +8,6 @@
   "itemsCount_few": "{{count}} أذكار",
   "itemsCount_many": "{{count}} ذكرًا",
   "itemsCount_other": "{{count}} ذكر",
-  "remaining": "متبقي {{count}}",
   "done": "تم",
   "completed": "أتممت الأذكار — تقبّل الله منك",
   "progress": "{{done}} من {{total}}",

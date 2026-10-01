@@ -3,12 +3,12 @@ import { getSurah } from "@/features/azkar/_data/quran";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
-import { BANNER_H, cartouchePath } from "../_components/bannerPaths";
+import { BANNER_H, scrolls } from "../_components/bannerShapes";
 import useMushafColors from "../_components/useMushafColors";
-import BannerConnector from "./BannerConnector";
 import BannerMedallion from "./BannerMedallion";
 
-const MEDALLION = 19;
+const CAPSULE_H = BANNER_H - 24;
+const MEDALLION_INSET = 29;
 
 export default function SurahBanner({ surahId }: { surahId: number }) {
   const c = useMushafColors();
@@ -16,11 +16,10 @@ export default function SurahBanner({ surahId }: { surahId: number }) {
   const surah = getSurah(surahId);
   if (!surah) return null;
 
-  const cartoucheWidth = Math.min(width * 0.46, 180);
-  const left = width / 2 - cartoucheWidth / 2;
-  const right = width / 2 + cartoucheWidth / 2;
-  const startMedallion = 26;
-  const endMedallion = width - 26;
+  const capsuleWidth = Math.min(width * 0.42, 170);
+  const left = (width - capsuleWidth) / 2;
+  const right = left + capsuleWidth;
+  const sideStart = MEDALLION_INSET + 23;
 
   return (
     <View
@@ -35,37 +34,45 @@ export default function SurahBanner({ surahId }: { surahId: number }) {
               y={1}
               width={width - 2}
               height={BANNER_H - 2}
+              rx={3}
               fill={c.frameFill}
               stroke={c.gold}
-              strokeWidth={1.4}
+              strokeWidth={1.6}
             />
             <Rect
-              x={4.5}
-              y={4.5}
-              width={width - 9}
-              height={BANNER_H - 9}
+              x={4}
+              y={4}
+              width={width - 8}
+              height={BANNER_H - 8}
+              rx={2}
               fill="none"
               stroke={c.gold}
               strokeWidth={0.6}
             />
-            <BannerConnector
-              from={startMedallion + MEDALLION + 2}
-              to={left - 4}
-            />
-            <BannerConnector
-              from={right + 4}
-              to={endMedallion - MEDALLION - 2}
-            />
-            <BannerMedallion cx={startMedallion} radius={MEDALLION} />
-            <BannerMedallion cx={endMedallion} radius={MEDALLION} />
             <Path
-              d={cartouchePath(left, right, 0)}
+              d={`${scrolls(sideStart, left - 8)} ${scrolls(right + 14, width - sideStart)}`}
+              fill="none"
+              stroke={c.gold}
+              strokeWidth={0.8}
+            />
+            <BannerMedallion cx={MEDALLION_INSET} />
+            <BannerMedallion cx={width - MEDALLION_INSET} />
+            <Rect
+              x={left}
+              y={12}
+              width={capsuleWidth}
+              height={CAPSULE_H}
+              rx={CAPSULE_H / 2}
               fill={c.page}
               stroke={c.gold}
               strokeWidth={1.3}
             />
-            <Path
-              d={cartouchePath(left, right, 3.5)}
+            <Rect
+              x={left + 3.5}
+              y={15.5}
+              width={capsuleWidth - 7}
+              height={CAPSULE_H - 7}
+              rx={(CAPSULE_H - 7) / 2}
               fill="none"
               stroke={c.frame}
               strokeWidth={0.7}
@@ -75,8 +82,8 @@ export default function SurahBanner({ surahId }: { surahId: number }) {
             <AppText
               variant="quran"
               weight="bold"
-              className="text-[22px]"
-              style={{ color: c.ink, maxWidth: cartoucheWidth - 28 }}
+              className="text-[20px]"
+              style={{ color: c.ink, maxWidth: capsuleWidth - 24 }}
               numberOfLines={1}
               adjustsFontSizeToFit
             >

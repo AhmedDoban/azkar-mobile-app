@@ -2,6 +2,10 @@ import type * as Location from "expo-location";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
+import {
+  CityName,
+  lookupCityName,
+} from "@/features/prayer-times/_data/cityName";
 import { distanceToKaaba, qiblaBearing } from "../_data/qibla";
 
 type Status = "loading" | "denied" | "error" | "ready";
@@ -12,7 +16,7 @@ export default function useQibla() {
   const [coords, setCoords] = useState<Location.LocationObjectCoords | null>(
     null,
   );
-  const [city, setCity] = useState<string | null>(null);
+  const [city, setCity] = useState<CityName | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
   const [accuracy, setAccuracy] = useState(3);
   const [attempt, setAttempt] = useState(0);
@@ -60,12 +64,8 @@ export default function useQibla() {
       }
 
       if (fix) {
-        try {
-          const [place] = await Location.reverseGeocodeAsync(fix);
-          if (!cancelled) {
-            setCity(place?.city ?? place?.subregion ?? place?.region ?? null);
-          }
-        } catch {}
+        const name = await lookupCityName(fix, Location);
+        if (!cancelled) setCity(name);
       }
     })();
 

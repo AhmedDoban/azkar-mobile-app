@@ -27,19 +27,3 @@ export const PRAYER_ICONS: Record<PrayerName, IconKey> = {
   Maghrib: "maghrib",
   Isha: "isha",
 };
-
-export interface PrayerTimesResponse {
-  region: string;
-  country: string;
-  prayer_times: Record<PrayerName, string>;
-  date: {
-    date_en: string;
-    date_hijri: {
-      day: string;
-      year: string;
-      weekday: { en: string; ar: string };
-      month: { number: number; en: string; ar: string };
-    };
-  };
-  meta: { timezone: string };
-}

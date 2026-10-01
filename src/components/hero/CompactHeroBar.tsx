@@ -27,7 +27,7 @@ export default function CompactHeroBar({
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
   const progress = useSharedValue(visible ? 1 : 0);
-  const tint = colors.isDark ? "#0d3630" : "#18766f";
+  const tint = colors.isDark ? colors.brand.deep : colors.brand.main;
   useStatusBarStyle(visible ? null : "light");
 
   useEffect(() => {

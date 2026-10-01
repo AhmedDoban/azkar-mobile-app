@@ -4,7 +4,6 @@
   "searchPlaceholder": "Search categories",
   "itemsCount_one": "{{count}} dhikr",
   "itemsCount_other": "{{count}} adhkar",
-  "remaining": "{{count}} left",
   "done": "Done",
   "completed": "All done — may Allah accept from you",
   "progress": "{{done}} of {{total}}",
