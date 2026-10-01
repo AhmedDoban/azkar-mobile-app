@@ -8,10 +8,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { cn } from "@/lib/utils";
 
-/**
- * Pulsing placeholder block. Compose these into the shape of the card that is
- * loading; pass size and rounding through className.
- */
 export default function Skeleton({ className }: { className?: string }) {
   const pulse = useSharedValue(0);
 

@@ -3,10 +3,6 @@ import AppText from "@/components/ui/AppText";
 import useThemeColors from "@/hooks/useThemeColors";
 import { gradeLevel } from "../_components/gradeLevel";
 
-/**
- * The ruling (خلاصة حكم المحدث) as a colored pill: green sahih, blue hasan,
- * amber weak, red fabricated; neutral when the wording isn't recognized
- */
 export default function GradeBadge({
   label,
   grade,

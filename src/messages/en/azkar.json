@@ -1,5 +1,4 @@
 {
-  "greeting": "Remember Me; I will remember you",
   "featured": "Daily Adhkar",
   "allCategories": "More Adhkar",
   "searchPlaceholder": "Search categories",
@@ -16,5 +15,20 @@
   "saveZikr": "Save to favorites",
   "savedAdhkar": "Saved adhkar",
   "favoriteCategories": "Categories",
-  "savedHadiths": "Saved Hadiths"
+  "savedHadiths": "Saved Hadiths",
+  "tagline": "Rest for the heart, peace for the soul",
+  "verseOfDay": "Verse of the day",
+  "verseRef": "Surah {{surah}} · Verse {{ayah}}",
+  "surahKahf": "Surah Al-Kahf",
+  "fridaySunnah": "Friday Sunnah",
+  "surahMulk": "Surah Al-Mulk",
+  "mulkHint": "Every night before sleep",
+  "quranTagline": "Read and reflect on the words of Allah",
+  "surahSearch": "Search surahs or verses",
+  "meccan": "Meccan",
+  "medinan": "Medinan",
+  "versesCount": "{{count}} verses",
+  "openFavorites": "Favorites",
+  "surahsHeading": "Surahs",
+  "versesHeading": "Verses"
 }

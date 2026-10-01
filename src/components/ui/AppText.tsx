@@ -9,7 +9,6 @@ type Props = TextProps & {
   arabic?: boolean;
 };
 
-// Same rule as the portfolio layout: LamaSans for Arabic, Space Grotesk otherwise
 const FONTS = {
   ui: {
     rtl: { regular: "font-lama", bold: "font-lama-bold" },

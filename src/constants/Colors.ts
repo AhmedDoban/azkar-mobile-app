@@ -2,11 +2,11 @@ export const Colors = {
   light: {
     main: "#18766f",
     mainFill: "#18766f",
-    onFill: "#ffffff", // text and icons on mainFill
-    hero: "#18766f", // big feature cards (greeting, hadith of the day)
+    onFill: "#ffffff",
+    hero: "#18766f",
     onHero: "#ffffff",
     onHeroMuted: "#ffffffcc",
-    heroBlob: "#ffffff1a", // decorative circles on hero cards
+    heroBlob: "#ffffff1a",
     heroBorder: "#18766f",
     bg: "#f7f6f0",
     gray: "#667176",
@@ -20,7 +20,6 @@ export const Colors = {
     mainSoft: "#18766f1f",
     mainBorder: "#667176",
     orangeSoft: "#f25f3a24",
-    // Hadith grades (خلاصة حكم المحدث): sahih, hasan, weak, fabricated
     sahih: "#2f7d4f",
     sahihSoft: "#2f7d4f1f",
     hasan: "#3e6d8c",
@@ -29,6 +28,9 @@ export const Colors = {
     daifSoft: "#b26b0024",
     mawdu: "#b3261e",
     mawduSoft: "#b3261e1c",
+    accent: "#18766f",
+    accentSoft: "#18766f1f",
+    love: "#e5484d",
   },
   dark: {
     main: "#E6E6E6",
@@ -59,6 +61,9 @@ export const Colors = {
     daifSoft: "#E0B0621F",
     mawdu: "#EF8A80",
     mawduSoft: "#EF8A801F",
+    accent: "#e6e6e6",
+    accentSoft: "#FFFFFF14",
+    love: "#ff6369",
   },
 } as const;
 

@@ -16,7 +16,6 @@ const byId = new Map(hadiths.map((h) => [h.id, h]));
 
 export const getHadith = (id: string) => byId.get(id);
 
-/** Same hadith all day, a new one tomorrow */
 export function getDailyHadith(date = new Date()) {
   const start = new Date(date.getFullYear(), 0, 0).getTime();
   const dayOfYear = Math.floor((date.getTime() - start) / 86_400_000);

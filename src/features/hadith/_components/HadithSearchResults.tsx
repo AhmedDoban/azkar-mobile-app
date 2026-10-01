@@ -14,10 +14,6 @@ import HadithCardSkeleton from "../_ui/HadithCardSkeleton";
 
 const MAX_LOCAL = 30;
 
-/**
- * Arabic queries go to the Dorar encyclopedia; anything else (or a failed
- * request) is matched against the bundled bilingual collection.
- */
 export default function HadithSearchResults({ query }: { query: string }) {
   const { t } = useTranslation("hadith");
   const colors = useThemeColors();

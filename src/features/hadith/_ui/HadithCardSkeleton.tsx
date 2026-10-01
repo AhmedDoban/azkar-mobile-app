@@ -2,9 +2,7 @@ import { View } from "react-native";
 import Skeleton from "@/components/ui/Skeleton";
 import useDirection from "@/hooks/useDirection";
 
-/** Same shape as a hadith card: a few lines of text, then the meta chips */
 export default function HadithCardSkeleton() {
-  // Hadith text is Arabic, so short lines end on the right in both languages
   const { isRTL } = useDirection();
 
   return (

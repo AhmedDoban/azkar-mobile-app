@@ -20,6 +20,7 @@ export default function AdhanReminder() {
   const { label } = usePrayerLabels();
   const { data, startingNow } = usePrayerSchedule();
   const reminders = useAppSelector((s) => s.settings.prayerReminders);
+  const sound = useAppSelector((s) => s.settings.adhanSound);
   const [active, setActive] = useState<PrayerName | null>(null);
   const shown = useRef(new Set<string>());
 
@@ -31,37 +32,38 @@ export default function AdhanReminder() {
     setActive(prayer);
   };
 
-  // A reminded prayer starts while the app is open
   useEffect(() => {
     if (startingNow && reminders[startingNow] !== false) show(startingNow);
   }, [startingNow, reminders]);
 
-  // Opened from an adhan notification
   useEffect(
     () =>
       onPrayerNotificationOpened((prayer) => {
-        if (REMINDER_PRAYERS.includes(prayer as (typeof REMINDER_PRAYERS)[number])) {
+        if (
+          REMINDER_PRAYERS.includes(prayer as (typeof REMINDER_PRAYERS)[number])
+        ) {
           show(prayer as PrayerName);
         }
       }),
     [],
   );
 
-  // Reschedule when times, bells or language change
   const times = data?.prayer_times;
   useEffect(() => {
     if (!times) return;
     syncPrayerNotifications({
       times,
       reminders,
+      sound,
       title: (prayer) => t("notificationTitle", { prayer: label(prayer) }),
       body: t("notificationBody"),
     });
-  }, [times, reminders, i18n.language]);
+  }, [times, reminders, sound, i18n.language]);
 
   return (
     <AdhanSplash
       prayer={active}
+      sound={sound}
       time={active && times ? times[active] : undefined}
       onClose={() => setActive(null)}
     />

@@ -1,15 +1,15 @@
 import AppText from "@/components/ui/AppText";
-import useThemeColors from "@/hooks/useThemeColors";
-import { cn } from "@/lib/utils";
+import Icon from "@/components/ui/Icon";
+import PressableScale from "@/components/ui/PressableScale";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { PrayerName } from "../_data/types";
 import { PrayerStatus } from "../_components/usePrayerSchedule";
-import ReminderBell from "./ReminderBell";
+import usePrayerReminder from "../_components/usePrayerReminder";
+import { PRAYER_ICONS, PrayerName } from "../_data/types";
 
-/**
- * One chip in the hero card's prayer row: name, time and the reminder bell.
- * The next prayer's chip is solid; passed ones fade back.
- */
+const INK = "#0e3a33";
+const MINT_FILL = "#dff3ea";
+
 export default function PrayerCell({
   prayer,
   label,
@@ -21,36 +21,56 @@ export default function PrayerCell({
   time: string;
   status: PrayerStatus;
 }) {
-  const colors = useThemeColors();
+  const { t } = useTranslation("prayer");
+  const { enabled, toggle } = usePrayerReminder(prayer);
   const isNext = status === "next";
+  const color = isNext ? INK : "#ffffff";
 
   return (
-    <View
-      className={cn(
-        "flex-1 items-center rounded-2xl px-1 pt-2.5",
-        isNext ? "bg-on-hero" : "bg-hero-blob",
-        status === "passed" && "opacity-50",
-      )}
+    <PressableScale
+      scaleTo={0.92}
+      onPress={toggle}
+      accessibilityRole="switch"
+      accessibilityState={{ checked: enabled }}
+      accessibilityLabel={`${label} ${time}, ${t(enabled ? "reminderOn" : "reminderOff")}`}
+      className="flex-1 items-center gap-1 rounded-2xl py-3"
+      style={[
+        isNext && { backgroundColor: MINT_FILL },
+        status === "passed" && { opacity: 0.55 },
+      ]}
     >
       <AppText
         weight={isNext ? "bold" : "regular"}
-        className={cn("text-[11px]", isNext ? "text-hero" : "text-on-hero-muted")}
+        className="text-xs"
+        style={{ color }}
         numberOfLines={1}
       >
         {label}
       </AppText>
       <AppText
         weight="bold"
-        className={cn("text-xs", isNext ? "text-hero" : "text-on-hero")}
+        className="text-[15px]"
+        style={{ color, writingDirection: "ltr" }}
         numberOfLines={1}
         adjustsFontSizeToFit
       >
         {time}
       </AppText>
-      <ReminderBell
-        prayer={prayer}
-        tint={isNext ? colors.hero : colors.onHero}
-      />
-    </View>
+      <View>
+        <Icon name={PRAYER_ICONS[prayer]} size={18} tintColor={color} />
+        {enabled ? null : (
+          <View
+            className="absolute -end-2.5 -top-1.5 size-3.5 items-center justify-center rounded-full"
+            style={{ backgroundColor: isNext ? INK : "#ffffff" }}
+          >
+            <Icon
+              name="bellSlash"
+              size={8}
+              tintColor={isNext ? MINT_FILL : INK}
+            />
+          </View>
+        )}
+      </View>
+    </PressableScale>
   );
 }

@@ -7,7 +7,6 @@ import ar from "@/messages/ar/ar";
 
 export const resources = { en, ar } as const;
 
-// First launch follows the device language; afterwards the saved choice wins
 export function getDeviceLocale(): Locale {
   const code = getLocales()[0]?.languageCode;
   return isLocale(code) ? code : defaultLocale;

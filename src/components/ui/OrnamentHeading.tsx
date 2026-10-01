@@ -2,7 +2,6 @@ import { View } from "react-native";
 import AppText from "./AppText";
 import Ornament from "./Ornament";
 
-/** Centered section heading between two ornaments, like the verse band */
 export default function OrnamentHeading({
   title,
   subtitle,

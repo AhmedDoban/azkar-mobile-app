@@ -1,27 +1,32 @@
 import GlassSlider from "@/components/Inputs/GlassSlider";
 import { ThemeSwitcher } from "@/components/theme/ThemeSwitcher";
 import AppText from "@/components/ui/AppText";
-import Icon from "@/components/ui/Icon";
+import type { IconKey } from "@/components/ui/Icon";
 import Screen from "@/components/ui/Screen";
 import useArabicTextStyle from "@/hooks/useArabicTextStyle";
 import useDirection from "@/hooks/useDirection";
-import useThemeColors from "@/hooks/useThemeColors";
-import { resetAllProgress } from "@/store/Slices/AzkarSlice";
+import { resetAllProgress, resetAzkarData } from "@/store/Slices/AzkarSlice";
 import {
   ReadingSettings,
-  setLocale,
+  resetSettings,
   setReadingOption,
   setTextSize,
   TEXT_SIZE,
 } from "@/store/Slices/SettingsSlice";
-import { useAppDispatch, useAppSelector } from "@/store/Store";
-import Constants from "expo-constants";
-import { Stack } from "expo-router";
+import { clearApiCache, useAppDispatch, useAppSelector } from "@/store/Store";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
+import useSettingsColors from "./_components/useSettingsColors";
+import AdhanSoundPicker from "./_ui/AdhanSoundPicker";
+import LanguageSwitcher from "./_ui/LanguageSwitcher";
+import QuranSizeSetting from "./_ui/QuranSizeSetting";
+import ResetDialog, { ResetDialogContent } from "./_ui/ResetDialog";
+import SettingsActionRow from "./_ui/SettingsActionRow";
 import SettingsGroup from "./_ui/SettingsGroup";
+import SettingsHeader from "./_ui/SettingsHeader";
 import SettingsSwitchRow from "./_ui/SettingsSwitchRow";
-import PressableScale from "@/components/ui/PressableScale";
+import SocialLinks from "./_ui/SocialLinks";
 
 const READING_OPTIONS: (keyof ReadingSettings)[] = [
   "hapticOnComplete",
@@ -29,29 +34,82 @@ const READING_OPTIONS: (keyof ReadingSettings)[] = [
   "hideCompleted",
 ];
 
+type SourceKey = "quran" | "adhkar" | "hadith" | "dorar" | "prayer" | "qibla";
+
+const SOURCES: { key: SourceKey; icon: IconKey; url?: string }[] = [
+  { key: "quran", icon: "quran" },
+  { key: "adhkar", icon: "heart" },
+  { key: "hadith", icon: "quote" },
+  { key: "dorar", icon: "search", url: "https://dorar.net" },
+  {
+    key: "prayer",
+    icon: "personPraying",
+    url: "https://quran.yousefheiba.com",
+  },
+  { key: "qibla", icon: "location" },
+];
+
+type ResetKind = "progress" | "cache" | "settings" | "all";
+
 export default function Settings() {
   const { t } = useTranslation(["settings", "common"]);
-  const colors = useThemeColors();
+  const palette = useSettingsColors();
+  const [pending, setPending] = useState<ResetKind | null>(null);
+
+  const actions: Record<ResetKind, ResetDialogContent> = {
+    progress: {
+      icon: "reset",
+      title: t("confirm.progress.title"),
+      message: t("confirm.progress.message"),
+      confirmLabel: t("confirm.progress.action"),
+      doneText: t("confirm.progress.done"),
+      danger: true,
+      onConfirm: () => dispatch(resetAllProgress()),
+    },
+    cache: {
+      icon: "clearCache",
+      title: t("confirm.cache.title"),
+      message: t("confirm.cache.message"),
+      confirmLabel: t("confirm.cache.action"),
+      doneText: t("confirm.cache.done"),
+      danger: false,
+      onConfirm: () => clearApiCache(dispatch),
+    },
+    settings: {
+      icon: "resetSettings",
+      title: t("confirm.settings.title"),
+      message: t("confirm.settings.message"),
+      confirmLabel: t("confirm.settings.action"),
+      doneText: t("confirm.settings.done"),
+      danger: false,
+      onConfirm: () => dispatch(resetSettings()),
+    },
+    all: {
+      icon: "resetAll",
+      title: t("confirm.all.title"),
+      message: t("confirm.all.message"),
+      confirmLabel: t("confirm.all.action"),
+      doneText: t("confirm.all.done"),
+      danger: true,
+      onConfirm: () => {
+        dispatch(resetAzkarData());
+        dispatch(resetSettings());
+        clearApiCache(dispatch);
+      },
+    },
+  };
   const dispatch = useAppDispatch();
   const textSize = useAppSelector((s) => s.settings.textSize);
   const reading = useAppSelector((s) => s.settings.reading);
-  const isArabic = useAppSelector((s) => s.settings.locale === "ar");
   const { isRTL } = useDirection();
   const sizeGlyph = isRTL ? "أ" : "A";
   const previewStyle = useArabicTextStyle();
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <Screen title={t("common:tabs.settings")}>
-        <SettingsGroup title={t("language")}>
-          {/* Title and hint follow the switch: the current language, and what toggling does */}
-          <SettingsSwitchRow
-            title={isArabic ? "العربية" : "English"}
-            subtitle={t(isArabic ? "arabicOnHint" : "arabicOffHint")}
-            value={isArabic}
-            onValueChange={(on) => dispatch(setLocale(on ? "ar" : "en"))}
-          />
+      <Screen title={t("common:tabs.settings")} header={<SettingsHeader />}>
+        <SettingsGroup title={t("language")} plain>
+          <LanguageSwitcher />
         </SettingsGroup>
 
         <SettingsGroup title={t("appearance")}>
@@ -60,8 +118,11 @@ export default function Settings() {
 
         <SettingsGroup title={t("textSize")}>
           <View className="flex-row items-center gap-3">
-            {/* Small and large letter at the ends, in the UI language */}
-            <AppText weight="bold" className="text-sm text-main-gray">
+            <AppText
+              weight="bold"
+              className="text-sm"
+              style={{ color: palette.subtitle }}
+            >
               {sizeGlyph}
             </AppText>
             <View className="flex-1">
@@ -75,7 +136,11 @@ export default function Settings() {
                 accessibilityLabel={t("textSize")}
               />
             </View>
-            <AppText weight="bold" className="text-2xl text-main-gray">
+            <AppText
+              weight="bold"
+              className="text-2xl"
+              style={{ color: palette.subtitle }}
+            >
               {sizeGlyph}
             </AppText>
           </View>
@@ -88,12 +153,20 @@ export default function Settings() {
             >
               سُبْحَانَ اللَّهِ وَبِحَمْدِهِ
             </AppText>
-            <View className="rounded-full bg-main-soft px-3 py-1">
-              <AppText weight="bold" className="text-sm text-main">
+            <View className="rounded-full bg-accent-soft px-3 py-1">
+              <AppText weight="bold" className="text-sm text-accent">
                 {textSize}
               </AppText>
             </View>
           </View>
+        </SettingsGroup>
+
+        <SettingsGroup title={t("quranSize")}>
+          <QuranSizeSetting />
+        </SettingsGroup>
+
+        <SettingsGroup title={t("adhanSound")} plain>
+          <AdhanSoundPicker />
         </SettingsGroup>
 
         <SettingsGroup title={t("reading")}>
@@ -114,30 +187,56 @@ export default function Settings() {
           ))}
         </SettingsGroup>
 
-        <SettingsGroup title={t("data")}>
-          <PressableScale
-            className="flex-row items-center gap-3"
-            onPress={() => {
-              dispatch(resetAllProgress());
-              Alert.alert(t("resetProgressDone"));
-            }}
-          >
-            <Icon name="reset" size={18} tintColor={colors.orange} />
-            <AppText weight="bold" className="text-main-orange">
-              {t("resetProgress")}
-            </AppText>
-          </PressableScale>
+        <SettingsGroup title={t("data")} plain>
+          <SettingsActionRow
+            icon="clearCache"
+            label={t("clearCache")}
+            onPress={() => setPending("cache")}
+          />
+          <SettingsActionRow
+            icon="resetSettings"
+            label={t("resetSettings")}
+            onPress={() => setPending("settings")}
+          />
+          <SettingsActionRow
+            icon="reset"
+            label={t("resetProgress")}
+            danger
+            onPress={() => setPending("progress")}
+          />
+          <SettingsActionRow
+            icon="resetAll"
+            label={t("resetAll")}
+            danger
+            onPress={() => setPending("all")}
+          />
         </SettingsGroup>
 
-        <SettingsGroup title={t("sources")}>
-          <AppText className="leading-6 text-main-gray">
-            {t("sourcesText")}
-          </AppText>
-          <AppText className="text-xs text-main-gray">
-            v{Constants.expoConfig?.version}
-          </AppText>
-        </SettingsGroup>
+        {/* <SettingsGroup title={t("sources")}>
+          {SOURCES.map(({ key, icon, url }, i) => (
+            <View
+              key={key}
+              className={i > 0 ? "border-t pt-3" : undefined}
+              style={i > 0 ? { borderColor: palette.border } : undefined}
+            >
+              <SettingsLinkRow
+                icon={icon}
+                title={t(`source.${key}.title`)}
+                subtitle={t(`source.${key}.hint`)}
+                url={url}
+              />
+            </View>
+          ))}
+        </SettingsGroup> */}
+
+        <View className="items-center gap-3 pt-2">
+          <SocialLinks />
+        </View>
       </Screen>
+      <ResetDialog
+        content={pending ? actions[pending] : null}
+        onClose={() => setPending(null)}
+      />
     </>
   );
 }

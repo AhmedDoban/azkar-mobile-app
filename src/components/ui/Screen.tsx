@@ -2,6 +2,7 @@ import useDirection from "@/hooks/useDirection";
 import usePageInsets from "@/hooks/usePageInsets";
 import { cn } from "@/lib/utils";
 import { PropsWithChildren, ReactNode } from "react";
+import StatusBarBackdrop from "@/components/StatusBarBackdrop";
 import { ScrollView, ScrollViewProps, View } from "react-native";
 import PageHeader from "./PageHeader";
 
@@ -9,15 +10,12 @@ type Props = PropsWithChildren<
   ScrollViewProps & {
     className?: string;
     scroll?: boolean;
-    /** Tab screens: renders the page title (the native header is hidden) */
     title?: string;
     headerTrailing?: ReactNode;
-    /** Replaces the default title row (still needs `title` for the spacing) */
     header?: ReactNode;
   }
 >;
 
-/** Page wrapper: cream/navy background, direction-aware */
 export default function Screen({
   children,
   className,
@@ -45,14 +43,11 @@ export default function Screen({
     );
   }
 
-  return (
-    // The ScrollView must be the screen's root view: iOS 26 finds it there to
-    // minimize the tab bar on scroll (and to drive the header scroll effects)
+  const scrollView = (
     <ScrollView
       className="flex-1 bg-main-bg"
       style={{ direction }}
       contentContainerClassName={cn("gap-6 px-4 pt-4 pb-8", className)}
-      // Tab screens own their top spacing; screens under a native header let iOS inset them
       contentContainerStyle={title ? insets : undefined}
       contentInsetAdjustmentBehavior={title ? "never" : "automatic"}
       keyboardDismissMode="on-drag"
@@ -63,4 +58,15 @@ export default function Screen({
       {children}
     </ScrollView>
   );
+
+  if (title) {
+    return (
+      <>
+        {scrollView}
+        <StatusBarBackdrop visible />
+      </>
+    );
+  }
+
+  return scrollView;
 }

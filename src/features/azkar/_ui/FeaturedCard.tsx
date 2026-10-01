@@ -10,13 +10,11 @@ import useCategoryProgress from "../_components/useCategoryProgress";
 import ProgressRing from "./ProgressRing";
 import PressableScale from "@/components/ui/PressableScale";
 
-/** Category tile on the teal tint: title and status beside today's progress ring */
 export default function FeaturedCard({
   category,
   showProgress = true,
 }: {
   category: AzkarCategory;
-  /** false = only the item count, no ring (used in Favorites) */
   showProgress?: boolean;
 }) {
   const { t, i18n } = useTranslation("azkar");
@@ -26,17 +24,22 @@ export default function FeaturedCard({
 
   return (
     <Link href={`/category/${category.id}`} asChild>
-      <PressableScale
-        className="flex-1 justify-center rounded-3xl bg-main-soft p-4"
-      >
+      <PressableScale className="flex-1 justify-center rounded-3xl bg-main-soft p-4">
         <View className="flex-row items-center gap-3">
           <View className="flex-1 gap-1">
-            <AppText weight="bold" className="text-base leading-6" numberOfLines={2}>
+            <AppText
+              weight="bold"
+              className="text-base leading-6"
+              numberOfLines={2}
+            >
               {category.title[i18n.language as Locale]}
             </AppText>
             <AppText
               weight={finished ? "bold" : "regular"}
-              className={cn("text-xs", finished ? "text-main" : "text-main-gray")}
+              className={cn(
+                "text-xs",
+                finished ? "text-main" : "text-main-gray",
+              )}
             >
               {!showProgress
                 ? t("itemsCount", { count: total })
@@ -48,7 +51,6 @@ export default function FeaturedCard({
           {showProgress ? (
             <ProgressRing
               progress={total ? done / total : 0}
-              // The filled "done" circle uses the teal fill pair for contrast
               color={complete ? colors.mainFill : colors.main}
               checkColor={colors.onFill}
               track={colors.surface}

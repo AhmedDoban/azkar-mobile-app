@@ -3,17 +3,17 @@ import { Locale } from "@/i18n/config";
 
 export interface Zikr {
   id: number;
-  /** Short heading such as "دعاء الكرب", when the source has one */
   title?: string;
   text: string;
   count: number;
 }
 
 export interface AzkarCategory {
-  /** Key from azkar.json, e.g. "morning_azkar" */
   id: string;
   title: Record<Locale, string>;
   featured: boolean;
+  resetEachPrayer?: boolean;
+  fridayOnly?: boolean;
   items: Zikr[];
 }
 
@@ -23,7 +23,6 @@ const byId = new Map(categories.map((c) => [c.id, c]));
 
 export const getCategory = (id: string) => byId.get(id);
 
-/** Looks up a single dhikr by its `${categoryId}:${itemId}` key */
 export function getZikr(key: string) {
   const [categoryId, itemId] = key.split(":");
   const category = byId.get(categoryId);
@@ -33,7 +32,15 @@ export function getZikr(key: string) {
 
 export const featuredCategories = categories.filter((c) => c.featured);
 
-// Strips harakat so "اذكار" matches "أَذْكَار"
+export const isFriday = (date = new Date()) => date.getDay() === 5;
+
+export const dailyCategories = (date = new Date()) =>
+  featuredCategories.filter((c) => !c.fridayOnly || isFriday(date));
+
+export const perPrayerCategoryIds = categories
+  .filter((c) => c.resetEachPrayer)
+  .map((c) => c.id);
+
 const normalize = (text: string) =>
   text
     .toLowerCase()

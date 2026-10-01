@@ -1,15 +1,18 @@
 import { isRunningInExpoGo } from "expo";
 import { Platform } from "react-native";
 import {
+  AdhanSoundId,
+  BUNDLED_SOUNDS,
+  channelId,
+  notificationSound,
+} from "../_data/adhanSounds";
+import {
   PrayerName,
   PrayerTimesResponse,
   REMINDER_PRAYERS,
 } from "../_data/types";
 
-const CHANNEL_ID = "adhan";
 const notificationId = (prayer: PrayerName) => `prayer-${prayer}`;
-// Expo Go on Android dropped expo-notifications (SDK 53): importing it there
-// throws, so the module is only loaded where it works (dev and store builds)
 const supported =
   Platform.OS !== "web" && !(Platform.OS === "android" && isRunningInExpoGo());
 const Notifications: typeof import("expo-notifications") | null = supported
@@ -20,26 +23,28 @@ export function configurePrayerNotifications() {
   if (!Notifications) return;
 
   Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      // While the app is open the full-screen adhan screen shows instead of a banner
+    handleNotification: async (notification) => ({
       shouldShowBanner: false,
       shouldShowList: true,
-      shouldPlaySound: true,
+      shouldPlaySound: !String(
+        notification.request.content.sound ?? "",
+      ).startsWith("adhan_"),
       shouldSetBadge: false,
     }),
   });
 
   if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: "Adhan",
-      importance: Notifications.AndroidImportance.MAX,
-      sound: "default",
-      vibrationPattern: [0, 400, 200, 400],
-    });
+    for (const { id } of BUNDLED_SOUNDS) {
+      Notifications.setNotificationChannelAsync(channelId(id), {
+        name: `Adhan (${id})`,
+        importance: Notifications.AndroidImportance.MAX,
+        sound: notificationSound(id, false),
+        vibrationPattern: [0, 400, 200, 400],
+      });
+    }
   }
 }
 
-/** Asks once; returns whether reminders can be delivered */
 export async function ensureNotificationPermission() {
   if (!Notifications) return false;
   const current = await Notifications.getPermissionsAsync();
@@ -48,16 +53,14 @@ export async function ensureNotificationPermission() {
   return (await Notifications.requestPermissionsAsync()).granted;
 }
 
-/**
- * One daily notification per enabled prayer at today's time. Times move by a
- * minute or two per day, so this reruns whenever the app loads fresh times.
- */
 export async function syncPrayerNotifications({
   times,
   reminders,
+  sound,
   title,
   body,
 }: {
+  sound: AdhanSoundId;
   times: PrayerTimesResponse["prayer_times"];
   reminders: Partial<Record<PrayerName, boolean>>;
   title: (prayer: PrayerName) => string;
@@ -78,24 +81,23 @@ export async function syncPrayerNotifications({
       content: {
         title: title(prayer),
         body,
-        sound: "default",
+        sound: notificationSound(sound, Platform.OS === "ios"),
         data: { prayer },
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour,
         minute,
-        channelId: CHANNEL_ID,
+        channelId: channelId(sound),
       },
     });
   }
 }
 
-/** Runs `onOpen` with the prayer when the user taps an adhan notification */
 export function onPrayerNotificationOpened(onOpen: (prayer: unknown) => void) {
   if (!Notifications) return () => {};
-  const sub = Notifications.addNotificationResponseReceivedListener((response) =>
-    onOpen(response.notification.request.content.data?.prayer),
+  const sub = Notifications.addNotificationResponseReceivedListener(
+    (response) => onOpen(response.notification.request.content.data?.prayer),
   );
   return () => sub.remove();
 }

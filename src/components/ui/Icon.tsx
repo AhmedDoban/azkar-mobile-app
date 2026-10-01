@@ -1,54 +1,135 @@
-import { SymbolView, SymbolViewProps } from "expo-symbols";
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  ArrowUpRight01Icon,
+  Book02Icon,
+  Calendar03Icon,
+  Cancel01Icon,
+  CheckmarkCircle02Icon,
+  CleanIcon,
+  CloudUploadIcon,
+  Copy01Icon,
+  Delete02Icon,
+  Facebook01Icon,
+  FavouriteIcon,
+  GithubIcon,
+  GlobeIcon,
+  InstagramIcon,
+  Kaaba01Icon,
+  Linkedin01Icon,
+  Location01Icon,
+  Moon01Icon,
+  Moon02Icon,
+  Notification03Icon,
+  NotificationOff03Icon,
+  PlayIcon,
+  PrayerRug01Icon,
+  QuoteUpIcon,
+  Quran02Icon,
+  RefreshIcon,
+  Search01Icon,
+  Settings02Icon,
+  Share08Icon,
+  UndoIcon,
+  SmartPhone01Icon,
+  StopIcon,
+  Sun03Icon,
+  SunCloud02Icon,
+  SunriseIcon,
+  SunsetIcon,
+  TasbihIcon,
+  Tick02Icon,
+  VolumeHighIcon,
+  WhatsappIcon,
+  WifiOff02Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react-native";
+import type { ColorValue } from "react-native";
+import QuranCoverIcon from "./QuranCoverIcon";
 
-type IconName = Extract<SymbolViewProps["name"], object> & {
-  ios: NonNullable<Extract<SymbolViewProps["name"], object>["ios"]>;
-  android: NonNullable<Extract<SymbolViewProps["name"], object>["android"]>;
-};
+const filled = (icon: IconSvgElement): IconSvgElement =>
+  icon.map(
+    ([tag, attrs]) => [tag, { ...attrs, fill: "currentColor" }] as const,
+  );
 
-// SF Symbols on iOS, Material Symbols on Android/web
 export const Icons = {
-  sunrise: { ios: "sunrise.fill", android: "wb_sunny" },
-  moon: { ios: "moon.stars.fill", android: "bedtime" },
-  prayer: { ios: "hands.sparkles.fill", android: "self_improvement" },
-  heart: { ios: "heart", android: "favorite_border" },
-  heartFill: { ios: "heart.fill", android: "favorite" },
-  share: { ios: "square.and.arrow.up", android: "share" },
-  copy: { ios: "doc.on.doc", android: "content_copy" },
-  check: { ios: "checkmark", android: "check" },
-  checkCircle: { ios: "checkmark.circle.fill", android: "check_circle" },
-  reset: { ios: "arrow.counterclockwise", android: "restart_alt" },
-  chevronUpDown: { ios: "chevron.up.chevron.down", android: "unfold_more" },
-  book: { ios: "book.closed.fill", android: "menu_book" },
-  quote: { ios: "quote.opening", android: "format_quote" },
-  wifiOff: { ios: "wifi.slash", android: "wifi_off" },
-  search: { ios: "magnifyingglass", android: "search" },
-  close: { ios: "xmark.circle.fill", android: "cancel" },
-  location: { ios: "location.fill", android: "location_on" },
-  bell: { ios: "bell.fill", android: "notifications_active" },
-  // Theme picker
-  themeSystem: { ios: "circle.lefthalf.filled", android: "contrast" },
-  themeLight: { ios: "sun.max.fill", android: "light_mode" },
-  themeDark: { ios: "moon.fill", android: "dark_mode" },
-  bellSlash: { ios: "bell.slash", android: "notifications_off" },
-  ring: { ios: "circle", android: "radio_button_unchecked" },
-  dot: { ios: "circle.inset.filled", android: "radio_button_checked" },
-  // One per prayer, for the "next prayer" header and the adhan screen
-  fajr: { ios: "sun.haze.fill", android: "wb_twilight" },
-  dhuhr: { ios: "sun.max.fill", android: "light_mode" },
-  asr: { ios: "sun.min.fill", android: "wb_sunny" },
-  maghrib: { ios: "sunset.fill", android: "wb_twilight" },
-  isha: { ios: "moon.stars.fill", android: "bedtime" },
-  clock: { ios: "clock.fill", android: "schedule" },
-} satisfies Record<string, IconName>;
+  arrowUpForward: ArrowUpRight01Icon,
+  asr: SunCloud02Icon,
+  bell: Notification03Icon,
+  bellSlash: NotificationOff03Icon,
+  book: Book02Icon,
+  calendar: Calendar03Icon,
+  check: Tick02Icon,
+  checkCircle: CheckmarkCircle02Icon,
+  chevronLeft: ArrowLeft01Icon,
+  chevronRight: ArrowRight01Icon,
+  clearCache: CleanIcon,
+  close: Cancel01Icon,
+  copy: Copy01Icon,
+  dhuhr: Sun03Icon,
+  facebook: Facebook01Icon,
+  fajr: Moon01Icon,
+  github: GithubIcon,
+  heart: FavouriteIcon,
+  heartFill: filled(FavouriteIcon),
+  instagram: InstagramIcon,
+  isha: Moon02Icon,
+  kaaba: Kaaba01Icon,
+  linkedin: Linkedin01Icon,
+  location: Location01Icon,
+  maghrib: SunsetIcon,
+  moon: Moon02Icon,
+  personPraying: PrayerRug01Icon,
+  play: PlayIcon,
+  quote: QuoteUpIcon,
+  quran: Quran02Icon,
+  reset: RefreshIcon,
+  resetAll: Delete02Icon,
+  resetSettings: UndoIcon,
+  search: Search01Icon,
+  share: Share08Icon,
+  stop: StopIcon,
+  sunrise: SunriseIcon,
+  tabAzkar: TasbihIcon,
+  tabHadith: Book02Icon,
+  tabQibla: Kaaba01Icon,
+  tabQuran: Quran02Icon,
+  tabSettings: Settings02Icon,
+  themeDark: Moon02Icon,
+  themeLight: Sun03Icon,
+  themeSystem: SmartPhone01Icon,
+  upload: CloudUploadIcon,
+  volume: VolumeHighIcon,
+  website: GlobeIcon,
+  whatsapp: WhatsappIcon,
+  wifiOff: WifiOff02Icon,
+} satisfies Record<string, IconSvgElement>;
 
 export type IconKey = keyof typeof Icons;
 
-type Props = Omit<SymbolViewProps, "name"> & { name: IconKey };
+export default function Icon({
+  name,
+  size = 20,
+  tintColor,
+  strokeWidth = 1.7,
+}: {
+  name: IconKey;
+  size?: number;
+  tintColor?: ColorValue;
+  strokeWidth?: number;
+}) {
+  if (name === "tabQuran" || name === "quran") {
+    return (
+      <QuranCoverIcon size={size} color={tintColor} strokeWidth={strokeWidth} />
+    );
+  }
 
-export default function Icon({ name, size = 20, ...props }: Props) {
-  const { ios, android } = Icons[name];
-  // Web renders the same Material Symbols font as Android
   return (
-    <SymbolView name={{ ios, android, web: android }} size={size} {...props} />
+    <HugeiconsIcon
+      icon={Icons[name]}
+      size={size}
+      color={tintColor as string | undefined}
+      strokeWidth={strokeWidth}
+    />
   );
 }

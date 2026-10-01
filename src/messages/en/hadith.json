@@ -13,5 +13,6 @@
   "noResults": "No hadith found",
   "dorarError": "Couldn't reach Dorar. Showing matches from the offline collection.",
   "hadithNo": "No. {{number}}",
-  "saveHadith": "Save to favorites"
+  "saveHadith": "Save to favorites",
+  "tagline": "From the guidance of the Prophet ﷺ"
 }

@@ -1,10 +1,12 @@
 {
+  "appName": "أذكار",
   "tabs": {
     "azkar": "الأذكار",
     "hadith": "الأحاديث",
     "qibla": "القبلة",
     "favorites": "المفضلة",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "quran": "القرآن"
   },
   "loading": "جارٍ التحميل...",
   "retry": "إعادة المحاولة",
@@ -13,5 +15,7 @@
   "share": "مشاركة",
   "somethingWrong": "حدث خطأ ما",
   "copy": "نسخ",
-  "copied": "تم النسخ"
+  "copied": "تم النسخ",
+  "nextPage": "الصفحة التالية",
+  "previousPage": "الصفحة السابقة"
 }

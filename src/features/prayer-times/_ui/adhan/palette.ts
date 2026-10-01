@@ -1,5 +1,3 @@
-// Deep green-teal scene built from the brand teal (#18766f). Dark mode sinks it
-// towards the navy canvas so it doesn't glare at night.
 export const ADHAN_PALETTE = {
   light: {
     bgTop: "#0d3b36",

@@ -8,9 +8,14 @@
     "scheme": "azkar",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ahmeddoban.azkar",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.ahmeddoban.azkar",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-foreground.png",
         "monochromeImage": "./assets/images/android-monochrome.png",
@@ -57,9 +62,20 @@
       [
         "expo-notifications",
         {
-          "color": "#18766f"
+          "color": "#18766f",
+          "sounds": [
+            "./assets/audio/adhan_other.mp3",
+            "./assets/audio/adhan_qassas.mp3",
+            "./assets/audio/adhan_qatami.mp3",
+            "./assets/audio/adhan_sobhi.mp3",
+            "./assets/audio/ios/adhan_other_ios.caf",
+            "./assets/audio/ios/adhan_qassas_ios.caf",
+            "./assets/audio/ios/adhan_qatami_ios.caf",
+            "./assets/audio/ios/adhan_sobhi_ios.caf"
+          ]
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

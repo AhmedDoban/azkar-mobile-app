@@ -2,10 +2,6 @@ import { ReactNode } from "react";
 import { View } from "react-native";
 import AppText from "./AppText";
 
-/**
- * Large page title for the tab screens. Rendered by React Native instead of the
- * native navigation bar, which breaks Arabic letter shaping in large titles.
- */
 export default function PageHeader({
   title,
   trailing,

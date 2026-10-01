@@ -2,12 +2,18 @@ import { useAppSelector } from "@/store/Store";
 import { progressKey } from "@/store/Slices/AzkarSlice";
 import { AzkarCategory } from "../_data";
 
-/** How many adhkar in the category have reached their repeat count today */
 export default function useCategoryProgress(category: AzkarCategory) {
   const progress = useAppSelector((state) => state.azkar.progress);
+  const counted = (id: number) => progress[progressKey(category.id, id)] ?? 0;
+
+  if (category.items.length === 1) {
+    const [item] = category.items;
+    const done = Math.min(counted(item.id), item.count);
+    return { done, total: item.count, complete: done >= item.count };
+  }
 
   const done = category.items.filter(
-    (item) => (progress[progressKey(category.id, item.id)] ?? 0) >= item.count,
+    (item) => counted(item.id) >= item.count,
   ).length;
 
   return {

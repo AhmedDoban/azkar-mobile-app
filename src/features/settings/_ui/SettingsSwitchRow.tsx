@@ -1,12 +1,8 @@
 import AppText from "@/components/ui/AppText";
-import useThemeColors from "@/hooks/useThemeColors";
+import useSettingsColors from "../_components/useSettingsColors";
 import * as Haptics from "expo-haptics";
 import { Platform, Switch, View } from "react-native";
 
-/**
- * Settings row with the platform switch. On iOS 26 the native switch is the
- * Liquid Glass one: its knob turns into a glass lens while it's held.
- */
 export default function SettingsSwitchRow({
   title,
   subtitle,
@@ -18,7 +14,9 @@ export default function SettingsSwitchRow({
   value: boolean;
   onValueChange: (value: boolean) => void;
 }) {
-  const colors = useThemeColors();
+  const palette = useSettingsColors();
+  const offTrack = palette.track;
+  const thumbOn = "#ffffff";
 
   return (
     <View className="flex-row items-center gap-3">
@@ -27,10 +25,11 @@ export default function SettingsSwitchRow({
           {title}
         </AppText>
         {subtitle ? (
-          <AppText className="text-sm text-main-gray">{subtitle}</AppText>
+          <AppText className="text-sm" style={{ color: palette.subtitle }}>
+            {subtitle}
+          </AppText>
         ) : null}
       </View>
-      {/* React Native Web misplaces the knob in RTL; native switches handle RTL themselves */}
       <View style={Platform.OS === "web" ? { direction: "ltr" } : undefined}>
         <Switch
           value={value}
@@ -39,14 +38,10 @@ export default function SettingsSwitchRow({
             onValueChange(next);
           }}
           accessibilityLabel={title}
-          // Brand teal when on; the system handles the glass knob and animation
-          trackColor={{
-            false: colors.surfaceMuted,
-            true: colors.isDark ? "#667176" : colors.main,
-          }}
-          ios_backgroundColor={colors.surfaceMuted}
-          // A custom thumb color on iOS would replace the glass knob, so Android only
-          thumbColor={Platform.OS === "android" ? "#ffffff" : undefined}
+          trackColor={{ false: offTrack, true: palette.switchOn }}
+          ios_backgroundColor={offTrack}
+          thumbColor={value ? thumbOn : "#ffffff"}
+          {...(Platform.OS === "web" ? { activeThumbColor: thumbOn } : null)}
         />
       </View>
     </View>

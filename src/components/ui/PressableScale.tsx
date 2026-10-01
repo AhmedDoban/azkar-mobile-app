@@ -1,9 +1,4 @@
-import {
-  Pressable,
-  PressableProps,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
+import { Pressable, PressableProps, StyleProp, ViewStyle } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -16,14 +11,9 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 type Props = Omit<PressableProps, "style"> & {
   className?: string;
   style?: StyleProp<ViewStyle>;
-  /** How far it shrinks while held (1 = not at all) */
   scaleTo?: number;
 };
 
-/**
- * Pressable that visibly sinks while held: shrinks a little and dims, then
- * springs back on release. Use it for every tappable card and button.
- */
 export default function PressableScale({
   scaleTo = 0.96,
   onPressIn,

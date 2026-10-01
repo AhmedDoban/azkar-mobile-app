@@ -11,7 +11,6 @@
   "turnLeft": "Turn left {{deg}}°",
   "noCompass": "The qibla is {{deg}}° from north",
   "hint": "Hold your phone flat and turn until the arrow points at the Kaaba",
-  "direction": "Qibla direction",
   "fromNorth": "{{deg}}° from north",
   "km": "{{value}} km",
   "calibrate": "Move your phone in a figure 8 to calibrate the compass",

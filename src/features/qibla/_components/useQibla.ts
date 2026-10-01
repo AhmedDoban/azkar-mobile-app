@@ -1,14 +1,11 @@
 import type * as Location from "expo-location";
+import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { distanceToKaaba, qiblaBearing } from "../_data/qibla";
 
 type Status = "loading" | "denied" | "error" | "ready";
 
-/**
- * Asks for location, then works out the qibla bearing and distance and streams
- * the device heading. `heading` stays null where there is no compass (web).
- */
 export default function useQibla() {
   const [status, setStatus] = useState<Status>("loading");
   const [canAskAgain, setCanAskAgain] = useState(true);
@@ -17,17 +14,14 @@ export default function useQibla() {
   );
   const [city, setCity] = useState<string | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
-  // 0-3; below 2 the compass needs calibrating
   const [accuracy, setAccuracy] = useState(3);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    let subscription: Location.LocationSubscription | undefined;
 
     (async () => {
       setStatus("loading");
-      // Loaded on demand so a missing native module can't break app startup
       let Location: typeof import("expo-location");
       try {
         Location = await import("expo-location");
@@ -43,22 +37,8 @@ export default function useQibla() {
         return;
       }
 
-      if (Platform.OS !== "web") {
-        try {
-          subscription = await Location.watchHeadingAsync((h) => {
-            // trueHeading is -1 until the device knows where true north is
-            setHeading(h.trueHeading >= 0 ? h.trueHeading : h.magHeading);
-            setAccuracy(h.accuracy);
-          });
-          if (cancelled) subscription.remove();
-        } catch {
-          // No compass: the screen falls back to showing the bearing only
-        }
-      }
-
       let fix: Location.LocationObjectCoords | null = null;
       try {
-        // A cached fix shows the direction right away; the fresh one refines it
         const last = await Location.getLastKnownPositionAsync();
         if (last && !cancelled) {
           fix = last.coords;
@@ -79,7 +59,6 @@ export default function useQibla() {
         if (!cancelled && !fix) setStatus("error");
       }
 
-      // City name for the header; optional (no geocoder on web)
       if (fix) {
         try {
           const [place] = await Location.reverseGeocodeAsync(fix);
@@ -92,9 +71,34 @@ export default function useQibla() {
 
     return () => {
       cancelled = true;
-      subscription?.remove();
     };
   }, [attempt]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (status !== "ready" || Platform.OS === "web") return;
+      let cancelled = false;
+      let subscription: Location.LocationSubscription | undefined;
+
+      (async () => {
+        try {
+          const Location = await import("expo-location");
+          const next = await Location.watchHeadingAsync((h) => {
+            setHeading(h.trueHeading >= 0 ? h.trueHeading : h.magHeading);
+            setAccuracy(h.accuracy);
+          });
+          if (cancelled) next.remove();
+          else subscription = next;
+        } catch {}
+      })();
+
+      return () => {
+        cancelled = true;
+        subscription?.remove();
+        setHeading(null);
+      };
+    }, [status]),
+  );
 
   const retry = useCallback(() => setAttempt((a) => a + 1), []);
 

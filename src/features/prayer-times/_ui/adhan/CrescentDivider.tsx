@@ -2,7 +2,6 @@ import { View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 import { crescentPath } from "./crescent";
 
-/** ——•  ☾  •—— ornament between the scene and the text */
 export default function CrescentDivider({ color }: { color: string }) {
   const line = (
     <View

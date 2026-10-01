@@ -2,7 +2,6 @@ import { normalize } from "@/features/azkar/_data";
 
 export type GradeLevel = "sahih" | "hasan" | "daif" | "mawdu";
 
-// Terms as they appear in Dorar's "خلاصة حكم المحدث", grouped by strength
 const TERMS: Record<GradeLevel, string[]> = {
   mawdu: [
     "موضوع",
@@ -37,7 +36,6 @@ const TERMS: Record<GradeLevel, string[]> = {
   ],
   hasan: ["حسن"],
   sahih: [
-    // al-Tirmidhi's "hasan sahih" counts as sahih (longer term beats "حسن")
     "حسن صحيح",
     "صحيح",
     "صححه",
@@ -55,16 +53,10 @@ const MATCHERS = (Object.keys(TERMS) as GradeLevel[]).flatMap((level) =>
   TERMS[level].map((term) => ({
     level,
     length: term.length,
-    // At the start of a word (optionally after و/ف/ب), any ending allowed
     pattern: new RegExp(`(^|[\\s\\[\\(،,.:؛-])[وفب]?${normalize(term)}`),
   })),
 );
 
-/**
- * Strength of a Dorar ruling. The term that appears first wins, so
- * "صحيح لغيره وهذا إسناد ضعيف" is sahih; on a tie the longer term wins, so
- * "ضعيف جدا" beats "ضعيف" and "ليس بصحيح" beats "صحيح". Unknown → null.
- */
 export function gradeLevel(grade: string): GradeLevel | null {
   const text = normalize(grade);
   let best: { level: GradeLevel; index: number; length: number } | null = null;

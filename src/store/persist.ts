@@ -22,7 +22,6 @@ persistMiddleware.startListening({
     ...Object.values(AzkarSlice.actions),
   ),
   effect: async (_action, api) => {
-    // Coalesce rapid taps on the counter into a single write
     api.cancelActiveListeners();
     await api.delay(400);
 

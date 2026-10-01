@@ -1,30 +1,30 @@
-import { Modal, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { FadeInDown } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import ThemeScope from "@/components/theme/ThemeScope";
 import AppText from "@/components/ui/AppText";
-import Icon from "@/components/ui/Icon";
+import PressableScale from "@/components/ui/PressableScale";
 import useDirection from "@/hooks/useDirection";
 import useThemeColors from "@/hooks/useThemeColors";
-import { ThemeScope } from "@/components/theme/ThemeProvider";
-import { PrayerName } from "./_data/types";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Modal, View } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useAdhanPlayer from "./_components/useAdhanPlayer";
 import usePrayerLabels from "./_components/usePrayerLabels";
+import { AdhanSoundId } from "./_data/adhanSounds";
+import { PrayerName } from "./_data/types";
 import AdhanBackdrop from "./_ui/adhan/AdhanBackdrop";
-import Lantern from "./_ui/adhan/Lantern";
 import CrescentDivider from "./_ui/adhan/CrescentDivider";
+import Lantern from "./_ui/adhan/Lantern";
 import { ADHAN_PALETTE } from "./_ui/adhan/palette";
-import PressableScale from "@/components/ui/PressableScale";
 
-/**
- * Full-screen "time for adhan" screen, shown when a reminded prayer begins:
- * hanging lanterns, an arch framing a glowing mosque, then the prayer name.
- */
 export default function AdhanSplash({
   prayer,
   time,
+  sound,
   onClose,
 }: {
   prayer: PrayerName | null;
+  sound: AdhanSoundId;
   time?: string;
   onClose: () => void;
 }) {
@@ -34,6 +34,13 @@ export default function AdhanSplash({
   const insets = useSafeAreaInsets();
   const { label, formatTime } = usePrayerLabels();
   const p = ADHAN_PALETTE[isDark ? "dark" : "light"];
+  const { play, stop } = useAdhanPlayer();
+
+  useEffect(() => {
+    if (!prayer) return;
+    play(sound);
+    return stop;
+  }, [prayer]);
 
   return (
     <Modal
@@ -50,7 +57,6 @@ export default function AdhanSplash({
           >
             <AdhanBackdrop palette={p} />
 
-            {/* Lanterns hang from the top edge, the pairs mirrored left and right */}
             <Lantern palette={p} left={20} length={insets.top + 24} />
             <Lantern
               palette={p}
@@ -73,7 +79,6 @@ export default function AdhanSplash({
               delay={750}
             />
 
-            {/* Heading inside the arch, where the reference puts its title */}
             <Animated.View
               entering={FadeInDown.duration(600)}
               style={{ marginTop: insets.top + 150 }}
@@ -115,7 +120,6 @@ export default function AdhanSplash({
                 className="mt-3 w-full flex-row items-center justify-center gap-2 rounded-full py-4"
                 style={{ backgroundColor: p.button }}
               >
-                <Icon name="bell" size={16} tintColor={p.buttonText} />
                 <AppText
                   weight="bold"
                   className="text-lg"

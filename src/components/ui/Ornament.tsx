@@ -1,7 +1,6 @@
 import { View } from "react-native";
 import { cn } from "@/lib/utils";
 
-/** A hairline with a small diamond at its inner end; `flip` mirrors it */
 export default function Ornament({
   flip,
   className,

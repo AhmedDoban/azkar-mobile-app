@@ -19,10 +19,13 @@ export const Store = configureStore({
       .concat([DorarSlice.middleware, PrayerTimesSlice.middleware]),
 });
 
-// Export hooks for dispatch and selector
 export type RootState = ReturnType<typeof Store.getState>;
 export type AppDispatch = typeof Store.dispatch;
 
-// Export typed hooks
+export function clearApiCache(dispatch: AppDispatch) {
+  dispatch(DorarSlice.util.resetApiState());
+  dispatch(PrayerTimesSlice.util.resetApiState());
+}
+
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();

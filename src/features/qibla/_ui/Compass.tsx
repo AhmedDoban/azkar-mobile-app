@@ -14,10 +14,6 @@ import { normalize180 } from "../_data/qibla";
 
 const TICKS = Array.from({ length: 60 }, (_, i) => i * 6);
 
-/**
- * Animated rotation toward `target`, always taking the short way round
- * (a 359° → 1° step turns 2°, not a full spin back)
- */
 function useRotation(target: number) {
   const rotation = useSharedValue(target);
   const last = useRef(target);
@@ -33,11 +29,6 @@ function useRotation(target: number) {
   }));
 }
 
-/**
- * Thin compass ring with the cardinal letters outside it; the ring turns with
- * the phone so the letters stay on real north. The arrow in the middle points
- * at the qibla: straight up (at the Kaaba above) means you're facing it.
- */
 export default function Compass({
   size,
   heading,
@@ -45,7 +36,6 @@ export default function Compass({
   aligned,
 }: {
   size: number;
-  /** Degrees from north the phone points at; null = no compass, dial stays north-up */
   heading: number | null;
   bearing: number;
   aligned: boolean;
@@ -59,7 +49,7 @@ export default function Compass({
   const arrowStyle = useRotation(bearing - (heading ?? 0));
 
   const c = size / 2;
-  const ring = c - 34; // leaves room for the letters outside
+  const ring = c - 34;
   const point = (angle: number, radius: number) => ({
     x: c + radius * Math.sin((angle * Math.PI) / 180),
     y: c - radius * Math.cos((angle * Math.PI) / 180),
@@ -123,7 +113,6 @@ export default function Compass({
         </Svg>
       </Animated.View>
 
-      {/* The qibla arrow */}
       <Animated.View
         style={[StyleSheet.absoluteFill, arrowStyle]}
         className="items-center justify-center"

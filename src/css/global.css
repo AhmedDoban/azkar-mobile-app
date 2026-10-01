@@ -14,13 +14,10 @@
 }
 
 @theme inline {
-  /* Brand Colors */
   --color-main: var(--main-color);
-  /* Solid teal blocks that carry white text (deeper than main in dark mode) */
   --color-main-fill: var(--main-fill-color);
   --color-on-fill: var(--on-fill-color);
 
-  /* Big feature cards: solid teal in light, teal tint in dark */
   --color-hero: var(--hero-color);
   --color-on-hero: var(--on-hero-color);
   --color-on-hero-muted: var(--on-hero-muted-color);
@@ -31,17 +28,16 @@
   --color-main-orange: var(--main-orange-color);
   --color-main-yellow: var(--main-yellow-color);
 
-  /* Tints — use these instead of opacity modifiers (bg-main/10) on theme colors */
   --color-main-soft: var(--main-soft-color);
+  --color-accent: var(--accent-color);
+  --color-accent-soft: var(--accent-soft-color);
   --color-main-border: var(--main-border-color);
   --color-main-orange-soft: var(--main-orange-soft-color);
 
-  /* Surfaces */
   --color-surface: var(--main-surface-color);
   --color-surface-muted: var(--main-surface-muted-color);
   --color-line: var(--main-line-color);
 
-  /* Text Colors */
   --color-ink: var(--main-p-color);
   --color-error: var(--main-error-color);
 }

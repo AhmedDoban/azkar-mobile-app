@@ -9,7 +9,6 @@ import Animated, {
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 import { AdhanPalette } from "./palette";
 
-/** A hanging lantern that sways gently from its string */
 export default function Lantern({
   palette: p,
   left,
@@ -83,7 +82,6 @@ export default function Lantern({
                 fill={p.lanternTop}
                 opacity="0.7"
               />
-              {/* Cap */}
               <Path
                 d={`M 11 ${top + 8} L 17 ${top} L 23 ${top + 8} Z`}
                 fill="url(#lantern)"
@@ -96,7 +94,6 @@ export default function Lantern({
                 rx="2"
                 fill="url(#lantern)"
               />
-              {/* Body with a glowing window */}
               <Rect
                 x="7"
                 y={top + 12}
@@ -122,7 +119,6 @@ export default function Lantern({
                 fill={p.mint}
                 opacity="0.55"
               />
-              {/* Base */}
               <Rect
                 x="9"
                 y={top + 46}

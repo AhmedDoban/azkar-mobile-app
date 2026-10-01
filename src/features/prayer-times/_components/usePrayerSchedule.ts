@@ -9,7 +9,6 @@ import {
 
 const MINUTE = 60_000;
 
-/** Re-renders on every minute boundary so the countdown stays current */
 function useNow() {
   const [now, setNow] = useState(() => new Date());
 
@@ -50,13 +49,11 @@ export function getNextPrayer(
 ) {
   const current = now.getHours() * 60 + now.getMinutes();
   const upcoming = REMINDER_PRAYERS.find((p) => toMinutes(times[p]) > current);
-  // After Isha the next prayer is tomorrow's Fajr (times barely shift day to day)
   const name = upcoming ?? "Fajr";
   const target = toMinutes(times[name]) + (upcoming ? 0 : 24 * 60);
   return { name, time: times[name], minutesLeft: target - current };
 }
 
-/** The prayer whose time is exactly this minute, if any (drives the adhan screen) */
 export function getPrayerStartingNow(
   times: PrayerTimesResponse["prayer_times"],
   now: Date,

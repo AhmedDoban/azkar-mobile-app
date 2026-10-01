@@ -7,15 +7,11 @@
   "textSize": "Adhkar text size",
   "data": "Data",
   "resetProgress": "Reset counters",
-  "resetProgressDone": "Counters have been reset",
   "sources": "Sources",
-  "sourcesText": "Adhkar and supplications from the Quran and Sunnah. Hadith search by Dorar.net.",
-  "arabicOnHint": "Turn off to switch to English",
-  "arabicOffHint": "Turn on to switch to Arabic",
   "reading": "Reading settings",
   "hapticOnComplete": {
     "title": "Haptic when complete",
-    "hint": "A strong vibration when a dhikr's count reaches 0"
+    "hint": "A strong vibration when a dhikr's count reaches zero"
   },
   "hapticOnTap": {
     "title": "Haptic on every tap",
@@ -23,6 +19,82 @@
   },
   "hideCompleted": {
     "title": "Hide completed cards",
-    "hint": "A card fades away once its count reaches 0"
-  }
+    "hint": "A card fades away once its count reaches zero"
+  },
+  "source": {
+    "quran": {
+      "title": "The Holy Quran",
+      "hint": "Uthmani script text, with an English translation"
+    },
+    "adhkar": {
+      "title": "Adhkar & duas",
+      "hint": "From the Quran and the Sunnah"
+    },
+    "hadith": {
+      "title": "Hadith",
+      "hint": "Sahih al-Bukhari and Sahih Muslim"
+    },
+    "dorar": {
+      "title": "Hadith search",
+      "hint": "Hadith encyclopedia – Dorar.net"
+    },
+    "prayer": {
+      "title": "Prayer times",
+      "hint": "Prayer times API by quran.yousefheiba.com"
+    },
+    "qibla": {
+      "title": "Qibla direction",
+      "hint": "Calculated on your device from your location"
+    }
+  },
+  "cancel": "Cancel",
+  "clearCache": "Clear cache",
+  "resetSettings": "Restore default settings",
+  "resetAll": "Delete all app data",
+  "confirm": {
+    "progress": {
+      "title": "Reset all counters?",
+      "message": "All of today's adhkar counters will go back to zero. This can't be undone.",
+      "action": "Reset",
+      "done": "Counters reset"
+    },
+    "cache": {
+      "title": "Clear the cache?",
+      "message": "Saved search results and prayer times will be deleted and reloaded when needed. Your favorites and settings won't change.",
+      "action": "Clear",
+      "done": "Cache cleared"
+    },
+    "settings": {
+      "title": "Restore default settings?",
+      "message": "Theme, text size, reading options and adhan reminders go back to their defaults. Your favorites and counters won't change.",
+      "action": "Restore",
+      "done": "Default settings restored"
+    },
+    "all": {
+      "title": "Delete all app data?",
+      "message": "Favorites, counters, settings and cache will all be deleted, as if the app were freshly installed. This can't be undone.",
+      "action": "Delete all",
+      "done": "All data deleted"
+    }
+  },
+  "version": "Version {{version}}",
+  "adhanSound": "Adhan sound",
+  "adhanHint": "Plays when a prayer time begins",
+  "previewAdhan": "Listen",
+  "stopAdhan": "Stop",
+  "sounds": {
+    "other": "Default adhan",
+    "qassas": "Mohammed Marwan Qassas",
+    "qatami": "Nasser Al-Qatami",
+    "sobhi": "Islam Sobhi",
+    "custom": "Upload from device"
+  },
+  "soundHints": {
+    "other": "The app's default sound",
+    "reciter": "Full adhan",
+    "custom": "Pick an audio file from your device",
+    "customNotice": "Plays in the app; notifications use the default adhan"
+  },
+  "changeFile": "Change file",
+  "quranSize": "Quran font size"
 }

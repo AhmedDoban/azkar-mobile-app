@@ -3,7 +3,6 @@ import Svg, { Circle } from "react-native-svg";
 import AppText from "@/components/ui/AppText";
 import Icon from "@/components/ui/Icon";
 
-/** Circular progress with the percentage inside; a filled check when complete */
 export default function ProgressRing({
   progress,
   color,
@@ -15,7 +14,6 @@ export default function ProgressRing({
   progress: number;
   color: string;
   track: string;
-  /** Check color on the filled circle (must contrast with `color`) */
   checkColor?: string;
   size?: number;
   stroke?: number;

@@ -5,13 +5,23 @@ import {
   PrayerName,
   REMINDER_PRAYERS,
 } from "@/features/prayer-times/_data/types";
+import {
+  AdhanSoundId,
+  CustomAdhan,
+  DEFAULT_ADHAN,
+  isAdhanSound,
+} from "@/features/prayer-times/_data/adhanSounds";
 
 export type ThemePreference = "system" | "light" | "dark";
-/** Font size (px) of Arabic adhkar/hadith text, set with the slider in Settings */
 export type TextSize = number;
 export const TEXT_SIZE = { min: 18, max: 40, step: 2, default: 24 } as const;
+export const QURAN_SIZE = { min: 18, max: 34, step: 1, default: 23 } as const;
 
-// Earlier versions stored small / medium / large
+const clampQuranSize = (value: unknown): number =>
+  typeof value === "number" && Number.isFinite(value)
+    ? Math.min(QURAN_SIZE.max, Math.max(QURAN_SIZE.min, Math.round(value)))
+    : QURAN_SIZE.default;
+
 const LEGACY_TEXT_SIZES: Record<string, number> = { sm: 20, md: 24, lg: 30 };
 
 const clampTextSize = (value: unknown): number => {
@@ -21,13 +31,9 @@ const clampTextSize = (value: unknown): number => {
   return Math.min(TEXT_SIZE.max, Math.max(TEXT_SIZE.min, Math.round(size)));
 };
 
-/** The three "Reading settings" switches */
 export interface ReadingSettings {
-  /** Strong haptic when a dhikr's remaining count reaches 0 */
   hapticOnComplete: boolean;
-  /** Light haptic on every tap of a dhikr card */
   hapticOnTap: boolean;
-  /** Fade a card out of the list once its count reaches 0 */
   hideCompleted: boolean;
 }
 
@@ -41,18 +47,27 @@ export interface SettingsState {
   locale: Locale;
   theme: ThemePreference;
   textSize: TextSize;
-  /** Adhan reminder on/off per prayer (the bell on each prayer row) */
+  quranSize: number;
   prayerReminders: Partial<Record<PrayerName, boolean>>;
+  adhanSound: AdhanSoundId;
+  customAdhan: CustomAdhan | null;
   reading: ReadingSettings;
 }
 
-const initialState: SettingsState = {
-  locale: getDeviceLocale(),
+export const defaultSettings = (
+  locale: Locale = getDeviceLocale(),
+): SettingsState => ({
+  locale,
   theme: "system",
   textSize: TEXT_SIZE.default,
+  quranSize: QURAN_SIZE.default,
   prayerReminders: Object.fromEntries(REMINDER_PRAYERS.map((p) => [p, true])),
-  reading: DEFAULT_READING,
-};
+  adhanSound: DEFAULT_ADHAN,
+  customAdhan: null,
+  reading: { ...DEFAULT_READING },
+});
+
+const initialState: SettingsState = defaultSettings();
 
 export const SettingsSlice = createSlice({
   name: "settings",
@@ -67,6 +82,9 @@ export const SettingsSlice = createSlice({
     setTextSize(state, action: PayloadAction<TextSize>) {
       state.textSize = clampTextSize(action.payload);
     },
+    setQuranSize(state, action: PayloadAction<number>) {
+      state.quranSize = clampQuranSize(action.payload);
+    },
     setReadingOption(
       state,
       action: PayloadAction<{ key: keyof ReadingSettings; value: boolean }>,
@@ -77,12 +95,26 @@ export const SettingsSlice = createSlice({
       const name = action.payload;
       state.prayerReminders[name] = !(state.prayerReminders[name] ?? true);
     },
+    setAdhanSound(state, action: PayloadAction<AdhanSoundId>) {
+      state.adhanSound = action.payload;
+    },
+    setCustomAdhan(state, action: PayloadAction<CustomAdhan>) {
+      state.customAdhan = action.payload;
+      state.adhanSound = "custom";
+    },
+    resetSettings(state) {
+      return defaultSettings(state.locale);
+    },
     hydrateSettings(state, action: PayloadAction<Partial<SettingsState>>) {
       return {
         ...state,
         ...action.payload,
         textSize: clampTextSize(action.payload.textSize ?? state.textSize),
-        // Saved before reminders existed: keep the defaults for missing prayers
+        quranSize: clampQuranSize(action.payload.quranSize ?? state.quranSize),
+        adhanSound: isAdhanSound(action.payload.adhanSound)
+          ? action.payload.adhanSound
+          : state.adhanSound,
+        customAdhan: action.payload.customAdhan ?? state.customAdhan,
         prayerReminders: {
           ...state.prayerReminders,
           ...action.payload.prayerReminders,
@@ -97,7 +129,11 @@ export const {
   setLocale,
   setTheme,
   setTextSize,
+  setQuranSize,
   togglePrayerReminder,
+  setAdhanSound,
+  setCustomAdhan,
   setReadingOption,
+  resetSettings,
   hydrateSettings,
 } = SettingsSlice.actions;

@@ -1,27 +1,37 @@
 import AppText from "@/components/ui/AppText";
 import Icon from "@/components/ui/Icon";
+import PressableScale from "@/components/ui/PressableScale";
+import { PAGE_MOSQUES } from "@/constants/mosques";
 import useThemeColors from "@/hooks/useThemeColors";
 import { Locale } from "@/i18n/config";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import usePrayerLabels from "./_components/usePrayerLabels";
-import usePrayerSchedule from "./_components/usePrayerSchedule";
+import usePrayerSchedule, { toMinutes } from "./_components/usePrayerSchedule";
+import ArchWindow from "./_ui/ArchWindow";
 import NextPrayerHeader from "./_ui/NextPrayerHeader";
 import PrayerCell from "./_ui/PrayerCell";
 import PrayerTimesCardSkeleton from "./_ui/PrayerTimesCardSkeleton";
-import PressableScale from "@/components/ui/PressableScale";
 
-/**
- * Home hero card: the hijri date and city, the next prayer with its
- * countdown, and the day's prayers as a row of chips
- */
+const DAY = 24 * 60;
+const WINDOW = 0.26;
+const DECOR = require("@/assets/images/NextPray_bg.webp");
+
+const shortTime = (hhmm: string) => {
+  const [h, m] = hhmm.split(":").map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")}`;
+};
+
 export default function PrayerTimesCard() {
   const { t, i18n } = useTranslation(["prayer", "common"]);
   const locale = i18n.language as Locale;
   const colors = useThemeColors();
-  const { label, formatTime, formatRemaining } = usePrayerLabels();
-  const { data, prayers, next, isFriday, isLoading, isError, refetch } =
+  const { label } = usePrayerLabels();
+  const { data, prayers, next, now, isFriday, isLoading, isError, refetch } =
     usePrayerSchedule();
+  const [size, setSize] = useState({ w: 0, h: 0 });
 
   if (isLoading) return <PrayerTimesCardSkeleton />;
 
@@ -43,36 +53,108 @@ export default function PrayerTimesCard() {
   const hijri = data.date.date_hijri;
   const comma = locale === "ar" ? "،" : ",";
 
+  const current = now.getHours() * 60 + now.getMinutes();
+  const passed = prayers.filter((p) => p.status === "passed");
+  const previous = passed.length
+    ? toMinutes(passed[passed.length - 1].time)
+    : toMinutes(data.prayer_times.Isha) - DAY;
+  const target = current + next.minutesLeft;
+  const progress = (current - previous) / Math.max(1, target - previous);
+
+  const windowW = size.w * WINDOW;
+
   return (
-    <View className="gap-5 overflow-hidden rounded-3xl border border-hero-border bg-hero p-5">
-      {/* Decorative circles */}
-      <View className="absolute -end-12 -top-14 size-44 rounded-full bg-hero-blob" />
-      <View className="absolute -bottom-20 -start-10 size-40 rounded-full bg-hero-blob" />
+    <View
+      className="overflow-hidden rounded-[28px]"
+      style={{ boxShadow: "0 10px 24px rgba(14, 58, 51, 0.25)" }}
+      onLayout={(e) =>
+        setSize({
+          w: e.nativeEvent.layout.width,
+          h: e.nativeEvent.layout.height,
+        })
+      }
+    >
+      <Svg width="100%" height="100%" style={StyleSheet.absoluteFill}>
+        <Defs>
+          <LinearGradient id="prayerCard" x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0" stopColor="#23604f" />
+            <Stop offset="1" stopColor="#0d3630" />
+          </LinearGradient>
+        </Defs>
+        <Rect width="100%" height="100%" fill="url(#prayerCard)" />
+      </Svg>
 
-      <View className="flex-row items-center gap-1.5">
-        <Icon name="location" size={12} tintColor={colors.onHeroMuted} />
-        <AppText className="shrink text-xs text-on-hero-muted" numberOfLines={1}>
-          {`${hijri.weekday[locale]}${comma} ${hijri.day} ${hijri.month[locale]} ${hijri.year} · ${data.region}`}
-        </AppText>
-      </View>
-
-      <NextPrayerHeader
-        prayer={next.name}
-        label={label(next.name, isFriday)}
-        time={formatTime(next.time)}
-        remaining={formatRemaining(next.minutesLeft)}
+      <Image
+        source={DECOR}
+        resizeMode="cover"
+        style={[StyleSheet.absoluteFill, { width: "100%", height: "100%" }]}
       />
 
-      <View className="flex-row gap-1.5">
-        {prayers.map(({ name, time, status }) => (
-          <PrayerCell
-            key={name}
-            prayer={name}
-            label={label(name, isFriday)}
-            time={formatTime(time)}
-            status={status}
+      {size.w > 0 ? (
+        <View
+          className="absolute bottom-0 end-3 top-3"
+          style={{ width: windowW, pointerEvents: "none" }}
+        >
+          <ArchWindow
+            source={PAGE_MOSQUES.prayerCard}
+            width={windowW}
+            height={size.h - 12 + 2}
           />
-        ))}
+        </View>
+      ) : null}
+
+      <View className="gap-5 p-4">
+        <View className="flex-row">
+          <View className="flex-1 gap-4">
+            <View className="flex-row items-center gap-1.5">
+              <Icon name="calendar" size={13} tintColor="#ffffff" />
+              <AppText
+                className="shrink text-xs text-white"
+                style={{ opacity: 0.85 }}
+                numberOfLines={1}
+              >
+                {`${hijri.weekday[locale]}${comma} ${hijri.day} ${hijri.month[locale]} ${hijri.year}`}
+              </AppText>
+              <Icon name="location" size={12} tintColor="#ffffff" />
+              <AppText
+                className="shrink text-xs text-white"
+                style={{ opacity: 0.85 }}
+                numberOfLines={1}
+              >
+                {data.region}
+              </AppText>
+            </View>
+
+            <NextPrayerHeader
+              prayer={next.name}
+              label={label(next.name, isFriday)}
+              minutesLeft={next.minutesLeft}
+              progress={progress}
+            />
+          </View>
+          <View style={{ width: windowW }} />
+        </View>
+
+        <View className="flex-row">
+          <View
+            className="flex-1 flex-row rounded-3xl border p-1"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              borderColor: "rgba(255, 255, 255, 0.16)",
+            }}
+          >
+            {prayers.map(({ name, time, status }) => (
+              <PrayerCell
+                key={name}
+                prayer={name}
+                label={label(name, isFriday)}
+                time={shortTime(time)}
+                status={status}
+              />
+            ))}
+          </View>
+          <View style={{ width: windowW * 0.4 }} />
+        </View>
       </View>
     </View>
   );

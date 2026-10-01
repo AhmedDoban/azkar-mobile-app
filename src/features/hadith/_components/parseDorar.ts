@@ -8,7 +8,6 @@ export interface DorarHadith {
   grade?: string;
 }
 
-// Labels Dorar uses inside each `hadith-info` block
 const INFO_LABELS: Record<Exclude<keyof DorarHadith, "id" | "text">, string> = {
   narrator: "الراوي",
   scholar: "المحدث",
@@ -35,7 +34,6 @@ function stripHtml(html: string) {
     .trim();
 }
 
-/** Pulls every HTML string out of `{ ahadith: ... }`, whatever shape it arrives in */
 function collectHtml(value: unknown): string {
   if (typeof value === "string") return value;
   if (Array.isArray(value)) return value.map(collectHtml).join("");
@@ -47,7 +45,6 @@ function collectHtml(value: unknown): string {
 
 function parseInfo(infoHtml: string) {
   const info: Partial<DorarHadith> = {};
-  // Each field runs from its label to the next label (or the end of the block)
   const parts = infoHtml.split(
     /<span[^>]*class=["']?info-subtitle["']?[^>]*>/i,
   );
@@ -67,7 +64,6 @@ function parseInfo(infoHtml: string) {
 }
 
 export function parseDorarResponse(raw: string): DorarHadith[] {
-  // Accept plain JSON as well as a JSONP wrapper: `callback({...})`
   const start = raw.indexOf("{");
   const end = raw.lastIndexOf("}");
   if (start === -1 || end === -1) throw new Error("Unexpected Dorar response");

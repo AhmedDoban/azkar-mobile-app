@@ -8,18 +8,14 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Share, View } from "react-native";
 
-/** Share, copy (shows ✓ for a moment) and love, as on the dhikr cards */
 export default function HadithActions({
   text,
   saved,
   tint,
   buttonClassName,
 }: {
-  /** What share and copy put out */
   text: string;
-  /** What the heart stores in favorites */
   saved: SavedHadith;
-  /** Icon color override, e.g. on the teal hero card */
   tint?: string;
   buttonClassName?: string;
 }) {
@@ -61,7 +57,7 @@ export default function HadithActions({
       />
       <IconButton
         icon={loved ? "heartFill" : "heart"}
-        color={loved ? (tint ?? colors.orange) : idle}
+        color={loved ? colors.love : idle}
         className={buttonClassName}
         accessibilityLabel={t("hadith:saveHadith")}
         accessibilityState={{ selected: loved }}

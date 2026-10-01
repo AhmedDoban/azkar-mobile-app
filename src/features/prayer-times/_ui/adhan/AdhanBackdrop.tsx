@@ -13,11 +13,6 @@ import Svg, {
 import { AdhanPalette } from "./palette";
 import { cloudBandPath, crescentPath } from "./crescent";
 
-/**
- * Full-screen scene: geometric star pattern, onion-arch frame, a glowing mint
- * mosque with crescent finials fading into clouds. Drawn in a 400-unit-wide
- * coordinate space that scales to the screen.
- */
 export default function AdhanBackdrop({
   palette: p,
 }: {
@@ -27,10 +22,9 @@ export default function AdhanBackdrop({
   const W = 400;
   const H = (W * height) / width;
   const archTop = H * 0.1;
-  const base = H * 0.56; // ground line of the mosque, where the clouds sit
-  const mosque = (y: number) => base - 470 + y; // mosque drawn for base 470
+  const base = H * 0.56;
+  const mosque = (y: number) => base - 470 + y;
 
-  // Onion arch (mihrab) with its point at archTop
   const arch =
     `M 14 ${H} L 14 ${archTop + 150} ` +
     `C 14 ${archTop + 118} 70 ${archTop + 108} 118 ${archTop + 88} ` +
@@ -67,7 +61,6 @@ export default function AdhanBackdrop({
           <Stop offset="0" stopColor="#ffffff" stopOpacity="1" />
           <Stop offset="0.45" stopColor="#ffffff" stopOpacity="0" />
         </LinearGradient>
-        {/* 8-point star tile, like the geometric texture in Islamic art */}
         <Pattern
           id="stars"
           width="36"
@@ -128,9 +121,7 @@ export default function AdhanBackdrop({
 
       <Path d={arch} fill="url(#arch)" stroke={p.outline} strokeWidth="1.4" />
 
-      {/* Mosque */}
       <G fill="url(#mint)">
-        {/* Minarets */}
         {[60, 316].map((x) => (
           <G key={x}>
             <Rect x={x} y={mosque(262)} width="24" height="208" rx="3" />
@@ -143,7 +134,6 @@ export default function AdhanBackdrop({
             <Path d={crescentPath(x + 12, mosque(214), 6)} />
           </G>
         ))}
-        {/* Side domes */}
         {[112, 288].map((cx) => (
           <G key={cx}>
             <Rect x={cx - 26} y={mosque(410)} width="52" height="60" />
@@ -153,7 +143,6 @@ export default function AdhanBackdrop({
             <Path d={crescentPath(cx, mosque(348), 5)} />
           </G>
         ))}
-        {/* Main onion dome */}
         <Rect x="140" y={mosque(392)} width="120" height="78" />
         <Path
           d={`M 138 ${mosque(392)} C 136 ${mosque(338)} 196 ${mosque(330)} 200 ${mosque(296)} C 204 ${mosque(330)} 264 ${mosque(338)} 262 ${mosque(392)} Z`}
@@ -162,7 +151,6 @@ export default function AdhanBackdrop({
         <Path d={crescentPath(200, mosque(258), 11)} />
       </G>
 
-      {/* Clouds the mosque rises from: a soft back band and a brighter front one */}
       <Path
         d={cloudBandPath(base - 6, base + 140, [
           [70, 26],

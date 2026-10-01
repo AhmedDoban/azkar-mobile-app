@@ -22,10 +22,6 @@ import PressableScale from "@/components/ui/PressableScale";
 type Props = {
   categoryId: string;
   zikr: Zikr;
-  /**
-   * false = plain reading card (used in Favorites): no count chip, no dimming
-   * when finished, and tapping doesn't count
-   */
   counting?: boolean;
 };
 
@@ -40,7 +36,6 @@ export default function ZikrCard({ categoryId, zikr, counting = true }: Props) {
   const loved = useAppSelector((s) => s.azkar.favoriteAdhkar.includes(key));
   const shareText = zikr.title ? `${zikr.title}\n\n${zikr.text}` : zikr.text;
 
-  // Copy shows a ✓ for a moment
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     if (!copied) return;
@@ -95,8 +90,7 @@ export default function ZikrCard({ categoryId, zikr, counting = true }: Props) {
             >
               {done
                 ? t("done")
-                : // "0 من 3" reads correctly in both directions; "0 / 3" flips in Arabic
-                  t("progress", { done: counted, total: zikr.count })}
+                : t("progress", { done: counted, total: zikr.count })}
             </AppText>
           </View>
         ) : null}
@@ -121,7 +115,7 @@ export default function ZikrCard({ categoryId, zikr, counting = true }: Props) {
         />
         <IconButton
           icon={loved ? "heartFill" : "heart"}
-          color={loved ? colors.orange : colors.gray}
+          color={loved ? colors.love : colors.gray}
           accessibilityLabel={t("azkar:saveZikr")}
           accessibilityState={{ selected: loved }}
           onPress={() => {

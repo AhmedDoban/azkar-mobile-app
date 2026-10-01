@@ -1,25 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { DorarHadith } from "@/features/hadith/_components/parseDorar";
+import { MOVED_FROM, MOVED_TO } from "@/features/azkar/_data/movedAdhkar";
 
-/**
- * A loved hadith. Local ones are looked up by id; Dorar results only live in
- * the search response, so the whole hadith is kept.
- */
 export type SavedHadith = { key: string } & (
   | { kind: "local"; id: string }
   | { kind: "dorar"; hadith: DorarHadith }
 );
 
 export interface AzkarState {
-  /** Category keys, e.g. "morning_azkar" */
   favorites: string[];
-  /** Single adhkar the user loved, keyed like progress: `${categoryId}:${itemId}` */
   favoriteAdhkar: string[];
   favoriteHadiths: SavedHadith[];
-  /** How many times each dhikr was counted today, keyed by `${categoryId}:${itemId}` */
   progress: Record<string, number>;
-  /** Local date (YYYY-MM-DD) the progress belongs to; counters reset each day */
   progressDate: string;
+  prayerPeriod: string;
 }
 
 export const today = () => new Date().toLocaleDateString("en-CA");
@@ -32,6 +26,13 @@ const initialState: AzkarState = {
   favoriteHadiths: [],
   progress: {},
   progressDate: today(),
+  prayerPeriod: "",
+};
+
+const movedKey = (key: string) => {
+  const [categoryId, itemId] = key.split(":");
+  const target = categoryId === MOVED_FROM ? MOVED_TO[Number(itemId)] : null;
+  return target ? progressKey(target, Number(itemId)) : key;
 };
 
 export const AzkarSlice = createSlice({
@@ -56,11 +57,24 @@ export const AzkarSlice = createSlice({
         ? state.favoriteHadiths.filter((h) => h.key !== key)
         : [...state.favoriteHadiths, action.payload];
     },
-    /** Clears yesterday's counters once the local date has changed (no-op otherwise) */
     startNewDay(state) {
       if (state.progressDate === today()) return;
       state.progress = {};
       state.progressDate = today();
+    },
+    startNewPrayer(
+      state,
+      action: PayloadAction<{ period: string; categoryIds: string[] }>,
+    ) {
+      const { period, categoryIds } = action.payload;
+      if (state.prayerPeriod === period) return;
+      state.prayerPeriod = period;
+      const prefixes = categoryIds.map((id) => `${id}:`);
+      for (const key of Object.keys(state.progress)) {
+        if (prefixes.some((prefix) => key.startsWith(prefix))) {
+          delete state.progress[key];
+        }
+      }
     },
     incrementCount(
       state,
@@ -84,15 +98,24 @@ export const AzkarSlice = createSlice({
         if (key.startsWith(prefix)) delete state.progress[key];
       }
     },
+    resetAzkarData() {
+      return { ...initialState, progressDate: today() };
+    },
     resetAllProgress(state) {
       state.progress = {};
       state.progressDate = today();
     },
     hydrateAzkar(state, action: PayloadAction<Partial<AzkarState>>) {
       const next = { ...state, ...action.payload };
-      // Older builds stored numeric category ids; those categories no longer exist
       next.favorites = (next.favorites ?? []).filter(
-        (f) => typeof f === "string",
+        (f) => typeof f === "string" && f !== MOVED_FROM,
+      );
+      next.favoriteAdhkar = (next.favoriteAdhkar ?? []).map(movedKey);
+      next.progress = Object.fromEntries(
+        Object.entries(next.progress ?? {}).map(([key, count]) => [
+          movedKey(key),
+          count,
+        ]),
       );
       if (next.progressDate !== today()) {
         next.progress = {};
@@ -109,7 +132,9 @@ export const {
   toggleFavoriteHadith,
   incrementCount,
   startNewDay,
+  startNewPrayer,
   resetCategory,
   resetAllProgress,
+  resetAzkarData,
   hydrateAzkar,
 } = AzkarSlice.actions;

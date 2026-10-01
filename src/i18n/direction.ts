@@ -8,11 +8,6 @@ const RELOAD_GUARD_KEY = "AZKAR_RTL_RELOAD_FOR";
 export const isRTLLocale = (locale: string) =>
   rtlLocales.includes(locale as Locale);
 
-/**
- * Makes the native layout direction (tab bar, headers, inputs, gestures) match
- * the locale. I18nManager only applies after a restart, so the app reloads
- * once when the direction has to change.
- */
 export async function syncNativeDirection(
   locale: Locale,
   beforeReload?: () => Promise<void>,
@@ -25,8 +20,6 @@ export async function syncNativeDirection(
     return;
   }
 
-  // If a reload already happened for this locale and the direction still didn't
-  // change (the host app doesn't allow RTL), stop instead of reloading forever
   if ((await AsyncStorage.getItem(RELOAD_GUARD_KEY)) === locale) return;
   await AsyncStorage.setItem(RELOAD_GUARD_KEY, locale);
 

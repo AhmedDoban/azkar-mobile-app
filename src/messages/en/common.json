@@ -1,10 +1,12 @@
 {
+  "appName": "Azkar",
   "tabs": {
     "azkar": "Azkar",
     "hadith": "Hadith",
     "qibla": "Qibla",
     "favorites": "Favorites",
-    "settings": "Settings"
+    "settings": "Settings",
+    "quran": "Quran"
   },
   "loading": "Loading...",
   "retry": "Try again",
@@ -13,5 +15,7 @@
   "share": "Share",
   "somethingWrong": "Something went wrong",
   "copy": "Copy",
-  "copied": "Copied"
+  "copied": "Copied",
+  "nextPage": "Next page",
+  "previousPage": "Previous page"
 }

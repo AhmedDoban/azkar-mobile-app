@@ -1,5 +1,4 @@
 {
-  "greeting": "ألا بذكر الله تطمئن القلوب",
   "featured": "الأذكار اليومية",
   "allCategories": "أذكار أخرى",
   "searchPlaceholder": "ابحث في الأقسام",
@@ -20,5 +19,20 @@
   "saveZikr": "حفظ في المفضلة",
   "savedAdhkar": "الأذكار المحفوظة",
   "favoriteCategories": "الأقسام",
-  "savedHadiths": "الأحاديث المحفوظة"
+  "savedHadiths": "الأحاديث المحفوظة",
+  "tagline": "راحة للقلب .. وطمأنينة للروح",
+  "verseOfDay": "آية اليوم",
+  "verseRef": "سورة {{surah}} · آية {{ayah}}",
+  "surahKahf": "سورة الكهف",
+  "fridaySunnah": "سنة يوم الجمعة",
+  "surahMulk": "سورة الملك",
+  "mulkHint": "قبل النوم كل ليلة",
+  "quranTagline": "كلام الله، اقرأ وتدبّر",
+  "surahSearch": "ابحث عن سورة أو آية",
+  "meccan": "مكية",
+  "medinan": "مدنية",
+  "versesCount": "{{count}} آية",
+  "openFavorites": "المفضلة",
+  "surahsHeading": "السور",
+  "versesHeading": "الآيات"
 }

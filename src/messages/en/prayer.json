@@ -1,9 +1,6 @@
 {
   "title": "Prayer Times",
   "next": "Next prayer",
-  "hours": "{{count}}h",
-  "minutes": "{{count}}m",
-  "now": "now",
   "error": "Couldn't load prayer times",
   "names": {
     "Fajr": "Fajr",
@@ -16,7 +13,6 @@
   },
   "am": "AM",
   "pm": "PM",
-  "remaining": "{{time}} remaining",
   "adhanTime": "It's time for",
   "adhanCall": "Come to prayer, come to success",
   "dismiss": "Dismiss",
@@ -24,5 +20,8 @@
   "reminderOff": "Adhan reminder off",
   "notificationTitle": "Time for {{prayer}}",
   "notificationBody": "Come to prayer, come to success",
-  "permissionDenied": "Allow notifications in Settings to get adhan reminders"
+  "permissionDenied": "Allow notifications in Settings to get adhan reminders",
+  "left": "Left",
+  "hour": "hr",
+  "minute": "min"
 }

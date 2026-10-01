@@ -22,15 +22,12 @@ type Props = {
   max: number;
   step: number;
   onChange: (value: number) => void;
-  /** Fill from the right (Arabic) */
   rtl?: boolean;
   accessibilityLabel?: string;
 };
 
-/**
- * Range slider with a glass thumb: a real Liquid Glass lens on iOS 26+, a
- * frosted pill elsewhere. Snaps to `step` and ticks with a haptic per step.
- */
+const DARK_FILL = "#2f8f72";
+
 export default function GlassSlider({
   value,
   min,
@@ -46,7 +43,6 @@ export default function GlassSlider({
   const lastValue = useSharedValue(value);
   const pressed = useSharedValue(0);
 
-  // Follow outside changes (hydration, accessibility actions) when not dragging
   useEffect(() => {
     if (pressed.get()) return;
     lastValue.set(value);
@@ -80,7 +76,6 @@ export default function GlassSlider({
     .onUpdate((e) => update(e.x))
     .onFinalize(() => {
       pressed.set(withSpring(0, { damping: 14 }));
-      // Settle exactly on the chosen step
       progress.set(
         withSpring((lastValue.get() - min) / (max - min), {
           damping: 18,
@@ -88,13 +83,9 @@ export default function GlassSlider({
       );
     });
 
-  // The track width also lives in state: the animated styles list it as a
-  // dependency, so they recompute once the slider is measured (otherwise the
-  // thumb stayed at 0 until the first drag)
   const [trackWidth, setTrackWidth] = useState(0);
   const usable = Math.max(trackWidth - THUMB_W, 0);
 
-  // Physical x of the thumb's left edge (the slider lays out left-to-right)
   const thumbStyle = useAnimatedStyle(() => {
     const x = (rtl ? 1 - progress.get() : progress.get()) * usable;
     return {
@@ -122,7 +113,6 @@ export default function GlassSlider({
     <GestureDetector gesture={pan}>
       <View
         onLayout={onLayout}
-        // Own left-to-right coordinate space; RTL is handled by flipping progress
         style={{
           direction: "ltr",
           height: THUMB_H + 16,
@@ -137,21 +127,25 @@ export default function GlassSlider({
           nudge(e.nativeEvent.actionName === "increment" ? 1 : -1)
         }
       >
-        {/* Track */}
         <View
           className="overflow-hidden rounded-full border border-line bg-surface-muted"
-          style={{
-            height: TRACK_H,
-            marginHorizontal: THUMB_W / 2 - TRACK_H / 2,
-          }}
+          style={[
+            {
+              height: TRACK_H,
+              marginHorizontal: THUMB_W / 2 - TRACK_H / 2,
+            },
+            colors.isDark && {
+              backgroundColor: "#2a2a2a",
+              borderColor: "#2a2a2a",
+            },
+          ]}
         >
           <Animated.View
-            className="absolute bottom-0 top-0 rounded-full bg-main"
-            style={fillStyle}
+            className="absolute bottom-0 top-0 rounded-full bg-accent"
+            style={[fillStyle, colors.isDark && { backgroundColor: DARK_FILL }]}
           />
         </View>
 
-        {/* Glass thumb */}
         <Animated.View
           style={[
             styles.thumb,
@@ -165,7 +159,6 @@ export default function GlassSlider({
             thumbStyle,
           ]}
         >
-          {/* Inner clip keeps the rounded glass while the outer view keeps its shadow */}
           <View
             style={[
               StyleSheet.absoluteFill,
@@ -178,6 +171,7 @@ export default function GlassSlider({
                 glassEffectStyle="clear"
                 isInteractive
                 colorScheme={colors.isDark ? "dark" : "light"}
+                tintColor={colors.isDark ? "#ffffff" : undefined}
               />
             ) : (
               <View
@@ -185,18 +179,15 @@ export default function GlassSlider({
                   StyleSheet.absoluteFill,
                   {
                     backgroundColor: colors.isDark
-                      ? "rgba(255,255,255,0.22)"
+                      ? "#ffffff"
                       : "rgba(255,255,255,0.92)",
-                    borderWidth: 1,
-                    borderColor: colors.isDark
-                      ? "rgba(255,255,255,0.35)"
-                      : colors.line,
+                    borderWidth: colors.isDark ? 2 : 1,
+                    borderColor: colors.isDark ? DARK_FILL : colors.line,
                     borderRadius: THUMB_H / 2,
                   },
                 ]}
               />
             )}
-            {/* Sheen along the top edge, like light on glass */}
             <View
               style={{
                 position: "absolute",

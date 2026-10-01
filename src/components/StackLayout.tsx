@@ -1,42 +1,27 @@
-import { Platform, View } from "react-native";
-import { Stack } from "expo-router";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
 import useThemeColors from "@/hooks/useThemeColors";
+import { Stack } from "expo-router";
+import { Platform, View } from "react-native";
 import HeaderTitle from "./ui/HeaderTitle";
 
-const isIOS = Platform.OS === "ios";
-const hasGlass = isLiquidGlassAvailable();
+const TAB_ROOTS = ["index", "hadith", "quran", "qibla", "settings"];
 
-/**
- * Per-tab stack. Tab screens hide the native header and draw their own title
- * (PageHeader); pushed screens keep it for the back button. Its title is
- * rendered by React Native (HeaderTitle): the native bar breaks Arabic shaping.
- */
 export default function StackLayout() {
   const colors = useThemeColors();
 
   const stack = (
     <Stack
-      screenOptions={{
-        headerTransparent: isIOS,
-        // Before iOS 26 there is no glass; blur so content doesn't show through
-        headerBlurEffect:
-          isIOS && !hasGlass
-            ? colors.isDark
-              ? "systemChromeMaterialDark"
-              : "systemChromeMaterialLight"
-            : undefined,
+      screenOptions={({ route }) => ({
+        headerShown: !TAB_ROOTS.includes(route.name),
         headerShadowVisible: false,
-        headerTintColor: colors.main,
+        headerTintColor: colors.isDark ? "#ffffff" : colors.main,
         headerTitle: ({ children }) => <HeaderTitle>{children}</HeaderTitle>,
-        headerStyle: isIOS ? undefined : { backgroundColor: colors.bg },
+        headerStyle: { backgroundColor: colors.bg },
         headerBackButtonDisplayMode: "minimal",
         contentStyle: { backgroundColor: colors.bg },
-      }}
+      })}
     />
   );
 
-  // On web the tab bar floats over the top of the page; keep content below it
   if (Platform.OS === "web") {
     return (
       <View style={{ flex: 1, paddingTop: 80, backgroundColor: colors.bg }}>

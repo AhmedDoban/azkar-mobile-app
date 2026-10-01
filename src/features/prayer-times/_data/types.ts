@@ -11,7 +11,6 @@ export const PRAYERS = [
 
 export type PrayerName = (typeof PRAYERS)[number];
 
-/** The five daily prayers: listed in the card, each with its own adhan reminder */
 export const REMINDER_PRAYERS = [
   "Fajr",
   "Dhuhr",
@@ -29,11 +28,9 @@ export const PRAYER_ICONS: Record<PrayerName, IconKey> = {
   Isha: "isha",
 };
 
-/** Response of https://quran.yousefheiba.com/api/getPrayerTimes */
 export interface PrayerTimesResponse {
   region: string;
   country: string;
-  /** "HH:mm" in the region's local time */
   prayer_times: Record<PrayerName, string>;
   date: {
     date_en: string;
