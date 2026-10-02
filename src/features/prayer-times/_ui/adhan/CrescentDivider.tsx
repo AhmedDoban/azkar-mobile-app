@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
-import { crescentPath } from "./crescent";
+import { crescentPath } from "../../_data/crescent";
 
 export default function CrescentDivider({ color }: { color: string }) {
   const line = (

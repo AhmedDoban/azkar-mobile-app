@@ -2,12 +2,12 @@ import AppText from "@/components/ui/AppText";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
 import useSettingsColors from "../_components/useSettingsColors";
+import SettingsCard from "./SettingsCard";
 
 export default function SettingsGroup({
   title,
   children,
-  plain = false,
-}: PropsWithChildren<{ title: string; plain?: boolean }>) {
+}: PropsWithChildren<{ title: string }>) {
   const palette = useSettingsColors();
 
   return (
@@ -19,16 +19,7 @@ export default function SettingsGroup({
       >
         {title}
       </AppText>
-      {plain ? (
-        <View className="gap-3">{children}</View>
-      ) : (
-        <View
-          className="gap-3 overflow-hidden rounded-3xl border p-4"
-          style={{ backgroundColor: palette.card, borderColor: palette.border }}
-        >
-          {children}
-        </View>
-      )}
+      <SettingsCard className="overflow-hidden">{children}</SettingsCard>
     </View>
   );
 }

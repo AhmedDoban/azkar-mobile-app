@@ -1,9 +1,6 @@
 import AndroidTabBar from "@/components/AndroidTabBar";
-import AdhanReminder from "@/features/prayer-times/AdhanReminder";
+import AppEffects from "@/components/AppEffects";
 import useDirection from "@/hooks/useDirection";
-import useSettingsSync from "@/hooks/useSettingsSync";
-import useDailyReset from "@/hooks/useDailyReset";
-import usePrayerReset from "@/hooks/usePrayerReset";
 import useTabBarColors from "@/hooks/useTabBarColors";
 import useThemeColors from "@/hooks/useThemeColors";
 import { useLocales } from "expo-localization";
@@ -95,13 +92,6 @@ const tabTransition: Pick<
   }),
 };
 
-function AppEffects() {
-  useSettingsSync();
-  useDailyReset();
-  usePrayerReset();
-  return <AdhanReminder />;
-}
-
 export default function AppTabs() {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -131,10 +121,7 @@ export default function AppTabs() {
       <View className="flex-1 bg-main-bg" style={{ direction }}>
         <StatusBarProvider>
           {Platform.OS === "android" ? (
-            <Tabs
-              screenOptions={screenOptions}
-              tabBar={tabBar}
-            >
+            <Tabs screenOptions={screenOptions} tabBar={tabBar}>
               {TABS.map((tab) => (
                 <Tabs.Screen key={tab.name} name={tab.name} />
               ))}

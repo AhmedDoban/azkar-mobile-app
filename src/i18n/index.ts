@@ -5,7 +5,7 @@ import { defaultLocale, isLocale, Locale } from "./config";
 import en from "@/messages/en/en";
 import ar from "@/messages/ar/ar";
 
-export const resources = { en, ar } as const;
+const resources = { en, ar } as const;
 
 export function getDeviceLocale(): Locale {
   const code = getLocales()[0]?.languageCode;

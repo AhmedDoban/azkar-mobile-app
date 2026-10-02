@@ -1,10 +1,13 @@
-import { ReactNode, useEffect, useState } from "react";
+import useSettingsColors from "@/features/settings/_components/useSettingsColors";
+import { cn } from "@/lib/utils";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import {
   Modal,
   Pressable,
   StyleSheet,
   useWindowDimensions,
   View,
+  ViewStyle,
 } from "react-native";
 import {
   Gesture,
@@ -18,9 +21,12 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
-import usePopupColors from "../_components/usePopupColors";
 
 const ROOT = { flex: 1, justifyContent: "flex-end" } as const;
+const BACKDROP = [
+  StyleSheet.absoluteFill,
+  { backgroundColor: "rgba(0,0,0,0.35)" },
+];
 
 export default function BottomSheet({
   visible,
@@ -28,14 +34,18 @@ export default function BottomSheet({
   header,
   children,
   closeLabel,
+  className = "max-h-[85%] gap-3",
+  direction,
 }: {
   visible: boolean;
   onClose: () => void;
   header: ReactNode;
   children: ReactNode;
   closeLabel?: string;
+  className?: string;
+  direction?: ViewStyle["direction"];
 }) {
-  const c = usePopupColors();
+  const palette = useSettingsColors();
   const insets = useSafeAreaInsets();
   const [mounted, setMounted] = useState(visible);
   const screenHeight = useWindowDimensions().height;
@@ -63,18 +73,27 @@ export default function BottomSheet({
     ],
   }));
 
-  const dragDown = Gesture.Pan()
-    .activeOffsetY(8)
-    .onUpdate((e) => {
-      drag.set(Math.max(0, e.translationY));
-    })
-    .onEnd((e) => {
-      if (e.translationY > 120 || e.velocityY > 900) {
-        scheduleOnRN(onClose);
-      } else {
-        drag.set(withTiming(0, { duration: 180 }));
-      }
-    });
+  const dragDown = useMemo(
+    () =>
+      Gesture.Pan()
+        .activeOffsetY(8)
+        .onUpdate((e) => {
+          drag.set(Math.max(0, e.translationY));
+        })
+        .onEnd((e) => {
+          if (e.translationY > 120 || e.velocityY > 900) {
+            scheduleOnRN(onClose);
+          } else {
+            drag.set(withTiming(0, { duration: 180 }));
+          }
+        }),
+    [drag, onClose],
+  );
+
+  const rootStyle = useMemo(
+    () => (direction ? { ...ROOT, direction } : ROOT),
+    [direction],
+  );
 
   return (
     <Modal
@@ -85,22 +104,19 @@ export default function BottomSheet({
       navigationBarTranslucent
       onRequestClose={onClose}
     >
-      <GestureHandlerRootView style={ROOT}>
+      <GestureHandlerRootView style={rootStyle}>
         <Animated.View style={[StyleSheet.absoluteFill, backdropStyle]}>
           <Pressable
-            style={[
-              StyleSheet.absoluteFill,
-              { backgroundColor: "rgba(0,0,0,0.35)" },
-            ]}
+            style={BACKDROP}
             onPress={onClose}
             accessibilityLabel={closeLabel}
           />
         </Animated.View>
         <Animated.View
-          className="max-h-[85%] gap-3 rounded-t-3xl px-4 pt-4"
+          className={cn("rounded-t-3xl px-4 pt-4", className)}
           style={[
             {
-              backgroundColor: c.frameFill,
+              backgroundColor: palette.card,
               paddingBottom: insets.bottom + 12,
             },
             sheetStyle,
@@ -111,7 +127,7 @@ export default function BottomSheet({
               <View className="items-center pb-3">
                 <View
                   className="h-1.5 w-11 rounded-full"
-                  style={{ backgroundColor: c.frame }}
+                  style={{ backgroundColor: palette.border }}
                 />
               </View>
               {header}

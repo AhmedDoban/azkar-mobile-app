@@ -8,9 +8,9 @@ import SectionTitle from "@/components/ui/SectionTitle";
 import useThemeColors from "@/hooks/useThemeColors";
 import { useSearchHadithQuery } from "@/store/Slices/DorarSlice";
 import { hasArabic, searchLocalHadiths } from "../_data";
-import DorarHadithCard from "../_ui/DorarHadithCard";
-import LocalHadithCard from "../_ui/LocalHadithCard";
-import HadithCardSkeleton from "../_ui/HadithCardSkeleton";
+import DorarHadithCard from "./DorarHadithCard";
+import LocalHadithCard from "./LocalHadithCard";
+import HadithCardSkeleton from "./HadithCardSkeleton";
 
 const MAX_LOCAL = 30;
 

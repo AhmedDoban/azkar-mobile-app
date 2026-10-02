@@ -1,12 +1,8 @@
 package expo.modules.adhanalarm
 
-import android.app.Activity
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import expo.modules.kotlin.records.Field
@@ -51,10 +47,6 @@ class AdhanAlarmModule : Module() {
       )
     }
 
-    Function("cancelAll") {
-      AdhanStore.replace(context, emptyList())
-    }
-
     Function("consumeLaunch") {
       val intent = AdhanLaunch.pending ?: return@Function null
       AdhanLaunch.pending = null
@@ -64,21 +56,6 @@ class AdhanAlarmModule : Module() {
     Function("dismiss") { id: String ->
       val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
       manager.cancel(id.hashCode())
-    }
-
-    Function("canFullScreen") {
-      if (Build.VERSION.SDK_INT < 34) return@Function true
-      val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-      manager.canUseFullScreenIntent()
-    }
-
-    Function("openFullScreenSettings") {
-      if (Build.VERSION.SDK_INT >= 34) {
-        val intent = Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT)
-          .setData(Uri.parse("package:${context.packageName}"))
-          .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-      }
     }
   }
 }

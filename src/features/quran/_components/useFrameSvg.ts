@@ -1,8 +1,7 @@
-import { Asset } from "expo-asset";
 import { ReactNode, useEffect, useState } from "react";
-import { Platform } from "react-native";
 import { parse } from "react-native-svg";
 import { FRAME_SVGS } from "../_data/frameSvgs";
+import readAssetText from "./readAssetText";
 
 export type FrameSvg = {
   x: number;
@@ -15,18 +14,9 @@ export type FrameSvg = {
 const parsed = new Map<number, FrameSvg>();
 const pending = new Map<number, Promise<FrameSvg>>();
 
-async function readSource(id: number) {
-  const asset = Asset.fromModule(FRAME_SVGS[id - 1]);
-  await asset.downloadAsync();
-  const uri = asset.localUri ?? asset.uri;
-  if (Platform.OS === "web" || uri.startsWith("http")) {
-    return (await fetch(uri)).text();
-  }
-  const { File } = await import("expo-file-system");
-  return new File(uri).text();
-}
+const readSource = (id: number) => readAssetText(FRAME_SVGS[id - 1]);
 
-export function loadFrameSvg(id: number) {
+function loadFrameSvg(id: number) {
   const hit = parsed.get(id);
   if (hit) return Promise.resolve(hit);
   let task = pending.get(id);

@@ -1,13 +1,6 @@
 import type { IconKey } from "@/components/ui/Icon";
 
-export const PRAYERS = [
-  "Fajr",
-  "Sunrise",
-  "Dhuhr",
-  "Asr",
-  "Maghrib",
-  "Isha",
-] as const;
+const PRAYERS = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
 
 export type PrayerName = (typeof PRAYERS)[number];
 

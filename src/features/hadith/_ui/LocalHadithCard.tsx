@@ -4,7 +4,7 @@ import useArabicTextStyle from "@/hooks/useArabicTextStyle";
 import { Locale } from "@/i18n/config";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { savedLocal } from "../_components/hadithKey";
+import { savedLocal } from "../_data/hadithKey";
 import useHadithColors from "../_components/useHadithColors";
 import { LocalHadith } from "../_data";
 import HadithDivider from "./HadithDivider";
@@ -56,14 +56,12 @@ export default memo(function LocalHadithCard({
         </AppText>
       )}
 
-      <HadithDivider accent={p.accent} line={p.line} />
+      <HadithDivider />
 
       <View className="flex-row justify-center">
         <HadithActions
           text={`${hadith.text.ar}\n\n${locale === "en" ? hadith.text.en + "\n\n" : ""}${source} — ${hadith.number}`}
           saved={savedLocal(hadith.id)}
-          tint={p.accent}
-          buttonClassName="bg-transparent"
         />
       </View>
     </HadithPaper>

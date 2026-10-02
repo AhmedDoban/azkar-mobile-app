@@ -2,7 +2,7 @@ import AppText from "@/components/ui/AppText";
 import useArabicTextStyle from "@/hooks/useArabicTextStyle";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { savedDorar } from "../_components/hadithKey";
+import { savedDorar } from "../_data/hadithKey";
 import useHadithColors from "../_components/useHadithColors";
 import { DorarHadith } from "../_components/parseDorar";
 import HadithDivider from "./HadithDivider";
@@ -44,7 +44,7 @@ export default function DorarHadithCard({ hadith }: { hadith: DorarHadith }) {
         {hadith.text}
       </AppText>
 
-      <HadithDivider accent={p.accent} line={p.line} />
+      <HadithDivider />
 
       <View className="gap-3">
         {hadith.grade ? (
@@ -65,8 +65,6 @@ export default function DorarHadithCard({ hadith }: { hadith: DorarHadith }) {
             .filter(Boolean)
             .join("\n")}
           saved={savedDorar(hadith)}
-          tint={p.accent}
-          buttonClassName="bg-transparent"
         />
       </View>
     </HadithPaper>

@@ -1,16 +1,11 @@
+import useCompactHero from "@/hooks/useCompactHero";
 import useDirection from "@/hooks/useDirection";
 import useTabBarSpace from "@/hooks/useTabBarSpace";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 import { View } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
-import { scheduleOnRN } from "react-native-worklets";
+import Animated from "react-native-reanimated";
 import CompactHeroBar from "./CompactHeroBar";
 import PageHero, { HERO_HEIGHT, PageHeroProps } from "./PageHero";
-
-const COMPACT_AT = 90;
 
 export default function HeroScreen({
   hero,
@@ -18,22 +13,7 @@ export default function HeroScreen({
 }: PropsWithChildren<{ hero: PageHeroProps }>) {
   const tabBarSpace = useTabBarSpace();
   const { direction } = useDirection();
-  const threshold = (hero.height ?? HERO_HEIGHT) - COMPACT_AT;
-  const [compact, setCompact] = useState(false);
-  const compactValue = useSharedValue(false);
-
-  const onScroll = useAnimatedScrollHandler(
-    {
-      onScroll: (e) => {
-        const next = e.contentOffset.y > threshold;
-        if (next !== compactValue.get()) {
-          compactValue.set(next);
-          scheduleOnRN(setCompact, next);
-        }
-      },
-    },
-    [threshold],
-  );
+  const { compact, onScroll } = useCompactHero(hero.height ?? HERO_HEIGHT);
 
   return (
     <View className="flex-1 bg-main-bg">

@@ -1,6 +1,6 @@
 import { perPrayerCategoryIds } from "@/features/azkar/_data";
+import { getLastPassedPrayer } from "@/features/prayer-times/_data/schedule";
 import {
-  getLastPassedPrayer,
   useClock,
   usePrayerConfig,
   usePrayerDay,

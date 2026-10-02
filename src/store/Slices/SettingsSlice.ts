@@ -94,7 +94,7 @@ export interface SettingsState {
   reading: ReadingSettings;
 }
 
-export const defaultSettings = (
+const defaultSettings = (
   locale: Locale = getDeviceLocale(),
 ): SettingsState => ({
   locale,
@@ -204,6 +204,12 @@ export const SettingsSlice = createSlice({
     setAsrMethod(state, action: PayloadAction<AsrMethod>) {
       state.asrMethod = action.payload;
     },
+    resetQuranData(state) {
+      state.quranBookmark = null;
+      state.savedAyahs = [];
+      state.ayahColors = {};
+      state.khatma = null;
+    },
     resetSettings(state) {
       return {
         ...defaultSettings(state.locale),
@@ -289,5 +295,6 @@ export const {
   setAsrMethod,
   setReadingOption,
   resetSettings,
+  resetQuranData,
   hydrateSettings,
 } = SettingsSlice.actions;

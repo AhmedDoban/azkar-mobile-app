@@ -1,22 +1,21 @@
 import AppText from "@/components/ui/AppText";
-import Icon from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
 import useCityName from "@/features/prayer-times/_components/useCityName";
 import usePrayerLocation from "@/features/prayer-times/_components/usePrayerLocation";
 import { resolveAsr } from "@/features/prayer-times/_data/methods";
-import useThemeColors from "@/hooks/useThemeColors";
 import { setAsrMethod, setPrayerMethod } from "@/store/Slices/SettingsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import useSettingsColors from "../_components/useSettingsColors";
 import PrayerMethodList from "./PrayerMethodList";
+import SettingsCard from "./SettingsCard";
+import SettingsIconBadge from "./SettingsIconBadge";
 import SettingsSwitchRow from "./SettingsSwitchRow";
 
 export default function PrayerSettings() {
   const { t } = useTranslation("settings");
   const dispatch = useAppDispatch();
-  const colors = useThemeColors();
   const palette = useSettingsColors();
   const method = useAppSelector((s) => s.settings.prayerMethod);
   const asr = useAppSelector((s) => s.settings.asrMethod);
@@ -26,14 +25,9 @@ export default function PrayerSettings() {
 
   return (
     <View className="gap-3">
-      <View
-        className="gap-3 rounded-3xl border p-4"
-        style={{ backgroundColor: palette.card, borderColor: palette.border }}
-      >
+      <SettingsCard>
         <View className="flex-row items-center gap-3">
-          <View className="size-9 items-center justify-center rounded-full bg-accent-soft">
-            <Icon name="location" size={16} tintColor={colors.accent} />
-          </View>
+          <SettingsIconBadge icon="location" size={16} />
           <View className="flex-1 gap-0.5">
             <AppText weight="bold" className="text-[15px]">
               {city ?? (location ? t("savedLocation") : t("locationUnknown"))}
@@ -67,7 +61,7 @@ export default function PrayerSettings() {
             }
           />
         </View>
-      </View>
+      </SettingsCard>
 
       <AppText
         weight="bold"

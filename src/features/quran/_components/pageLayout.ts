@@ -5,7 +5,3 @@ export const PAGE = {
   gap: 8,
   topRow: 22,
 };
-
-const NO_BASMALA = new Set([1, 9]);
-
-export const hasBasmala = (surahId: number) => !NO_BASMALA.has(surahId);

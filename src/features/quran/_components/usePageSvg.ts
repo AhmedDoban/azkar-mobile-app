@@ -1,4 +1,3 @@
-import { Asset } from "expo-asset";
 import {
   cloneElement,
   isValidElement,
@@ -7,24 +6,22 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Platform } from "react-native";
 import { parse } from "react-native-svg";
 import { PAGE_SVGS } from "../_data/pageSvgs";
+import readAssetText from "./readAssetText";
 
 const INK = /^#231f20$/i;
 
 const CACHE_SIZE = 8;
 
-export type AyahShape = { surah: number; ayah: number; d: string };
+type AyahShape = { surah: number; ayah: number; d: string };
 
-export type TitleBox = {
+type TitleBox = {
   surah: number;
   x: number;
   y: number;
   width: number;
   height: number;
-  nameX: number;
-  nameWidth: number;
 };
 
 type MeasuredTitle = [number, number, number, number, number];
@@ -44,7 +41,7 @@ export type PageSvg = {
   hits: { surah: number; ayah: number; boxes: Box[] }[];
 };
 
-export type Box = [number, number, number, number];
+type Box = [number, number, number, number];
 
 function boxesOf(d: string): Box[] {
   return d
@@ -75,7 +72,7 @@ function findTitles(page: number, shapes: { boxes: Box[] }[]): TitleBox[] {
   const x1 = Math.max(...all.map((b) => b[2]));
   const printed = page > 2 ? measuredTitles(page) : null;
   if (!printed) return [];
-  return printed.map(([surah, nx0, ny0, nx1, ny1]) => {
+  return printed.map(([surah, , ny0, , ny1]) => {
     const height = Math.min(line * 0.95, (ny1 - ny0) * 1.5);
     return {
       surah,
@@ -83,8 +80,6 @@ function findTitles(page: number, shapes: { boxes: Box[] }[]): TitleBox[] {
       y: (ny0 + ny1) / 2 - height / 2,
       width: x1 - x0,
       height,
-      nameX: (nx0 + nx1) / 2,
-      nameWidth: nx1 - nx0,
     };
   });
 }
@@ -104,16 +99,7 @@ const rectPath = (boxes: Box[]) =>
 const parsed = new Map<number, PageSvg>();
 const pending = new Map<number, Promise<PageSvg>>();
 
-async function readSource(page: number) {
-  const asset = Asset.fromModule(PAGE_SVGS[page - 1]);
-  await asset.downloadAsync();
-  const uri = asset.localUri ?? asset.uri;
-  if (Platform.OS === "web" || uri.startsWith("http")) {
-    return (await fetch(uri)).text();
-  }
-  const { File } = await import("expo-file-system");
-  return new File(uri).text();
-}
+const readSource = (page: number) => readAssetText(PAGE_SVGS[page - 1]);
 
 type XmlNode = {
   props: Record<string, unknown>;
@@ -219,7 +205,7 @@ export default function usePageSvg(page: number) {
   const [svg, setSvg] = useState<PageSvg | null>(
     () => parsed.get(page) ?? null,
   );
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
@@ -230,10 +216,10 @@ export default function usePageSvg(page: number) {
     }
     let alive = true;
     setSvg(null);
-    setFailed(false);
+    setFailed(null);
     loadPageSvg(page)
       .then((result) => alive && setSvg(result))
-      .catch(() => alive && setFailed(true));
+      .catch((error) => alive && setFailed(String(error?.message ?? error)));
     return () => {
       alive = false;
     };

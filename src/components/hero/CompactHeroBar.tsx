@@ -1,5 +1,5 @@
 import StatusBarBackdrop from "@/components/StatusBarBackdrop";
-import { useStatusBarStyle } from "@/components/StatusBarStyle";
+import useStatusBarStyle from "@/hooks/useStatusBarStyle";
 import AppText from "@/components/ui/AppText";
 import useThemeColors from "@/hooks/useThemeColors";
 import { memo, useEffect } from "react";

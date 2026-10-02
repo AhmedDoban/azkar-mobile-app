@@ -1,3 +1,4 @@
+import { clearDorarCache } from "./dorarCache";
 import { useDispatch, useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { DorarSlice } from "./Slices/DorarSlice";
@@ -22,6 +23,7 @@ export type AppDispatch = typeof Store.dispatch;
 
 export function clearApiCache(dispatch: AppDispatch) {
   dispatch(DorarSlice.util.resetApiState());
+  clearDorarCache();
 }
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();

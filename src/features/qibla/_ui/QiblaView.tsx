@@ -11,6 +11,8 @@ import useCityName from "@/features/prayer-times/_components/useCityName";
 import type { CityName } from "@/features/prayer-times/_data/cityName";
 import Compass from "./Compass";
 
+const deg = (value: number) => Math.round(Math.abs(value));
+
 export default function QiblaView({
   city,
   heading,
@@ -42,7 +44,6 @@ export default function QiblaView({
     wasAligned.current = aligned;
   }, [aligned]);
 
-  const deg = (value: number) => Math.round(Math.abs(value));
   const status =
     offset === null
       ? t("noCompass", { deg: deg(bearing) })

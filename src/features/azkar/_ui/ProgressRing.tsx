@@ -3,22 +3,22 @@ import Svg, { Circle } from "react-native-svg";
 import AppText from "@/components/ui/AppText";
 import Icon from "@/components/ui/Icon";
 
+const STROKE = 4;
+
 export default function ProgressRing({
   progress,
   color,
   track,
   checkColor = "#ffffff",
   size = 44,
-  stroke = 4,
 }: {
   progress: number;
   color: string;
   track: string;
   checkColor?: string;
   size?: number;
-  stroke?: number;
 }) {
-  const r = (size - stroke) / 2;
+  const r = (size - STROKE) / 2;
   const circumference = 2 * Math.PI * r;
   const complete = progress >= 1;
 
@@ -48,7 +48,7 @@ export default function ProgressRing({
           cy={size / 2}
           r={r}
           stroke={track}
-          strokeWidth={stroke}
+          strokeWidth={STROKE}
           fill="none"
         />
         <Circle
@@ -56,7 +56,7 @@ export default function ProgressRing({
           cy={size / 2}
           r={r}
           stroke={color}
-          strokeWidth={stroke}
+          strokeWidth={STROKE}
           fill="none"
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}

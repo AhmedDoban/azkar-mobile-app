@@ -30,7 +30,7 @@ export function getZikr(key: string) {
   return category && zikr ? { category, zikr } : undefined;
 }
 
-export const featuredCategories = categories.filter((c) => c.featured);
+const featuredCategories = categories.filter((c) => c.featured);
 
 export const isFriday = (date = new Date()) => date.getDay() === 5;
 

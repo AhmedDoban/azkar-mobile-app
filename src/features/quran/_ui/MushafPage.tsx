@@ -14,7 +14,7 @@ import { PAGE } from "../_components/pageLayout";
 import useMushafColors from "../_components/useMushafColors";
 import { useAppSelector } from "@/store/Store";
 import Icon from "@/components/ui/Icon";
-import { AYAH_COLORS } from "./AyahSheet";
+import { AYAH_COLORS } from "../_data/ayahColors";
 import { todayWirdBounds } from "../_data/khatma";
 import { registerHitTest } from "../_components/pageHitTest";
 import usePageSvg, { paintMarkers } from "../_components/usePageSvg";
@@ -163,7 +163,13 @@ export default memo(function MushafPage({
               ) : null,
             )}
             {svg.titles.map((title, i) => (
-              <SurahFrame key={`f${i}`} {...title} />
+              <SurahFrame
+                key={`f${i}`}
+                x={title.x}
+                y={title.y}
+                width={title.width}
+                height={title.height}
+              />
             ))}
             <G color={c.ink}>{content}</G>
           </Svg>
@@ -175,6 +181,13 @@ export default memo(function MushafPage({
           >
             <AppText weight="bold" style={{ color: c.accent }}>
               {t("retry")}
+            </AppText>
+            <AppText
+              className="text-center text-[10px]"
+              style={{ color: c.gold }}
+              selectable
+            >
+              {failed}
             </AppText>
           </Pressable>
         ) : (

@@ -253,7 +253,7 @@ export default function SurahReader({
               tintColor={c.accent}
             />
           </PressableScale>
-          <PageSlider page={page} onChange={(p) => jump(p)} />
+          <PageSlider page={page} onChange={jump} />
           <PressableScale
             onPress={() => bookmarkPage && jump(bookmarkPage)}
             disabled={!bookmark || bookmarked}

@@ -34,7 +34,7 @@ const channels = (hex: string) =>
 const toHex = (rgb: number[]) =>
   `#${rgb.map((v) => Math.round(v).toString(16).padStart(2, "0")).join("")}`;
 
-export const mix = (hex: string, target: string, amount: number) => {
+const mix = (hex: string, target: string, amount: number) => {
   const a = channels(hex);
   const b = channels(target);
   return toHex(a.map((v, i) => v + (b[i] - v) * amount));

@@ -1,12 +1,9 @@
 import { View } from "react-native";
+import useHadithColors from "../_components/useHadithColors";
 
-export default function HadithDivider({
-  accent,
-  line,
-}: {
-  accent: string;
-  line: string;
-}) {
+export default function HadithDivider() {
+  const { accent, line } = useHadithColors();
+
   return (
     <View className="flex-row items-center gap-2 self-stretch px-6">
       <View className="h-px flex-1" style={{ backgroundColor: line }} />

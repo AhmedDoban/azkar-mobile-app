@@ -1,7 +1,8 @@
 import useDirection from "@/hooks/useDirection";
 import { cn } from "@/lib/utils";
-import { memo, ReactNode, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Text, TextProps } from "react-native";
+import withPunctuation from "./withPunctuation";
 
 type Props = TextProps & {
   className?: string;
@@ -20,23 +21,6 @@ const FONTS = {
     ltr: { regular: "font-hafs", bold: "font-hafs" },
   },
 } as const;
-
-const PUNCTUATION = /([،؛؟.,:!"«»-]+)/;
-
-function withPunctuation(children: ReactNode) {
-  if (typeof children !== "string" || !PUNCTUATION.test(children)) {
-    return children;
-  }
-  return children.split(PUNCTUATION).map((part, i) =>
-    i % 2 ? (
-      <Text key={i} style={{ fontFamily: "LamaSans" }}>
-        {part}
-      </Text>
-    ) : (
-      part
-    ),
-  );
-}
 
 export default memo(function AppText({
   className,

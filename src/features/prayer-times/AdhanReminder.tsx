@@ -12,12 +12,12 @@ import {
 import usePrayerLabels from "./_components/usePrayerLabels";
 import usePrayerLocation from "./_components/usePrayerLocation";
 import {
-  getPrayerStartingNow,
   useClock,
   usePrayerConfig,
   usePrayerDay,
 } from "./_components/usePrayerSchedule";
 import { addDays, prayerDates } from "./_data/calculate";
+import { getPrayerStartingNow } from "./_data/schedule";
 import { PrayerName, REMINDER_PRAYERS } from "./_data/types";
 import AdhanSplash from "./AdhanSplash";
 

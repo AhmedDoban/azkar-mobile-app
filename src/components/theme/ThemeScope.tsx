@@ -1,7 +1,7 @@
 import { VariableContextProvider } from "nativewind";
 import { PropsWithChildren, useMemo } from "react";
 import toCssVariables from "./cssVariables";
-import { useTheme } from "./ThemeProvider";
+import { useTheme } from "./ThemeContext";
 
 export default function ThemeScope({ children }: PropsWithChildren) {
   const theme = useTheme();

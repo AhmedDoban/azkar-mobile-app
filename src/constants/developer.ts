@@ -1,4 +1,4 @@
-export type Brand =
+type Brand =
   "website" | "linkedin" | "github" | "whatsapp" | "facebook" | "instagram";
 
 export type DeveloperLink = {

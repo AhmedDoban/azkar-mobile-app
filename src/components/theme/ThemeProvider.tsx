@@ -1,24 +1,11 @@
-import { Colors, ThemeColors } from "@/constants/Colors";
-import { Brand, brandFor } from "@/constants/palettes";
+import { Colors } from "@/constants/Colors";
+import { brandFor } from "@/constants/palettes";
 import toCssVariables from "./cssVariables";
+import { ThemeContext } from "./ThemeContext";
 import { useAppSelector } from "@/store/Store";
 import { VariableContextProvider } from "nativewind";
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
+import { PropsWithChildren, useEffect, useMemo } from "react";
 import { Appearance, Platform, useColorScheme } from "react-native";
-
-type Theme = ThemeColors & { isDark: boolean; brand: Brand };
-
-const ThemeContext = createContext<Theme>({
-  ...Colors.light,
-  isDark: false,
-  brand: brandFor("emerald"),
-});
 
 export default function ThemeProvider({ children }: PropsWithChildren) {
   const preference = useAppSelector((state) => state.settings.theme);
@@ -68,5 +55,3 @@ export default function ThemeProvider({ children }: PropsWithChildren) {
     </ThemeContext>
   );
 }
-
-export const useTheme = () => useContext(ThemeContext);

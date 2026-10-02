@@ -48,6 +48,18 @@
       "message": "Favorites, counters, settings and cache will all be deleted, as if the app were freshly installed. This can't be undone.",
       "action": "Delete all",
       "done": "All data deleted"
+    },
+    "recitations": {
+      "title": "Delete saved recitations?",
+      "message": "Recitation files saved on your device will be deleted and downloaded again when you listen.",
+      "action": "Delete",
+      "done": "Saved recitations deleted"
+    },
+    "quran": {
+      "title": "Delete Quran data?",
+      "message": "Your reading bookmark, saved ayahs, highlights and current khatma will be deleted. This can't be undone.",
+      "action": "Delete",
+      "done": "Quran data deleted"
     }
   },
   "version": "Version {{version}}",
@@ -113,5 +125,7 @@
     "olive": "Olive",
     "slate": "Slate"
   },
-  "surahFrame": "Surah title frame"
+  "surahFrame": "Surah title frame",
+  "clearRecitations": "Saved recitations",
+  "resetQuran": "Delete Quran data"
 }

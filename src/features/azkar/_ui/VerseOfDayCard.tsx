@@ -1,6 +1,6 @@
 import { memo } from "react";
 import AppText from "@/components/ui/AppText";
-import Icon from "@/components/ui/Icon";
+import IconCircle from "@/components/ui/IconCircle";
 import { Colors } from "@/constants/Colors";
 import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
@@ -33,12 +33,11 @@ export default memo(function VerseOfDayCard() {
           style={{ direction: english ? "ltr" : "rtl" }}
         >
           <View className="flex-row items-center gap-2.5">
-            <View
-              className="size-10 items-center justify-center rounded-full"
-              style={{ backgroundColor: LIGHT.mainSoft }}
-            >
-              <Icon name="quran" size={20} tintColor={LIGHT.main} />
-            </View>
+            <IconCircle
+              icon="quran"
+              tintColor={LIGHT.main}
+              backgroundColor={LIGHT.mainSoft}
+            />
             <AppText
               weight="bold"
               className="text-base"

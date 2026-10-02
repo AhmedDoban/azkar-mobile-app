@@ -3,8 +3,7 @@ import type { DorarHadith } from "@/features/hadith/_components/parseDorar";
 import { MOVED_FROM, MOVED_TO } from "@/features/azkar/_data/movedAdhkar";
 
 export type SavedHadith = { key: string } & (
-  | { kind: "local"; id: string }
-  | { kind: "dorar"; hadith: DorarHadith }
+  { kind: "local"; id: string } | { kind: "dorar"; hadith: DorarHadith }
 );
 
 export interface AzkarState {

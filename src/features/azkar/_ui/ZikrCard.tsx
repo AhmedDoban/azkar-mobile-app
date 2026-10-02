@@ -1,25 +1,24 @@
-import IconButton from "@/components/Buttons/IconButton";
 import AppText from "@/components/ui/AppText";
+import ContentActions from "@/components/ui/ContentActions";
 import PressableScale from "@/components/ui/PressableScale";
 import useHadithColors from "@/features/hadith/_components/useHadithColors";
 import useArabicTextStyle from "@/hooks/useArabicTextStyle";
-import useThemeColors from "@/hooks/useThemeColors";
+import useDirection from "@/hooks/useDirection";
 import {
   incrementCount,
   progressKey,
   toggleFavoriteZikr,
 } from "@/store/Slices/AzkarSlice";
 import { useAppDispatch, useAppSelector } from "@/store/Store";
-import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
-import { memo, useEffect, useState } from "react";
+import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, Share, View } from "react-native";
+import { Platform, View } from "react-native";
 import { Zikr } from "../_data";
-import Icon from "@/components/ui/Icon";
-import useDirection from "@/hooks/useDirection";
 import ZikrCardBackdrop from "./ZikrCardBackdrop";
+import ZikrCounter from "./ZikrCounter";
 import ZikrOrnament from "./ZikrOrnament";
+import ZikrPosition from "./ZikrPosition";
 
 type Props = {
   categoryId: string;
@@ -47,11 +46,11 @@ export default memo(function ZikrCard({
   index,
   total,
 }: Props) {
-  const { t } = useTranslation(["azkar", "common"]);
-  const colors = useThemeColors();
+  const { t } = useTranslation("azkar");
   const p = useHadithColors();
   const dispatch = useAppDispatch();
   const textStyle = useArabicTextStyle();
+  const { isRTL } = useDirection();
   const hapticOnTap = useAppSelector((s) => s.settings.reading.hapticOnTap);
   const hapticOnComplete = useAppSelector(
     (s) => s.settings.reading.hapticOnComplete,
@@ -60,14 +59,11 @@ export default memo(function ZikrCard({
   const counted = useAppSelector((s) => s.azkar.progress[key] ?? 0);
   const loved = useAppSelector((s) => s.azkar.favoriteAdhkar.includes(key));
   const shareText = zikr.title ? `${zikr.title}\n\n${zikr.text}` : zikr.text;
-
-  const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    if (!copied) return;
-    const timer = setTimeout(() => setCopied(false), 1500);
-    return () => clearTimeout(timer);
-  }, [copied]);
   const done = counting && counted >= zikr.count;
+  const buttonStyle = useMemo(
+    () => ({ backgroundColor: p.card, ...BUTTON_SHADOW }),
+    [p.card],
+  );
 
   const onCount = () => {
     if (done) return;
@@ -79,36 +75,6 @@ export default memo(function ZikrCard({
     }
     dispatch(incrementCount({ categoryId, itemId: zikr.id, max: zikr.count }));
   };
-
-  const { isRTL } = useDirection();
-
-  const actions = [
-    {
-      icon: loved ? ("heartFill" as const) : ("heart" as const),
-      label: t("azkar:saveZikr"),
-      color: loved ? colors.love : p.muted,
-      onPress: () => {
-        Haptics.selectionAsync();
-        dispatch(toggleFavoriteZikr(key));
-      },
-    },
-    {
-      icon: copied ? ("check" as const) : ("copy" as const),
-      label: t(copied ? "common:copied" : "common:copy"),
-      color: copied ? p.accent : p.muted,
-      onPress: async () => {
-        await Clipboard.setStringAsync(shareText);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        setCopied(true);
-      },
-    },
-    {
-      icon: "share" as const,
-      label: t("common:share"),
-      color: p.muted,
-      onPress: () => Share.share({ message: shareText }),
-    },
-  ];
 
   return (
     <PressableScale
@@ -132,14 +98,7 @@ export default memo(function ZikrCard({
       <View className="flex-row items-center">
         <View className="flex-1 items-start">
           {index && total && total > 1 ? (
-            <View
-              className="rounded-full px-2.5 py-0.5"
-              style={{ backgroundColor: p.chip }}
-            >
-              <AppText className="text-xs" style={{ color: p.muted }}>
-                {`${index} / ${total}`}
-              </AppText>
-            </View>
+            <ZikrPosition index={index} total={total} />
           ) : null}
         </View>
         <ZikrOrnament color={ORNAMENT_GOLD} />
@@ -158,53 +117,21 @@ export default memo(function ZikrCard({
 
       <View className="flex-row items-center gap-2 pt-1">
         {counting ? (
-          <View
-            className="flex-row items-baseline gap-1 rounded-full px-3.5 py-1.5"
-            style={{ backgroundColor: done ? p.accent : p.chip }}
-          >
-            {done ? (
-              <Icon
-                name="check"
-                size={16}
-                strokeWidth={2.6}
-                tintColor={p.onAccent}
-              />
-            ) : (
-              <>
-                <AppText
-                  weight="bold"
-                  className="text-xl"
-                  style={{ color: p.accent }}
-                >
-                  {counted}
-                </AppText>
-                <AppText className="text-sm" style={{ color: p.muted }}>
-                  {`/ ${zikr.count}`}
-                </AppText>
-              </>
-            )}
-          </View>
+          <ZikrCounter counted={counted} count={zikr.count} done={done} />
         ) : null}
 
         <View className="flex-1" />
 
-        {actions
-          .slice()
-          .reverse()
-          .map((action) => (
-            <IconButton
-              key={action.label}
-              icon={action.icon}
-              color={action.color}
-              accessibilityLabel={action.label}
-              className="size-11 rounded-full"
-              style={{
-                backgroundColor: p.card,
-                ...BUTTON_SHADOW,
-              }}
-              onPress={action.onPress}
-            />
-          ))}
+        <ContentActions
+          text={shareText}
+          loved={loved}
+          loveLabel={t("saveZikr")}
+          onToggleLove={() => dispatch(toggleFavoriteZikr(key))}
+          idleColor={p.muted}
+          activeColor={p.accent}
+          buttonClassName="size-11 rounded-full"
+          buttonStyle={buttonStyle}
+        />
       </View>
     </PressableScale>
   );

@@ -1,4 +1,5 @@
 import useThemeColors from "@/hooks/useThemeColors";
+import { useMemo } from "react";
 
 const LIGHT = {
   paper: "#f3f8f6",
@@ -24,12 +25,17 @@ const DARK = {
 
 export default function useHadithColors() {
   const { isDark, brand } = useThemeColors();
-  if (isDark) return { ...DARK, accent: brand.bright };
-  return {
-    ...LIGHT,
-    accent: brand.main,
-    paper: brand.tint,
-    line: brand.line,
-    chip: brand.soft,
-  };
+  return useMemo(
+    () =>
+      isDark
+        ? { ...DARK, accent: brand.bright }
+        : {
+            ...LIGHT,
+            accent: brand.main,
+            paper: brand.tint,
+            line: brand.line,
+            chip: brand.soft,
+          },
+    [isDark, brand],
+  );
 }

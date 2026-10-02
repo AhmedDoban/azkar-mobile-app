@@ -1,16 +1,17 @@
 import AppText from "@/components/ui/AppText";
 import Icon from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { PrayerStatus } from "../_components/usePrayerSchedule";
 import usePrayerReminder from "../_components/usePrayerReminder";
+import { PrayerStatus } from "../_data/schedule";
 import { PRAYER_ICONS, PrayerName } from "../_data/types";
 
 const INK = "#0e3a33";
 const MINT_FILL = "#dff3ea";
 
-export default function PrayerCell({
+function PrayerCell({
   prayer,
   label,
   time,
@@ -76,3 +77,5 @@ export default function PrayerCell({
     </PressableScale>
   );
 }
+
+export default memo(PrayerCell);

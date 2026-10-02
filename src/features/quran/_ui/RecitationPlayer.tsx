@@ -7,7 +7,7 @@ import {
   toArabicDigits,
 } from "@/features/azkar/_data/quran";
 import { useAppSelector } from "@/store/Store";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
 import useMushafColors from "../_components/useMushafColors";
@@ -36,6 +36,7 @@ export default function RecitationPlayer({
   const [picking, setPicking] = useState(false);
   const ar = i18n.language === "ar";
   const surah = current ? getSurah(current.surah) : null;
+  const closePicker = useCallback(() => setPicking(false), []);
 
   return (
     <View
@@ -96,7 +97,7 @@ export default function RecitationPlayer({
         </PressableScale>
       ) : null}
 
-      <ReciterPicker visible={picking} onClose={() => setPicking(false)} />
+      <ReciterPicker visible={picking} onClose={closePicker} />
     </View>
   );
 }

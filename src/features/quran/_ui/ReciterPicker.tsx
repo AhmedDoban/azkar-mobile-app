@@ -1,13 +1,14 @@
 import AppText from "@/components/ui/AppText";
+import BottomSheet from "@/components/ui/BottomSheet";
 import Icon from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
+import SheetHeader from "@/components/ui/SheetHeader";
 import { setReciter } from "@/store/Slices/SettingsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { ScrollView, TextInput, View } from "react-native";
-import BottomSheet from "./BottomSheet";
+import { ScrollView, TextInput } from "react-native";
 import usePopupColors from "../_components/usePopupColors";
 import { RECITERS } from "../_data/reciters";
 
@@ -35,22 +36,12 @@ export default function ReciterPicker({
       onClose={onClose}
       closeLabel={t("close")}
       header={
-        <View className="flex-row items-center px-1 pb-1">
-          <View className="flex-1" />
-          <AppText weight="bold" className="text-lg" style={{ color: c.ink }}>
-            {t("chooseReciter")}
-          </AppText>
-          <View className="flex-1 items-end">
-            <PressableScale
-              onPress={onClose}
-              accessibilityLabel={t("close")}
-              className="size-9 items-center justify-center rounded-full"
-              style={{ backgroundColor: c.frame }}
-            >
-              <Icon name="close" size={16} tintColor={c.ink} />
-            </PressableScale>
-          </View>
-        </View>
+        <SheetHeader
+          title={t("chooseReciter")}
+          onClose={onClose}
+          closeLabel={t("close")}
+          className="pb-1"
+        />
       }
     >
       <TextInput

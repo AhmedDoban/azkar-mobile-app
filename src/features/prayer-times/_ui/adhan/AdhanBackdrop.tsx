@@ -10,8 +10,8 @@ import Svg, {
   Rect,
   Stop,
 } from "react-native-svg";
-import { AdhanPalette } from "./palette";
-import { cloudBandPath, crescentPath } from "./crescent";
+import { AdhanPalette } from "../../_data/adhanPalette";
+import { cloudBandPath, crescentPath } from "../../_data/crescent";
 
 export default function AdhanBackdrop({
   palette: p,

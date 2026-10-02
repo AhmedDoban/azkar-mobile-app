@@ -1,11 +1,9 @@
 import useThemeColors from "@/hooks/useThemeColors";
-import { ListRenderItem, Platform, View } from "react-native";
+import { ListRenderItem, Platform } from "react-native";
 import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
-import { NativeStackNavigationOptions, Stack } from "expo-router";
-import { useTranslation } from "react-i18next";
+import { Stack } from "expo-router";
 import useDirection from "@/hooks/useDirection";
-import AppText from "@/components/ui/AppText";
 import {
   progressKey,
   resetCategory,
@@ -14,7 +12,8 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import { getCategory, Zikr } from "../_data";
 import useCategoryProgress from "../_components/useCategoryProgress";
-import CategoryHeaderActions from "./CategoryHeaderActions";
+import useCategoryScreenOptions from "../_components/useCategoryScreenOptions";
+import CategoryCompletedBanner from "./CategoryCompletedBanner";
 import ZikrCard from "./ZikrCard";
 import Animated, {
   Easing,
@@ -38,7 +37,6 @@ export default function CategoryContent({
   categoryId: string;
   title: string;
 }) {
-  const { t } = useTranslation("azkar");
   const dispatch = useAppDispatch();
   const category = getCategory(categoryId)!;
   const progress = useCategoryProgress(category);
@@ -65,86 +63,27 @@ export default function CategoryContent({
     [category],
   );
   const total = category.items.length;
-  const canReset = progress.done > 0;
 
-  const resetProgress = useCallback(() => {
+  const onReset = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     dispatch(resetCategory(categoryId));
   }, [dispatch, categoryId]);
-  const toggleFavoriteCategory = useCallback(() => {
+  const onToggleFavorite = useCallback(() => {
     Haptics.selectionAsync();
     dispatch(toggleFavorite(categoryId));
   }, [dispatch, categoryId]);
 
-  const options = useMemo((): NativeStackNavigationOptions => {
-    const actions = (
-      <CategoryHeaderActions
-        isFavorite={isFavorite}
-        canReset={canReset}
-        resetLabel={t("reset")}
-        favoriteLabel={t("saveZikr")}
-        onReset={resetProgress}
-        onToggleFavorite={toggleFavoriteCategory}
-      />
-    );
-    return {
-      title,
-      headerLargeTitle: false,
-      headerRight: Platform.OS === "ios" ? undefined : () => actions,
-      unstable_headerRightItems:
-        Platform.OS === "ios"
-          ? () => [
-              {
-                type: "button",
-                icon: {
-                  type: "sfSymbol",
-                  name: isFavorite ? "heart.fill" : "heart",
-                },
-                tintColor: isFavorite ? colors.love : colors.ink,
-                label: t("saveZikr"),
-                onPress: toggleFavoriteCategory,
-              },
-              {
-                type: "button",
-                icon: { type: "sfSymbol", name: "arrow.counterclockwise" },
-                tintColor: colors.ink,
-                disabled: !canReset,
-                label: t("reset"),
-                onPress: resetProgress,
-              },
-            ]
-          : undefined,
-    };
-  }, [
+  const options = useCategoryScreenOptions({
     title,
     isFavorite,
-    canReset,
-    colors.love,
-    colors.ink,
-    t,
-    resetProgress,
-    toggleFavoriteCategory,
-  ]);
+    canReset: progress.done > 0,
+    onReset,
+    onToggleFavorite,
+  });
 
   const style = useMemo(
     () => ({ flex: 1, backgroundColor: colors.bg, direction }),
     [colors.bg, direction],
-  );
-
-  const header = useMemo(
-    () =>
-      progress.complete ? (
-        <View className="rounded-3xl bg-main-soft p-4">
-          <AppText
-            weight="bold"
-            className="text-main"
-            style={{ textAlign: "center" }}
-          >
-            {t("completed")}
-          </AppText>
-        </View>
-      ) : null,
-    [progress.complete, t],
   );
 
   const renderItem = useCallback<ListRenderItem<Zikr>>(
@@ -178,7 +117,7 @@ export default function CategoryContent({
         windowSize={7}
         removeClippedSubviews={Platform.OS === "android"}
         itemLayoutAnimation={hideCompleted ? LAYOUT : undefined}
-        ListHeaderComponent={header}
+        ListHeaderComponent={progress.complete ? CategoryCompletedBanner : null}
         renderItem={renderItem}
       />
       <TopProgressBar done={progress.done} total={progress.total} />

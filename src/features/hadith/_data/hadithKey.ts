@@ -1,5 +1,5 @@
 import type { SavedHadith } from "@/store/Slices/AzkarSlice";
-import type { DorarHadith } from "./parseDorar";
+import type { DorarHadith } from "../_components/parseDorar";
 
 function hash(text: string) {
   let h = 5381;

@@ -3,24 +3,13 @@ import { AppDispatch, useAppDispatch, useAppSelector } from "@/store/Store";
 import { useCallback, useEffect, useState } from "react";
 import type { PrayerLocation } from "../_data/calculate";
 import { lookupCityName } from "../_data/cityName";
+import { distanceKm } from "../_data/geo";
 
 export type LocationStatus = "loading" | "ready" | "denied" | "error";
 
 const MOVED_KM = 5;
 const LOOKUP_RETRY = 7 * 24 * 60 * 60 * 1000;
 let refresh: Promise<LocationStatus> | null = null;
-
-const distanceKm = (a: PrayerLocation, b: PrayerLocation) => {
-  const rad = Math.PI / 180;
-  const dLat = (b.latitude - a.latitude) * rad;
-  const dLon = (b.longitude - a.longitude) * rad;
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(a.latitude * rad) *
-      Math.cos(b.latitude * rad) *
-      Math.sin(dLon / 2) ** 2;
-  return 12742 * Math.asin(Math.sqrt(h));
-};
 
 async function locate(
   dispatch: AppDispatch,

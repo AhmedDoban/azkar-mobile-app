@@ -1,11 +1,10 @@
 import AppText from "@/components/ui/AppText";
-import Icon from "@/components/ui/Icon";
-import PressableScale from "@/components/ui/PressableScale";
-import useThemeColors from "@/hooks/useThemeColors";
 import { View } from "react-native";
 import useSettingsColors from "../_components/useSettingsColors";
+import SelectableCard from "./SelectableCard";
+import SelectionCheck from "./SelectionCheck";
 
-const METHOD_CARD_HEIGHT = 60;
+const CARD_STYLE = { height: 60, borderWidth: 1 };
 
 export default function PrayerMethodOption({
   label,
@@ -18,22 +17,15 @@ export default function PrayerMethodOption({
   selected: boolean;
   onPress: () => void;
 }) {
-  const colors = useThemeColors();
   const palette = useSettingsColors();
 
   return (
-    <PressableScale
-      scaleTo={0.98}
+    <SelectableCard
+      label={label}
+      selected={selected}
       onPress={onPress}
-      accessibilityRole="radio"
-      accessibilityState={{ selected }}
-      accessibilityLabel={label}
-      className="flex-row items-center gap-3 rounded-2xl border px-4"
-      style={{
-        height: METHOD_CARD_HEIGHT,
-        borderColor: selected ? colors.accent : palette.border,
-        backgroundColor: selected ? palette.activeFill : palette.card,
-      }}
+      className="flex-row items-center gap-3 rounded-2xl px-4"
+      style={CARD_STYLE}
     >
       <View className="flex-1 justify-center gap-0.5">
         <AppText weight="bold" className="text-[15px]" numberOfLines={1}>
@@ -49,24 +41,7 @@ export default function PrayerMethodOption({
           </AppText>
         ) : null}
       </View>
-      {selected ? (
-        <View
-          className="size-6 items-center justify-center rounded-full"
-          style={{ backgroundColor: colors.accent }}
-        >
-          <Icon
-            name="check"
-            size={14}
-            strokeWidth={3}
-            tintColor={colors.isDark ? "#0a0a0a" : "#ffffff"}
-          />
-        </View>
-      ) : (
-        <View
-          className="size-6 rounded-full"
-          style={{ borderWidth: 2, borderColor: palette.border }}
-        />
-      )}
-    </PressableScale>
+      <SelectionCheck selected={selected} idleColor={palette.border} />
+    </SelectableCard>
   );
 }

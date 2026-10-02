@@ -8,11 +8,13 @@ export default function SettingsActionRow({
   icon,
   label,
   danger = false,
+  value,
   onPress,
 }: {
   icon: IconKey;
   label: string;
   danger?: boolean;
+  value?: string;
   onPress: () => void;
 }) {
   const colors = useThemeColors();
@@ -32,9 +34,12 @@ export default function SettingsActionRow({
         size={20}
         tintColor={danger ? palette.danger : colors.accent}
       />
-      <AppText weight="bold" style={{ color }}>
+      <AppText weight="bold" className="flex-1" style={{ color }}>
         {label}
       </AppText>
+      {value ? (
+        <AppText className="text-sm text-main-gray">{value}</AppText>
+      ) : null}
     </PressableScale>
   );
 }

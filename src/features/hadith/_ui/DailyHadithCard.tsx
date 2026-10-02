@@ -3,7 +3,7 @@ import Icon from "@/components/ui/Icon";
 import { Locale } from "@/i18n/config";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { savedLocal } from "../_components/hadithKey";
+import { savedLocal } from "../_data/hadithKey";
 import useHadithColors from "../_components/useHadithColors";
 import { getDailyHadith } from "../_data";
 import HadithDivider from "./HadithDivider";
@@ -57,7 +57,7 @@ export default function DailyHadithCard() {
         </AppText>
       )}
 
-      <HadithDivider accent={p.accent} line={p.line} />
+      <HadithDivider />
 
       <AppText className="text-center text-xs" style={{ color: p.muted }}>
         {hadith.source[locale]} · {t("hadithNo", { number: hadith.number })}
@@ -66,8 +66,6 @@ export default function DailyHadithCard() {
       <HadithActions
         text={`${hadith.text.ar}\n\n${hadith.source[locale]} — ${hadith.number}`}
         saved={savedLocal(hadith.id)}
-        tint={p.accent}
-        buttonClassName="bg-transparent"
       />
     </View>
   );

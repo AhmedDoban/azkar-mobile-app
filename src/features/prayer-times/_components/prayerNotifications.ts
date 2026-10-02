@@ -62,7 +62,7 @@ export async function ensureNotificationPermission() {
   return (await Notifications.requestPermissionsAsync()).granted;
 }
 
-export type PrayerAlert = { prayer: PrayerName; date: Date };
+type PrayerAlert = { prayer: PrayerName; date: Date };
 
 type SyncOptions = {
   alerts: PrayerAlert[];

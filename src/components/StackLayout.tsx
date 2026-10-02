@@ -5,6 +5,10 @@ import HeaderTitle from "./ui/HeaderTitle";
 
 const TAB_ROOTS = ["index", "hadith", "quran", "qibla", "settings"];
 
+const renderHeaderTitle = ({ children }: { children: string }) => (
+  <HeaderTitle>{children}</HeaderTitle>
+);
+
 export default function StackLayout() {
   const colors = useThemeColors();
 
@@ -14,7 +18,7 @@ export default function StackLayout() {
         headerShown: !TAB_ROOTS.includes(route.name),
         headerShadowVisible: false,
         headerTintColor: colors.isDark ? "#ffffff" : colors.main,
-        headerTitle: ({ children }) => <HeaderTitle>{children}</HeaderTitle>,
+        headerTitle: renderHeaderTitle,
         headerStyle: { backgroundColor: colors.bg },
         headerBackButtonDisplayMode: "minimal",
         contentStyle: { backgroundColor: colors.bg },

@@ -7,7 +7,6 @@ import {
   JUZ_STARTS,
   juzOf,
   pageOf,
-  toArabicDigits,
 } from "@/features/azkar/_data/quran";
 import useThemeColors from "@/hooks/useThemeColors";
 import { Link } from "expo-router";
@@ -15,12 +14,13 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import SurahRow from "./SurahRow";
+import useLocalDigits from "../_components/useLocalDigits";
 
 export default function JuzList() {
   const { t, i18n } = useTranslation("azkar");
   const colors = useThemeColors();
   const ar = i18n.language === "ar";
-  const num = (n: number) => (ar ? toArabicDigits(n) : String(n));
+  const num = useLocalDigits();
 
   const groups = useMemo(() => {
     const surahs = getSurahList();

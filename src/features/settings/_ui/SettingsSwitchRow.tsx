@@ -3,6 +3,8 @@ import useSettingsColors from "../_components/useSettingsColors";
 import * as Haptics from "expo-haptics";
 import { Platform, Switch, View } from "react-native";
 
+const THUMB = "#ffffff";
+
 export default function SettingsSwitchRow({
   title,
   subtitle,
@@ -16,7 +18,6 @@ export default function SettingsSwitchRow({
 }) {
   const palette = useSettingsColors();
   const offTrack = palette.track;
-  const thumbOn = "#ffffff";
 
   return (
     <View className="flex-row items-center gap-3">
@@ -40,8 +41,8 @@ export default function SettingsSwitchRow({
           accessibilityLabel={title}
           trackColor={{ false: offTrack, true: palette.switchOn }}
           ios_backgroundColor={offTrack}
-          thumbColor={value ? thumbOn : "#ffffff"}
-          {...(Platform.OS === "web" ? { activeThumbColor: thumbOn } : null)}
+          thumbColor={THUMB}
+          {...(Platform.OS === "web" ? { activeThumbColor: THUMB } : null)}
         />
       </View>
     </View>

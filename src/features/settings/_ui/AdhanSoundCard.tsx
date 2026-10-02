@@ -4,6 +4,8 @@ import PressableScale from "@/components/ui/PressableScale";
 import useThemeColors from "@/hooks/useThemeColors";
 import { View } from "react-native";
 import useSettingsColors from "../_components/useSettingsColors";
+import SelectableCard from "./SelectableCard";
+import SelectionCheck from "./SelectionCheck";
 
 export default function AdhanSoundCard({
   label,
@@ -30,19 +32,7 @@ export default function AdhanSoundCard({
   const palette = useSettingsColors();
 
   return (
-    <PressableScale
-      scaleTo={0.98}
-      onPress={onPress}
-      accessibilityRole="radio"
-      accessibilityState={{ selected }}
-      accessibilityLabel={label}
-      className="flex-row items-center gap-3 rounded-2xl p-3.5"
-      style={{
-        borderWidth: selected ? 2 : 1,
-        borderColor: selected ? colors.accent : palette.border,
-        backgroundColor: selected ? palette.activeFill : palette.card,
-      }}
-    >
+    <SelectableCard label={label} selected={selected} onPress={onPress}>
       {onPreview ? (
         <PressableScale
           onPress={onPreview}
@@ -89,23 +79,7 @@ export default function AdhanSoundCard({
         </PressableScale>
       ) : null}
 
-      <View
-        className="size-6 items-center justify-center rounded-full"
-        style={
-          selected
-            ? { backgroundColor: colors.accent }
-            : { borderWidth: 2, borderColor: palette.subtitle }
-        }
-      >
-        {selected ? (
-          <Icon
-            name="check"
-            size={14}
-            strokeWidth={3}
-            tintColor={colors.isDark ? "#0a0a0a" : "#ffffff"}
-          />
-        ) : null}
-      </View>
-    </PressableScale>
+      <SelectionCheck selected={selected} idleColor={palette.subtitle} />
+    </SelectableCard>
   );
 }

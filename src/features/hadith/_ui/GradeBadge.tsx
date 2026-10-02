@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import AppText from "@/components/ui/AppText";
 import useThemeColors from "@/hooks/useThemeColors";
-import { gradeLevel } from "../_components/gradeLevel";
+import { gradeLevel } from "../_data/gradeLevel";
 
 export default function GradeBadge({
   label,

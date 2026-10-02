@@ -2,9 +2,8 @@ import AppText from "@/components/ui/AppText";
 import Icon, { IconKey } from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
 import useDirection from "@/hooks/useDirection";
-import useThemeColors from "@/hooks/useThemeColors";
-import { View } from "react-native";
 import useSettingsColors from "../_components/useSettingsColors";
+import SettingsIconBadge from "./SettingsIconBadge";
 
 export default function SettingsNavRow({
   icon,
@@ -17,7 +16,6 @@ export default function SettingsNavRow({
   value?: string | null;
   onPress: () => void;
 }) {
-  const colors = useThemeColors();
   const palette = useSettingsColors();
   const { isRTL } = useDirection();
 
@@ -29,9 +27,7 @@ export default function SettingsNavRow({
       accessibilityLabel={title}
       className="flex-row items-center gap-3 py-3"
     >
-      <View className="size-9 items-center justify-center rounded-full bg-accent-soft">
-        <Icon name={icon} size={17} tintColor={colors.accent} />
-      </View>
+      <SettingsIconBadge icon={icon} size={17} />
       <AppText weight="bold" className="flex-1 text-[15px]">
         {title}
       </AppText>

@@ -1,105 +1,61 @@
-import AppText from "@/components/ui/AppText";
-import Icon from "@/components/ui/Icon";
-import PressableScale from "@/components/ui/PressableScale";
+import BrandCardBackground from "@/components/ui/BrandCardBackground";
 import { PAGE_MOSQUES } from "@/constants/mosques";
-import useThemeColors from "@/hooks/useThemeColors";
-import { Locale } from "@/i18n/config";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Image, Linking, StyleSheet, View } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import { useCallback, useState } from "react";
+import { LayoutChangeEvent, View } from "react-native";
 import useCityName from "./_components/useCityName";
 import usePrayerLabels from "./_components/usePrayerLabels";
-import usePrayerSchedule, { toMinutes } from "./_components/usePrayerSchedule";
+import usePrayerSchedule from "./_components/usePrayerSchedule";
+import { getPrayerProgress } from "./_data/schedule";
+import { shortTime } from "./_data/time";
 import ArchWindow from "./_ui/ArchWindow";
 import NextPrayerHeader from "./_ui/NextPrayerHeader";
 import NotificationPermissionDialog from "./_ui/NotificationPermissionDialog";
 import PrayerCell from "./_ui/PrayerCell";
+import PrayerDateRow from "./_ui/PrayerDateRow";
 import PrayerTimesCardSkeleton from "./_ui/PrayerTimesCardSkeleton";
+import PrayerTimesError from "./_ui/PrayerTimesError";
 
-const DAY = 24 * 60;
 const WINDOW = 0.26;
-const DECOR = require("@/assets/images/NextPray_bg.webp");
-
-const shortTime = (hhmm: string) => {
-  const [h, m] = hhmm.split(":").map(Number);
-  return `${h % 12 || 12}:${String(m).padStart(2, "0")}`;
+const CARD_STYLE = { boxShadow: "0 10px 24px rgba(14, 58, 51, 0.25)" };
+const STRIP_STYLE = {
+  backgroundColor: "rgba(255, 255, 255, 0.1)",
+  borderColor: "rgba(255, 255, 255, 0.16)",
 };
 
 export default function PrayerTimesCard() {
-  const { t, i18n } = useTranslation(["prayer", "common"]);
-  const locale = i18n.language as Locale;
-  const colors = useThemeColors();
   const { label } = usePrayerLabels();
   const { day, prayers, next, now, isFriday, status, retry } =
     usePrayerSchedule();
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [askNotifications, setAskNotifications] = useState(false);
   const city = useCityName(day?.city);
+  const onLayout = useCallback(
+    (e: LayoutChangeEvent) =>
+      setSize({
+        w: e.nativeEvent.layout.width,
+        h: e.nativeEvent.layout.height,
+      }),
+    [],
+  );
+  const openNotifications = useCallback(() => setAskNotifications(true), []);
+  const closeNotifications = useCallback(() => setAskNotifications(false), []);
 
   if (status === "loading") return <PrayerTimesCardSkeleton />;
 
   if (!day || !next) {
-    const denied = status === "denied";
-    return (
-      <PressableScale
-        onPress={denied ? () => Linking.openSettings() : retry}
-        className="flex-row items-center justify-center gap-3 rounded-3xl border border-line bg-surface p-5"
-      >
-        <Icon
-          name={denied ? "location" : "wifiOff"}
-          size={16}
-          tintColor={colors.orange}
-        />
-        <AppText className="shrink text-main-gray">
-          {t(denied ? "locationNeeded" : "error")}
-        </AppText>
-        <AppText weight="bold" className="text-main">
-          {t(denied ? "openSettings" : "common:retry")}
-        </AppText>
-      </PressableScale>
-    );
+    return <PrayerTimesError denied={status === "denied"} onRetry={retry} />;
   }
 
-  const hijri = day.hijri;
-  const comma = locale === "ar" ? "،" : ",";
-
-  const current = now.getHours() * 60 + now.getMinutes();
-  const passed = prayers.filter((p) => p.status === "passed");
-  const previous = passed.length
-    ? toMinutes(passed[passed.length - 1].time)
-    : toMinutes(day.yesterdayIsha) - DAY;
-  const target = current + next.minutesLeft;
-  const progress = (current - previous) / Math.max(1, target - previous);
-
+  const progress = getPrayerProgress(day, prayers, next, now);
   const windowW = size.w * WINDOW;
 
   return (
     <View
       className="overflow-hidden rounded-[28px]"
-      style={{ boxShadow: "0 10px 24px rgba(14, 58, 51, 0.25)" }}
-      onLayout={(e) =>
-        setSize({
-          w: e.nativeEvent.layout.width,
-          h: e.nativeEvent.layout.height,
-        })
-      }
+      style={CARD_STYLE}
+      onLayout={onLayout}
     >
-      <Svg width="100%" height="100%" style={StyleSheet.absoluteFill}>
-        <Defs>
-          <LinearGradient id="prayerCard" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor={colors.brand.mid} />
-            <Stop offset="1" stopColor={colors.brand.deep} />
-          </LinearGradient>
-        </Defs>
-        <Rect width="100%" height="100%" fill="url(#prayerCard)" />
-      </Svg>
-
-      <Image
-        source={DECOR}
-        resizeMode="cover"
-        style={[StyleSheet.absoluteFill, { width: "100%", height: "100%" }]}
-      />
+      <BrandCardBackground id="prayerCard" />
 
       {size.w > 0 ? (
         <View
@@ -117,28 +73,7 @@ export default function PrayerTimesCard() {
       <View className="gap-5 p-4">
         <View className="flex-row">
           <View className="flex-1 gap-4">
-            <View className="flex-row items-center gap-1.5">
-              <Icon name="calendar" size={13} tintColor="#ffffff" />
-              <AppText
-                className="shrink text-xs text-white"
-                style={{ opacity: 0.85 }}
-                numberOfLines={1}
-              >
-                {`${hijri.weekday[locale]}${comma} ${hijri.day} ${hijri.monthName[locale]} ${hijri.year}`}
-              </AppText>
-              {city ? (
-                <>
-                  <Icon name="location" size={12} tintColor="#ffffff" />
-                  <AppText
-                    className="shrink text-xs text-white"
-                    style={{ opacity: 0.85 }}
-                    numberOfLines={1}
-                  >
-                    {city}
-                  </AppText>
-                </>
-              ) : null}
-            </View>
+            <PrayerDateRow hijri={day.hijri} city={city} />
 
             <NextPrayerHeader
               prayer={next.name}
@@ -153,10 +88,7 @@ export default function PrayerTimesCard() {
         <View className="flex-row">
           <View
             className="flex-1 flex-row rounded-3xl border p-1"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              borderColor: "rgba(255, 255, 255, 0.16)",
-            }}
+            style={STRIP_STYLE}
           >
             {prayers.map(({ name, time, status }) => (
               <PrayerCell
@@ -165,7 +97,7 @@ export default function PrayerTimesCard() {
                 label={label(name, isFriday)}
                 time={shortTime(time)}
                 status={status}
-                onDenied={() => setAskNotifications(true)}
+                onDenied={openNotifications}
               />
             ))}
           </View>
@@ -174,7 +106,7 @@ export default function PrayerTimesCard() {
       </View>
       <NotificationPermissionDialog
         visible={askNotifications}
-        onClose={() => setAskNotifications(false)}
+        onClose={closeNotifications}
       />
     </View>
   );

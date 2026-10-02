@@ -24,7 +24,7 @@ export type PrayerConfig = {
 export type PrayerDates = Record<PrayerName, Date>;
 
 const pad = (n: number) => String(n).padStart(2, "0");
-export const toHHMM = (date: Date) =>
+const toHHMM = (date: Date) =>
   `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 
 export function prayerDates(config: PrayerConfig, day: Date): PrayerDates {

@@ -1,14 +1,16 @@
 import {
   getPage,
+  getSurah,
   JUZ_STARTS,
   PAGE_COUNT,
   pageOf,
 } from "@/features/azkar/_data/quran";
 import type { KhatmaPlan } from "@/store/Slices/SettingsSlice";
+import { localDigits } from "./localDigits";
 
 export type Wird = { index: number; from: number; to: number };
 
-export function juzPages(fromJuz: number, toJuz: number) {
+function juzPages(fromJuz: number, toJuz: number) {
   const start = JUZ_STARTS[fromJuz - 1];
   const from = pageOf(start.surah, start.ayah);
   if (toJuz >= 30) return { from, to: PAGE_COUNT };
@@ -61,5 +63,18 @@ export function todayWirdBounds(plan: KhatmaPlan | null) {
     wird,
     first: getPage(wird.from).start,
     last: getPage(wird.to).end,
+  };
+}
+
+export function wirdLabel(from: number, to: number, ar: boolean) {
+  const start = getPage(from).start;
+  const end = getPage(to).end;
+  const name = (surah: number) => {
+    const s = getSurah(surah);
+    return ar ? s?.name : s?.transliteration;
+  };
+  return {
+    start: `${name(start.surah)} ${localDigits(start.ayah, ar)}`,
+    end: `${name(end.surah)} ${localDigits(end.ayah, ar)}`,
   };
 }

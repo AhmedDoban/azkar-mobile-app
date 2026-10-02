@@ -7,6 +7,7 @@ import {
 } from "expo-audio";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ayahAudioUrl } from "../_data/reciters";
+import { audioSource, cacheAudio } from "./audioCache";
 
 let stopOthers: (() => void) | null = null;
 
@@ -30,9 +31,16 @@ export default function useRecitation() {
         ? ayahAudioUrl(reciter, 1, 1)
         : ayahAudioUrl(reciter, ref.surah, ref.ayah);
       try {
-        player.replace({ uri: url });
+        player.replace({ uri: audioSource(url) });
         player.play();
       } catch {}
+      let ahead: AyahRef | null = ref;
+      for (let i = 0; i < 2 && ahead; i++) {
+        const end = until.current;
+        if (end && end.surah === ahead.surah && end.ayah === ahead.ayah) break;
+        ahead = nextAyah(ahead);
+        if (ahead) cacheAudio(ayahAudioUrl(reciter, ahead.surah, ahead.ayah));
+      }
       setCurrent(ref);
       setPlaying(true);
     },

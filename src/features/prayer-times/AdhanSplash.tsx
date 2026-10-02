@@ -3,30 +3,18 @@ import AppText from "@/components/ui/AppText";
 import PressableScale from "@/components/ui/PressableScale";
 import useDirection from "@/hooks/useDirection";
 import useThemeColors from "@/hooks/useThemeColors";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import useAdhanPlayer from "./_components/useAdhanPlayer";
 import usePrayerLabels from "./_components/usePrayerLabels";
 import { AdhanSoundId } from "./_data/adhanSounds";
 import { PrayerName } from "./_data/types";
+import AdhanAudio from "./_ui/AdhanAudio";
 import AdhanBackdrop from "./_ui/adhan/AdhanBackdrop";
 import CrescentDivider from "./_ui/adhan/CrescentDivider";
 import Lantern from "./_ui/adhan/Lantern";
-import { ADHAN_PALETTE } from "./_ui/adhan/palette";
-
-function AdhanAudio({ sound }: { sound: AdhanSoundId }) {
-  const { play, stop } = useAdhanPlayer();
-
-  useEffect(() => {
-    play(sound);
-    return stop;
-  }, []);
-
-  return null;
-}
+import { ADHAN_PALETTE } from "./_data/adhanPalette";
 
 export default function AdhanSplash({
   prayer,

@@ -59,7 +59,7 @@ const filled = (icon: IconSvgElement): IconSvgElement =>
     ([tag, attrs]) => [tag, { ...attrs, fill: "currentColor" }] as const,
   );
 
-export const Icons = {
+const Icons = {
   arrowUpForward: ArrowUpRight01Icon,
   asr: SunCloud02Icon,
   bell: Notification03Icon,

@@ -12,8 +12,6 @@ export default function SurahFrame({
   y: number;
   width: number;
   height: number;
-  nameX?: number;
-  nameWidth?: number;
 }) {
   const id = useAppSelector((s) => s.settings.surahFrame);
   const frame = useFrameSvg(id);

@@ -1,0 +1,3 @@
+#!/bin/sh
+export PATH="$PATH:/usr/local/bin:/opt/homebrew/bin"
+node "$(git rev-parse --show-toplevel)/scripts/bump-version.js" || exit 1
