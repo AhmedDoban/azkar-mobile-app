@@ -2,8 +2,8 @@ import AppText from "@/components/ui/AppText";
 import ContentActions from "@/components/ui/ContentActions";
 import PressableScale from "@/components/ui/PressableScale";
 import useHadithColors from "@/features/hadith/_components/useHadithColors";
-import useArabicTextStyle from "@/hooks/useArabicTextStyle";
 import useDirection from "@/hooks/useDirection";
+import { Locale } from "@/i18n/config";
 import {
   incrementCount,
   progressKey,
@@ -15,20 +15,15 @@ import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform, View } from "react-native";
 import { Zikr } from "../_data";
+import ZikrBody from "./ZikrBody";
 import ZikrCardBackdrop from "./ZikrCardBackdrop";
 import ZikrCounter from "./ZikrCounter";
-import ZikrOrnament from "./ZikrOrnament";
-import ZikrPosition from "./ZikrPosition";
 
 type Props = {
   categoryId: string;
   zikr: Zikr;
   counting?: boolean;
-  index?: number;
-  total?: number;
 };
-
-const ORNAMENT_GOLD = "#c9a96e";
 
 const CARD_SHADOW =
   Platform.OS === "ios"
@@ -43,13 +38,11 @@ export default memo(function ZikrCard({
   categoryId,
   zikr,
   counting = true,
-  index,
-  total,
 }: Props) {
-  const { t } = useTranslation("azkar");
+  const { t, i18n } = useTranslation("azkar");
+  const locale = i18n.language as Locale;
   const p = useHadithColors();
   const dispatch = useAppDispatch();
-  const textStyle = useArabicTextStyle();
   const { isRTL } = useDirection();
   const hapticOnTap = useAppSelector((s) => s.settings.reading.hapticOnTap);
   const hapticOnComplete = useAppSelector(
@@ -58,7 +51,20 @@ export default memo(function ZikrCard({
   const key = progressKey(categoryId, zikr.id);
   const counted = useAppSelector((s) => s.azkar.progress[key] ?? 0);
   const loved = useAppSelector((s) => s.azkar.favoriteAdhkar.includes(key));
-  const shareText = zikr.title ? `${zikr.title}\n\n${zikr.text}` : zikr.text;
+  const content = zikr[locale];
+  const shareText = useMemo(
+    () =>
+      [
+        content.title,
+        [content.prefix, content.text, content.suffix]
+          .filter(Boolean)
+          .join("\n"),
+        content.source,
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
+    [content],
+  );
   const done = counting && counted >= zikr.count;
   const buttonStyle = useMemo(
     () => ({ backgroundColor: p.card, ...BUTTON_SHADOW }),
@@ -95,25 +101,7 @@ export default memo(function ZikrCard({
         rtl={isRTL}
       />
 
-      <View className="flex-row items-center">
-        <View className="flex-1 items-start">
-          {index && total && total > 1 ? (
-            <ZikrPosition index={index} total={total} />
-          ) : null}
-        </View>
-        <ZikrOrnament color={ORNAMENT_GOLD} />
-        <View className="flex-1" />
-      </View>
-
-      {zikr.title ? (
-        <AppText weight="bold" className="text-sm" style={{ color: p.accent }}>
-          {zikr.title}
-        </AppText>
-      ) : null}
-
-      <AppText variant="quran" style={[textStyle, { color: p.ink }]} selectable>
-        {zikr.text}
-      </AppText>
+      <ZikrBody content={content} arabic={locale === "ar"} />
 
       <View className="flex-row items-center gap-2 pt-1">
         {counting ? (

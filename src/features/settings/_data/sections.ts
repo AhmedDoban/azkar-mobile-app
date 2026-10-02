@@ -4,6 +4,7 @@ export const SETTINGS_SECTIONS = [
   { id: "language", icon: "translate", title: "language", group: "general" },
   { id: "appearance", icon: "paint", title: "appearance", group: "general" },
   { id: "reading", icon: "textFont", title: "reading", group: "general" },
+  { id: "surahFrame", icon: "quran", title: "surahFrame", group: "general" },
   {
     id: "prayer",
     icon: "personPraying",
@@ -12,6 +13,7 @@ export const SETTINGS_SECTIONS = [
   },
   { id: "adhan", icon: "volume", title: "adhanSound", group: "worship" },
   { id: "data", icon: "data", title: "data", group: "data" },
+  { id: "sources", icon: "website", title: "sources", group: "data" },
 ] as const satisfies readonly {
   id: string;
   icon: IconKey;

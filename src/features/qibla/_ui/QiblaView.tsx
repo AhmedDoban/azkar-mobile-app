@@ -89,7 +89,7 @@ export default function QiblaView({
             style={{ textAlign: "center" }}
           >
             {`${t("fromNorth", { deg: deg(bearing) })} · ${t("km", {
-              value: Math.round(distance).toLocaleString(),
+              value: Math.round(distance).toLocaleString("en-US"),
             })}`}
           </AppText>
         </View>

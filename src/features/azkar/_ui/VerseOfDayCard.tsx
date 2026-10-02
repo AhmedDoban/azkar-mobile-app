@@ -4,7 +4,7 @@ import IconCircle from "@/components/ui/IconCircle";
 import { Colors } from "@/constants/Colors";
 import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
-import { getRandomVerse } from "../_data/quran";
+import { getRandomVerse, toArabicDigits } from "../_data/quran";
 
 const BACKGROUND = require("@/assets/images/qoran_bg.webp");
 const LIGHT = Colors.light;
@@ -47,23 +47,27 @@ export default memo(function VerseOfDayCard() {
             </AppText>
           </View>
 
-          <AppText
-            variant="quran"
-            style={{ fontSize: 20, lineHeight: 38, color: LIGHT.main }}
-          >
-            {`﴿ ${verse.text} ﴾`}
-          </AppText>
-
           {english ? (
-            <AppText className="text-sm leading-5" style={{ color: LIGHT.ink }}>
-              {verse.translation}
+            <AppText
+              weight="bold"
+              className="text-base leading-6"
+              style={{ color: LIGHT.main }}
+            >
+              {`“${verse.translation}”`}
             </AppText>
-          ) : null}
+          ) : (
+            <AppText
+              variant="quran"
+              style={{ fontSize: 20, lineHeight: 38, color: LIGHT.main }}
+            >
+              {`﴿ ${verse.text} ﴾`}
+            </AppText>
+          )}
 
           <AppText className="text-xs" style={{ color: LIGHT.gray }}>
             {t("verseRef", {
               surah: english ? verse.surahEn : verse.surah,
-              ayah: verse.ayah,
+              ayah: english ? verse.ayah : toArabicDigits(verse.ayah),
             })}
           </AppText>
         </View>

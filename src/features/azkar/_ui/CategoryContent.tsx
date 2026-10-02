@@ -10,7 +10,7 @@ import {
   toggleFavorite,
 } from "@/store/Slices/AzkarSlice";
 import { useAppDispatch, useAppSelector } from "@/store/Store";
-import { getCategory, Zikr } from "../_data";
+import { getCategory, getItems, Zikr } from "../_data";
 import useCategoryProgress from "../_components/useCategoryProgress";
 import useCategoryScreenOptions from "../_components/useCategoryScreenOptions";
 import CategoryCompletedBanner from "./CategoryCompletedBanner";
@@ -39,6 +39,7 @@ export default function CategoryContent({
 }) {
   const dispatch = useAppDispatch();
   const category = getCategory(categoryId)!;
+  const allItems = useMemo(() => getItems(categoryId), [categoryId]);
   const progress = useCategoryProgress(category);
   const isFavorite = useAppSelector((s) =>
     s.azkar.favorites.includes(categoryId),
@@ -47,22 +48,17 @@ export default function CategoryContent({
   const items = useAppSelector(
     (s) =>
       hideCompleted
-        ? category.items.filter(
+        ? allItems.filter(
             (zikr) =>
               (s.azkar.progress[progressKey(categoryId, zikr.id)] ?? 0) <
               zikr.count,
           )
-        : category.items,
+        : allItems,
     shallowEqual,
   );
 
   const colors = useThemeColors();
   const { direction } = useDirection();
-  const positions = useMemo(
-    () => new Map(category.items.map((zikr, i) => [zikr.id, i + 1])),
-    [category],
-  );
-  const total = category.items.length;
 
   const onReset = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -92,15 +88,10 @@ export default function CategoryContent({
         entering={hideCompleted ? ENTERING : undefined}
         exiting={hideCompleted ? EXITING : undefined}
       >
-        <ZikrCard
-          categoryId={categoryId}
-          zikr={zikr}
-          index={positions.get(zikr.id)}
-          total={total}
-        />
+        <ZikrCard categoryId={categoryId} zikr={zikr} />
       </Animated.View>
     ),
-    [hideCompleted, categoryId, positions, total],
+    [hideCompleted, categoryId],
   );
 
   return (

@@ -18,6 +18,7 @@
   "reminderOn": "تذكير الأذان مفعّل",
   "reminderOff": "تذكير الأذان متوقف",
   "notificationTitle": "حان الآن موعد أذان {{prayer}}",
+  "channelName": "الأذان · {{sound}}",
   "notificationBody": "حيّ على الصلاة، حيّ على الفلاح",
   "permissionDenied": "اسمح بالإشعارات من الإعدادات لتصلك تذكيرات الأذان",
   "left": "متبقي",
@@ -26,5 +27,6 @@
   "locationNeeded": "اسمح بالوصول للموقع لحساب مواقيت الصلاة",
   "openSettings": "الإعدادات",
   "notificationsTitle": "فعّل الإشعارات",
-  "notNow": "ليس الآن"
+  "notNow": "ليس الآن",
+  "reminderHint": "اضغط على أي صلاة لتشغيل تنبيه الأذان أو إيقافه"
 }

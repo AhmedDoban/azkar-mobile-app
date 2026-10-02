@@ -16,6 +16,7 @@ import {
   usePrayerConfig,
   usePrayerDay,
 } from "./_components/usePrayerSchedule";
+import { AdhanSoundId } from "./_data/adhanSounds";
 import { addDays, prayerDates } from "./_data/calculate";
 import { getPrayerStartingNow } from "./_data/schedule";
 import { PrayerName, REMINDER_PRAYERS } from "./_data/types";
@@ -24,7 +25,7 @@ import AdhanSplash from "./AdhanSplash";
 const ALERT_DAYS = 7;
 
 export default function AdhanReminder() {
-  const { t, i18n } = useTranslation("prayer");
+  const { t, i18n } = useTranslation(["prayer", "settings"]);
   const { label } = usePrayerLabels();
   usePrayerLocation();
   const config = usePrayerConfig();
@@ -45,12 +46,15 @@ export default function AdhanReminder() {
     setActive(prayer);
   };
 
+  const channelName = (id: AdhanSoundId) =>
+    t("channelName", { sound: t(`settings:sounds.${id}`) });
+
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
-      configurePrayerNotifications();
+      configurePrayerNotifications(channelName);
     });
     return () => task.cancel();
-  }, []);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (startingNow && reminders[startingNow] !== false) show(startingNow);
@@ -81,6 +85,7 @@ export default function AdhanReminder() {
     syncPrayerNotifications({
       alerts,
       sound,
+      channelName,
       title: (prayer, date) =>
         t("notificationTitle", { prayer: label(prayer, date.getDay() === 5) }),
       body: t("notificationBody"),

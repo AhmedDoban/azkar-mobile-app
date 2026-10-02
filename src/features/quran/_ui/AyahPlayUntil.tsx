@@ -3,13 +3,15 @@ import {
   AyahRef,
   ayahsOnPage,
   ayahText,
+  ayahTranslation,
   getSurah,
   pageOf,
-  toArabicDigits,
 } from "@/features/azkar/_data/quran";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
+import useLocalDigits from "../_components/useLocalDigits";
 import usePopupColors from "../_components/usePopupColors";
+import useSurahName from "../_components/useSurahName";
 
 export default function AyahPlayUntil({
   ayah,
@@ -18,8 +20,11 @@ export default function AyahPlayUntil({
   ayah: AyahRef;
   onPlay: (until: AyahRef | null) => void;
 }) {
-  const { t } = useTranslation("azkar");
+  const { t, i18n } = useTranslation("azkar");
+  const ar = i18n.language === "ar";
   const c = usePopupColors();
+  const num = useLocalDigits();
+  const surahName = useSurahName();
 
   const surah = getSurah(ayah.surah);
   const page = pageOf(ayah.surah, ayah.ayah);
@@ -40,10 +45,14 @@ export default function AyahPlayUntil({
         {[
           {
             title: t("endOfPage"),
-            value: t("pageNumber", { page: toArabicDigits(page) }),
+            value: t("pageNumber", { page: num(page) }),
             stop: pageEnd,
           },
-          { title: t("endOfSurah"), value: surah?.name ?? "", stop: surahEnd },
+          {
+            title: t("endOfSurah"),
+            value: surahName(ayah.surah),
+            stop: surahEnd,
+          },
           { title: t("continuous"), value: "∞", stop: null },
         ].map((row, i) => (
           <Pressable
@@ -73,19 +82,22 @@ export default function AyahPlayUntil({
           >
             <View className="flex-row items-center justify-between">
               <AppText weight="bold" style={{ color: c.ink }}>
-                {`${getSurah(ref.surah)?.name}: ${toArabicDigits(ref.ayah)}`}
+                {t("ayahRef", {
+                  surah: surahName(ref.surah),
+                  ayah: num(ref.ayah),
+                })}
               </AppText>
-              <AppText style={{ color: c.gold }}>
-                {toArabicDigits(page)}
-              </AppText>
+              <AppText style={{ color: c.gold }}>{num(page)}</AppText>
             </View>
             <AppText
-              variant="quran"
-              className="text-xl"
+              variant={ar ? "quran" : "ui"}
+              className={ar ? "text-xl" : "text-sm"}
               style={{ color: c.gold }}
               numberOfLines={1}
             >
-              {ayahText(ref.surah, ref.ayah)}
+              {ar
+                ? ayahText(ref.surah, ref.ayah)
+                : ayahTranslation(ref.surah, ref.ayah)}
             </AppText>
           </Pressable>
         ))}

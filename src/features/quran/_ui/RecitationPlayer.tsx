@@ -1,16 +1,14 @@
 import AppText from "@/components/ui/AppText";
 import Icon from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
-import {
-  AyahRef,
-  getSurah,
-  toArabicDigits,
-} from "@/features/azkar/_data/quran";
+import { AyahRef } from "@/features/azkar/_data/quran";
 import { useAppSelector } from "@/store/Store";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
+import useLocalDigits from "../_components/useLocalDigits";
 import useMushafColors from "../_components/useMushafColors";
+import useSurahName from "../_components/useSurahName";
 import { getReciter } from "../_data/reciters";
 import ReciterPicker from "./ReciterPicker";
 
@@ -35,7 +33,8 @@ export default function RecitationPlayer({
   const reciter = getReciter(reciterId);
   const [picking, setPicking] = useState(false);
   const ar = i18n.language === "ar";
-  const surah = current ? getSurah(current.surah) : null;
+  const num = useLocalDigits();
+  const surahName = useSurahName();
   const closePicker = useCallback(() => setPicking(false), []);
 
   return (
@@ -74,11 +73,11 @@ export default function RecitationPlayer({
           <AppText weight="bold" numberOfLines={1}>
             {ar ? reciter.ar : reciter.en}
           </AppText>
-          {surah && current ? (
+          {current ? (
             <AppText className="text-xs" style={{ color: c.gold }}>
               {t("verseRef", {
-                surah: surah.name,
-                ayah: ar ? toArabicDigits(current.ayah) : current.ayah,
+                surah: surahName(current.surah),
+                ayah: num(current.ayah),
               })}
             </AppText>
           ) : null}

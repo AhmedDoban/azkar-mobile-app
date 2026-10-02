@@ -9,12 +9,13 @@ import { View } from "react-native";
 import useSettingsColors from "../_components/useSettingsColors";
 
 export default function TextSizeSetting() {
-  const { t } = useTranslation("settings");
+  const { t, i18n } = useTranslation("settings");
+  const ar = i18n.language === "ar";
   const dispatch = useAppDispatch();
   const palette = useSettingsColors();
   const textSize = useAppSelector((s) => s.settings.textSize);
   const { isRTL } = useDirection();
-  const sizeGlyph = isRTL ? "أ" : "A";
+  const sizeGlyph = t("textSizeGlyph");
   const previewStyle = useArabicTextStyle();
 
   return (
@@ -48,12 +49,12 @@ export default function TextSizeSetting() {
       </View>
       <View className="flex-row items-center justify-between gap-3">
         <AppText
-          variant="quran"
+          variant={ar ? "quran" : "ui"}
           className="flex-1"
           style={previewStyle}
           numberOfLines={2}
         >
-          سُبْحَانَ اللَّهِ وَبِحَمْدِهِ
+          {t("textSizePreview")}
         </AppText>
         <View className="rounded-full bg-accent-soft px-3 py-1">
           <AppText weight="bold" className="text-sm text-accent">

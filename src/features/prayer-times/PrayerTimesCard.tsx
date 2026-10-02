@@ -1,5 +1,6 @@
 import BrandCardBackground from "@/components/ui/BrandCardBackground";
 import { PAGE_MOSQUES } from "@/constants/mosques";
+import { useAppSelector } from "@/store/Store";
 import { useCallback, useState } from "react";
 import { LayoutChangeEvent, View } from "react-native";
 import useCityName from "./_components/useCityName";
@@ -14,6 +15,7 @@ import PrayerCell from "./_ui/PrayerCell";
 import PrayerDateRow from "./_ui/PrayerDateRow";
 import PrayerTimesCardSkeleton from "./_ui/PrayerTimesCardSkeleton";
 import PrayerTimesError from "./_ui/PrayerTimesError";
+import ReminderHint from "./_ui/ReminderHint";
 
 const WINDOW = 0.26;
 const CARD_STYLE = { boxShadow: "0 10px 24px rgba(14, 58, 51, 0.25)" };
@@ -29,6 +31,7 @@ export default function PrayerTimesCard() {
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [askNotifications, setAskNotifications] = useState(false);
   const city = useCityName(day?.city);
+  const hintSeen = useAppSelector((s) => s.settings.reminderHintSeen);
   const onLayout = useCallback(
     (e: LayoutChangeEvent) =>
       setSize({
@@ -70,7 +73,7 @@ export default function PrayerTimesCard() {
         </View>
       ) : null}
 
-      <View className="gap-5 p-4">
+      <View className="gap-4 p-4">
         <View className="flex-row">
           <View className="flex-1 gap-4">
             <PrayerDateRow hijri={day.hijri} city={city} />
@@ -103,6 +106,15 @@ export default function PrayerTimesCard() {
           </View>
           <View style={{ width: windowW * 0.4 }} />
         </View>
+
+        {hintSeen ? null : (
+          <View className="flex-row">
+            <View className="flex-1">
+              <ReminderHint />
+            </View>
+            <View style={{ width: windowW * 0.4 }} />
+          </View>
+        )}
       </View>
       <NotificationPermissionDialog
         visible={askNotifications}

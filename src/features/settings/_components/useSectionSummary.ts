@@ -21,7 +21,7 @@ export default function useSectionSummary() {
   return (id: SettingsSectionId): string | null => {
     switch (id) {
       case "language":
-        return settings.locale === "ar" ? "العربية" : "English";
+        return t(`languageNames.${settings.locale}`);
       case "appearance":
         return `${t(settings.theme)} · ${t(`palettes.${settings.palette}`)}`;
       case "reading":

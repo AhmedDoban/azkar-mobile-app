@@ -27,7 +27,7 @@ export default function AyahTafsir({
       {tafsir ? (
         <>
           <AppText
-            arabic
+            arabic={tafsir.arabic}
             className="absolute inset-x-4 top-4 text-base leading-8"
             style={{ opacity: 0 }}
             onTextLayout={(e) => onLines(e.nativeEvent.lines.length)}
@@ -37,7 +37,7 @@ export default function AyahTafsir({
             {tafsir.text}
           </AppText>
           <AppText
-            arabic
+            arabic={tafsir.arabic}
             className="text-base leading-8"
             style={{ color: c.ink }}
             numberOfLines={open ? undefined : 5}

@@ -3,15 +3,14 @@ import BottomSheet from "@/components/ui/BottomSheet";
 import Icon from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
 import SheetHeader from "@/components/ui/SheetHeader";
-import {
-  AyahRef,
-  getSurah,
-  toArabicDigits,
-} from "@/features/azkar/_data/quran";
+import { AyahRef } from "@/features/azkar/_data/quran";
+import useDirection from "@/hooks/useDirection";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
+import useLocalDigits from "../_components/useLocalDigits";
 import usePopupColors from "../_components/usePopupColors";
+import useSurahName from "../_components/useSurahName";
 import AyahActions from "./AyahActions";
 import AyahPlayUntil from "./AyahPlayUntil";
 
@@ -28,6 +27,9 @@ export default memo(function AyahSheet({
 }) {
   const { t } = useTranslation("azkar");
   const c = usePopupColors();
+  const { isRTL, direction } = useDirection();
+  const num = useLocalDigits();
+  const surahName = useSurahName();
   const [view, setView] = useState<"main" | "until">("main");
   const [tafsirOpen, setTafsirOpen] = useState(false);
   const [tafsirLines, setTafsirLines] = useState(0);
@@ -55,7 +57,10 @@ export default memo(function AyahSheet({
 
   if (!shown) return null;
 
-  const label = `${getSurah(shown.surah)?.name}: ${toArabicDigits(shown.ayah)}`;
+  const label = t("ayahRef", {
+    surah: surahName(shown.surah),
+    ayah: num(shown.ayah),
+  });
 
   return (
     <BottomSheet
@@ -63,7 +68,7 @@ export default memo(function AyahSheet({
       onClose={onClose}
       closeLabel={t("close")}
       className="max-h-[88%]"
-      direction="rtl"
+      direction={direction}
       header={
         <SheetHeader
           title={view === "until" ? t("playUntil") : label}
@@ -76,7 +81,11 @@ export default memo(function AyahSheet({
                 onPress={showMain}
                 className="flex-row items-center gap-1"
               >
-                <Icon name="chevronRight" size={20} tintColor={c.accent} />
+                <Icon
+                  name={isRTL ? "chevronRight" : "chevronLeft"}
+                  size={20}
+                  tintColor={c.accent}
+                />
                 <AppText weight="bold" style={{ color: c.accent }}>
                   {label}
                 </AppText>

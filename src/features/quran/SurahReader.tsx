@@ -4,7 +4,6 @@ import {
   AyahRef,
   ayahsOnPage,
   getPage,
-  getSurah,
   PAGE_COUNT,
   pageOf,
 } from "@/features/azkar/_data/quran";
@@ -26,7 +25,8 @@ import useMushafColors from "./_components/useMushafColors";
 import useThemeColors from "@/hooks/useThemeColors";
 import useDirection from "@/hooks/useDirection";
 import useRecitation from "./_components/useRecitation";
-import { loadMuyassar } from "./_components/useTafsir";
+import useSurahName from "./_components/useSurahName";
+import { preloadTafsir } from "./_components/useTafsir";
 import { loadPageSvg } from "./_components/usePageSvg";
 import MushafPage from "./_ui/MushafPage";
 import MushafPager from "./_ui/MushafPager";
@@ -45,7 +45,9 @@ export default function SurahReader({
   ayah?: number;
   page?: number;
 }) {
-  const { t } = useTranslation("azkar");
+  const { t, i18n } = useTranslation("azkar");
+  const ar = i18n.language === "ar";
+  const surahName = useSurahName();
   const c = useMushafColors();
   const theme = useThemeColors();
   const { isRTL, direction } = useDirection();
@@ -79,10 +81,10 @@ export default function SurahReader({
 
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
-      loadMuyassar();
+      preloadTafsir(ar);
     });
     return () => task.cancel();
-  }, []);
+  }, [ar]);
   const [sheetAyah, setSheetAyah] = useState<AyahRef | null>(null);
   const fade = useSharedValue(1);
 
@@ -152,7 +154,7 @@ export default function SurahReader({
     dispatch(setQuranBookmark(bookmarked ? null : ayahsOnPage(page)[0]));
   };
 
-  const title = getSurah(getPage(page).start.surah)?.name ?? "";
+  const title = surahName(getPage(page).start.surah);
 
   return (
     <View
@@ -211,12 +213,13 @@ export default function SurahReader({
           />
         </PressableScale>
         <AppText
-          variant="quran"
-          className="flex-1 text-xl"
+          variant={ar ? "quran" : "ui"}
+          weight="bold"
+          className={ar ? "flex-1 text-xl" : "flex-1 text-lg"}
           style={{ color: c.ink, textAlign: "center" }}
           numberOfLines={1}
         >
-          {`سورة ${title}`}
+          {t("surahTitle", { name: title })}
         </AppText>
         <View className="size-10" />
       </Animated.View>

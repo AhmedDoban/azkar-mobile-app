@@ -5,6 +5,12 @@
   "light": "Light",
   "dark": "Dark",
   "textSize": "Adhkar text size",
+  "textSizeGlyph": "A",
+  "textSizePreview": "Glory be to Allah and praise be to Him",
+  "languageNames": {
+    "ar": "Arabic",
+    "en": "English"
+  },
   "data": "Data",
   "resetProgress": "Reset counters",
   "reading": "Reading settings",
@@ -127,5 +133,43 @@
   },
   "surahFrame": "Surah title frame",
   "clearRecitations": "Saved recitations",
-  "resetQuran": "Delete Quran data"
+  "resetQuran": "Delete Quran data",
+  "zikrContent": "Zikr card content",
+  "showPrefix": {
+    "title": "Show opening",
+    "hint": "The line before the zikr, like the basmala"
+  },
+  "showSuffix": {
+    "title": "Show note",
+    "hint": "The reference or note after the zikr"
+  },
+  "showVirtue": {
+    "title": "Show virtue",
+    "hint": "The reward and virtue of the zikr"
+  },
+  "showSource": {
+    "title": "Show source",
+    "hint": "The hadith book or verse it comes from"
+  },
+  "sources": "Sources",
+  "externalSources": "Online sources",
+  "sourcesHint": "Everything else in the app is stored on your device and works offline. These services are only used for the features below.",
+  "sourceList": {
+    "everyayah": {
+      "name": "EveryAyah",
+      "usage": "Quran recitation audio, saved on your device after the first play"
+    },
+    "dorar": {
+      "name": "Dorar.net",
+      "usage": "Online hadith search with authenticity grades"
+    },
+    "openstreetmap": {
+      "name": "OpenStreetMap",
+      "usage": "Your city name for prayer times"
+    }
+  },
+  "dataHint": "Clear saved progress, downloaded recitations and settings. Each option asks for confirmation first, and cleared data can't be restored.",
+  "resetOptions": "Reset options",
+  "followDeveloper": "Follow the developer",
+  "followDeveloperHint": "Get in touch, share feedback or follow new updates"
 }

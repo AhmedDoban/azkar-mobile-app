@@ -61,18 +61,19 @@ function PrayerCell({
       </AppText>
       <View>
         <Icon name={PRAYER_ICONS[prayer]} size={18} tintColor={color} />
-        {enabled ? null : (
-          <View
-            className="absolute -end-2.5 -top-1.5 size-3.5 items-center justify-center rounded-full"
-            style={{ backgroundColor: isNext ? INK : "#ffffff" }}
-          >
-            <Icon
-              name="bellSlash"
-              size={8}
-              tintColor={isNext ? MINT_FILL : INK}
-            />
-          </View>
-        )}
+        <View
+          className="absolute -end-2.5 -top-1.5 size-3.5 items-center justify-center rounded-full"
+          style={{
+            backgroundColor: isNext ? INK : "#ffffff",
+            opacity: enabled ? 1 : 0.7,
+          }}
+        >
+          <Icon
+            name={enabled ? "bell" : "bellSlash"}
+            size={8}
+            tintColor={isNext ? MINT_FILL : INK}
+          />
+        </View>
       </View>
     </PressableScale>
   );

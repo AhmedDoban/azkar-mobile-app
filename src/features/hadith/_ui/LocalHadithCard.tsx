@@ -19,9 +19,10 @@ export default memo(function LocalHadithCard({
 }) {
   const { i18n } = useTranslation("hadith");
   const p = useHadithColors();
-  const textStyle = useArabicTextStyle(0.85);
   const locale = i18n.language as Locale;
-  const source = hadith.source[locale];
+  const content = hadith[locale];
+  const arabic = locale === "ar";
+  const textStyle = useArabicTextStyle(arabic ? 0.85 : 0.75);
 
   return (
     <HadithPaper>
@@ -34,33 +35,31 @@ export default memo(function LocalHadithCard({
             style={{ color: p.accent }}
             numberOfLines={1}
           >
-            {source}
+            {content.source}
           </AppText>
           <AppText
             className="text-xs"
             style={{ color: p.muted }}
             numberOfLines={1}
           >
-            {hadith.chapter[locale]}
+            {content.chapter}
           </AppText>
         </View>
       </View>
 
-      <AppText variant="quran" style={[textStyle, { color: p.ink }]} selectable>
-        {hadith.text.ar}
+      <AppText
+        variant={arabic ? "quran" : "ui"}
+        style={[textStyle, { color: p.ink }]}
+        selectable
+      >
+        {content.text}
       </AppText>
-
-      {locale === "en" && (
-        <AppText className="leading-6" style={{ color: p.muted }} selectable>
-          {hadith.text.en}
-        </AppText>
-      )}
 
       <HadithDivider />
 
       <View className="flex-row justify-center">
         <HadithActions
-          text={`${hadith.text.ar}\n\n${locale === "en" ? hadith.text.en + "\n\n" : ""}${source} — ${hadith.number}`}
+          text={`${content.text}\n\n${content.source} — ${hadith.number}`}
           saved={savedLocal(hadith.id)}
         />
       </View>

@@ -18,6 +18,7 @@
   "reminderOn": "Adhan reminder on",
   "reminderOff": "Adhan reminder off",
   "notificationTitle": "Time for {{prayer}}",
+  "channelName": "Adhan · {{sound}}",
   "notificationBody": "Come to prayer, come to success",
   "permissionDenied": "Allow notifications in Settings to get adhan reminders",
   "left": "Left",
@@ -26,5 +27,6 @@
   "locationNeeded": "Allow location access to calculate prayer times",
   "openSettings": "Settings",
   "notificationsTitle": "Turn on notifications",
-  "notNow": "Not now"
+  "notNow": "Not now",
+  "reminderHint": "Tap any prayer to turn its adhan reminder on or off"
 }

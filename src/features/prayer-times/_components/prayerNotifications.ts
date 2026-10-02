@@ -23,35 +23,49 @@ const Notifications: typeof import("expo-notifications") | null = supported
   : null;
 
 let configured: Promise<void> | null = null;
+let channelNames = "";
+let handlerSet = false;
 
-export function configurePrayerNotifications() {
+export function configurePrayerNotifications(
+  channelName: (id: AdhanSoundId) => string,
+) {
   if (!Notifications) return Promise.resolve();
-  if (configured) return configured;
+  const names = BUNDLED_SOUNDS.map(({ id }) => channelName(id)).join("|");
+  if (configured && names === channelNames) return configured;
+  channelNames = names;
 
-  Notifications.setNotificationHandler({
-    handleNotification: async (notification) => ({
-      shouldShowBanner: false,
-      shouldShowList: true,
-      shouldPlaySound: !String(
-        notification.request.content.sound ?? "",
-      ).startsWith("adhan_"),
-      shouldSetBadge: false,
-    }),
-  });
+  if (!handlerSet) {
+    handlerSet = true;
+    Notifications.setNotificationHandler({
+      handleNotification: async (notification) => ({
+        shouldShowBanner: false,
+        shouldShowList: true,
+        shouldPlaySound: !String(
+          notification.request.content.sound ?? "",
+        ).startsWith("adhan_"),
+        shouldSetBadge: false,
+      }),
+    });
+  }
 
+  configured = createChannels(channelName);
+  return configured;
+}
+
+function createChannels(channelName: (id: AdhanSoundId) => string) {
+  if (!Notifications) return Promise.resolve();
   const channels =
     Platform.OS === "android"
       ? BUNDLED_SOUNDS.map(({ id }) =>
           Notifications.setNotificationChannelAsync(channelId(id), {
-            name: `Adhan (${id})`,
+            name: channelName(id),
             importance: Notifications.AndroidImportance.MAX,
             sound: notificationSound(id, false),
             vibrationPattern: [0, 400, 200, 400],
           }).catch(() => null),
         )
       : [];
-  configured = Promise.all(channels).then(() => {});
-  return configured;
+  return Promise.all(channels).then(() => {});
 }
 
 export async function ensureNotificationPermission() {
@@ -67,6 +81,7 @@ type PrayerAlert = { prayer: PrayerName; date: Date };
 type SyncOptions = {
   alerts: PrayerAlert[];
   sound: AdhanSoundId;
+  channelName: (id: AdhanSoundId) => string;
   title: (prayer: PrayerName, date: Date) => string;
   body: string;
 };
@@ -93,12 +108,12 @@ export function syncPrayerNotifications(options: SyncOptions) {
 }
 
 async function reschedule(
-  { alerts, sound, title, body }: SyncOptions,
+  { alerts, sound, channelName, title, body }: SyncOptions,
   run: number,
 ) {
   if (!Notifications) return;
   const stale = () => run !== generation;
-  await configurePrayerNotifications();
+  await configurePrayerNotifications(channelName);
   if (stale()) return;
   if (!(await Notifications.getPermissionsAsync()).granted || stale()) return;
 

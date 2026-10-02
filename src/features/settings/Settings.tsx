@@ -1,3 +1,4 @@
+import AppText from "@/components/ui/AppText";
 import Screen from "@/components/ui/Screen";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -44,6 +45,17 @@ export default function Settings() {
       ))}
 
       <View className="items-center gap-3 pt-2">
+        <View className="items-center gap-1">
+          <AppText weight="bold" className="text-base">
+            {t("followDeveloper")}
+          </AppText>
+          <AppText
+            className="text-center text-sm"
+            style={{ color: palette.subtitle }}
+          >
+            {t("followDeveloperHint")}
+          </AppText>
+        </View>
         <SocialLinks />
       </View>
     </Screen>

@@ -2,11 +2,15 @@
   "expo": {
     "name": "Azkar",
     "slug": "azkar",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "azkar",
     "userInterfaceStyle": "automatic",
+    "locales": {
+      "ar": "./assets/locales/ar.json",
+      "en": "./assets/locales/en.json"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ahmeddoban.azkar",
@@ -18,7 +22,7 @@
           "en"
         ]
       },
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "package": "com.ahmeddoban.azkar",
@@ -39,7 +43,7 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.RECEIVE_BOOT_COMPLETED"
       ],
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "output": "single",
@@ -74,7 +78,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "يستخدم التطبيق موقعك لتحديد اتجاه القبلة."
+          "locationWhenInUsePermission": "The app uses your location to find the qibla direction and prayer times."
         }
       ],
       [

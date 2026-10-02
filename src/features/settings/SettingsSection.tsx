@@ -14,6 +14,8 @@ import DataSection from "./_sections/DataSection";
 import LanguageSection from "./_sections/LanguageSection";
 import PrayerSection from "./_sections/PrayerSection";
 import ReadingSection from "./_sections/ReadingSection";
+import SourcesSection from "./_sections/SourcesSection";
+import SurahFrameSection from "./_sections/SurahFrameSection";
 
 const CONTENT: Record<SettingsSectionId, ComponentType> = {
   language: LanguageSection,
@@ -21,7 +23,9 @@ const CONTENT: Record<SettingsSectionId, ComponentType> = {
   prayer: PrayerSection,
   adhan: AdhanSection,
   reading: ReadingSection,
+  surahFrame: SurahFrameSection,
   data: DataSection,
+  sources: SourcesSection,
 };
 
 export default function SettingsSection({ id }: { id: string }) {

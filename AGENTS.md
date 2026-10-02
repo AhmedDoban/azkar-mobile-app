@@ -9,6 +9,7 @@ Expo SDK 57, expo-router, React Native 0.86, Reanimated 4, react-native-svg, Red
 - Format touched files: `npx prettier --write <files>`
 - Dev server: `npm start`
 - Android release APK: `npm run build:android` (output opens in `android/app/build/outputs/apk/release/`)
+  - If `android/` is missing it runs `expo prebuild` first. `npm run build:android -- --clean` regenerates it from scratch (needed after changing `app.json`, plugins or native modules).
 - Don't run web exports or screenshot checks unless asked.
 - Don't commit or push. The owner commits and pushes themselves.
 - Packages: install with `npm install <pkg>` (Expo packages with `npx expo install <pkg>`). Run `npm audit` after changing dependencies and fix with `npm audit fix` only. Never `npm audit fix --force` — it downgrades Expo. Pin patched transitive versions through `overrides` in package.json, and only after checking the dependent still loads (ESM-only versions break `require()` callers).
@@ -110,6 +111,9 @@ Shared hooks live in `src/hooks` (`useThemeColors`, `useDirection`, `useCompactH
 ## Feature notes
 
 - **Mushaf:** pages are the bundled SVGs in `assets/images/Qoran` (do not edit them). They're read with `readAssetText` (needed for Android release builds) and parsed once in `usePageSvg`. The ink `#231f20` becomes `currentColor`. Ayah highlight and long-press hit testing use `src/features/quran/_data/ayahBoxes.json`; regenerate it with `scripts/build-ayah-boxes.py` if pages change.
+- **Azkar data:** one file per category in `src/features/azkar/_data/adhkar/<categoryId>.ts`, loaded on demand by `getItems` in `_data/index.ts`. Each item has `ar` and `en` blocks (`title?`, `prefix`, `text`, `suffix`, `virtue`, `source`) and a `count`. Category metadata and progress goals (`{ id, count }` per item) live in `_data/categories.ts` so the home screen never loads the texts — when adding, removing or changing the count of an item, update its goal there too. A new category needs a loader line in `_data/index.ts`.
+- **Hadith data:** `src/features/hadith/_data/hadiths/partN.ts` (50 per file, `ar`/`en` blocks), with the ordered ids in `hadithIds.ts`. Parts load on demand (`getHadithAt`, `getHadith`, `getHadiths`).
+- **Language:** Arabic mode shows only Arabic and English mode only English. Only the mushaf pages stay Arabic in both; elsewhere an ayah shows its English translation in English mode.
 - **Offline first:** Quran text, tafsir (Muyassar), search, azkar, local hadiths and prayer times are bundled. Only recitation audio (everyayah.com, cached on device by `audioCache`), Dorar hadith search (cached in AsyncStorage) and the city name lookup use the network.
 - **Prayer alerts:** on Android they go through the native `modules/adhan-alarm` (exact alarm + full-screen intent that opens the adhan popup). iOS uses expo-notifications. Native changes need a new build.
 - **Android folder:** `android/` and `ios/` are generated and git-ignored. Put native config in `app.json` or a plugin in `plugins/`, never only in `android/`.

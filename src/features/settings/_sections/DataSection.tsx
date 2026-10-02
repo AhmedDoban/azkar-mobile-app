@@ -12,6 +12,8 @@ import { View } from "react-native";
 import { formatSize, RESET_ACTIONS, ResetKind } from "../_data/resetActions";
 import ResetDialog, { ResetDialogContent } from "../_ui/ResetDialog";
 import SettingsActionRow from "../_ui/SettingsActionRow";
+import SettingsGroupTitle from "../_ui/SettingsGroupTitle";
+import SettingsIntro from "../_ui/SettingsIntro";
 
 export default function DataSection() {
   const { t, i18n } = useTranslation("settings");
@@ -60,7 +62,9 @@ export default function DataSection() {
 
   return (
     <>
+      <SettingsIntro text={t("dataHint")} />
       <View className="gap-3">
+        <SettingsGroupTitle title={t("resetOptions")} />
         {RESET_ACTIONS.map(({ kind, icon, label, danger }) => (
           <SettingsActionRow
             key={kind}

@@ -2,6 +2,7 @@ import { Locale } from "@/i18n/config";
 import { setLocale } from "@/store/Slices/SettingsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { FLAG_SA, FLAG_US } from "../_data/flags";
 import LanguageCard from "./LanguageCard";
@@ -10,13 +11,13 @@ const LANGUAGES: {
   locale: Locale;
   flag: string;
   label: string;
-  hint: string;
 }[] = [
-  { locale: "ar", flag: FLAG_SA, label: "العربية", hint: "Arabic" },
-  { locale: "en", flag: FLAG_US, label: "English", hint: "الإنجليزية" },
+  { locale: "ar", flag: FLAG_SA, label: "العربية" },
+  { locale: "en", flag: FLAG_US, label: "English" },
 ];
 
 export default function LanguageSwitcher() {
+  const { t } = useTranslation("settings");
   const dispatch = useAppDispatch();
   const locale = useAppSelector((s) => s.settings.locale);
 
@@ -27,7 +28,7 @@ export default function LanguageSwitcher() {
           key={lang.locale}
           flag={lang.flag}
           label={lang.label}
-          hint={lang.hint}
+          hint={t(`languageNames.${lang.locale}`)}
           arabic={lang.locale === "ar"}
           selected={locale === lang.locale}
           onPress={() => {

@@ -14,6 +14,8 @@ export default function DailyHadithCard() {
   const p = useHadithColors();
   const hadith = getDailyHadith();
   const locale = i18n.language as Locale;
+  const content = hadith[locale];
+  const arabic = locale === "ar";
 
   return (
     <View
@@ -44,27 +46,26 @@ export default function DailyHadithCard() {
       </View>
 
       <AppText
-        variant="quran"
-        className="text-center text-xl leading-[40px]"
+        variant={arabic ? "quran" : "ui"}
+        className={
+          arabic
+            ? "text-center text-xl leading-[40px]"
+            : "text-center text-base leading-7"
+        }
         style={{ color: p.ink }}
         selectable
       >
-        {hadith.text.ar}
+        {content.text}
       </AppText>
-      {locale === "en" && (
-        <AppText className="text-center leading-6" style={{ color: p.muted }}>
-          {hadith.text.en}
-        </AppText>
-      )}
 
       <HadithDivider />
 
       <AppText className="text-center text-xs" style={{ color: p.muted }}>
-        {hadith.source[locale]} · {t("hadithNo", { number: hadith.number })}
+        {content.source} · {t("hadithNo", { number: hadith.number })}
       </AppText>
 
       <HadithActions
-        text={`${hadith.text.ar}\n\n${hadith.source[locale]} — ${hadith.number}`}
+        text={`${content.text}\n\n${content.source} — ${hadith.number}`}
         saved={savedLocal(hadith.id)}
       />
     </View>

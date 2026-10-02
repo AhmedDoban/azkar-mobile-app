@@ -1,5 +1,5 @@
 import AppText from "@/components/ui/AppText";
-import { PAGE_COUNT, toArabicDigits } from "@/features/azkar/_data/quran";
+import { PAGE_COUNT } from "@/features/azkar/_data/quran";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -8,6 +8,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import useLocalDigits from "../_components/useLocalDigits";
 import useMushafColors from "../_components/useMushafColors";
 
 const THUMB_W = 64;
@@ -21,6 +22,7 @@ export default function PageSlider({
   onChange: (page: number) => void;
 }) {
   const c = useMushafColors();
+  const num = useLocalDigits();
   const width = useSharedValue(0);
   const progress = useSharedValue((page - 1) / (PAGE_COUNT - 1));
   const dragging = useSharedValue(false);
@@ -78,8 +80,8 @@ export default function PageSlider({
             thumb,
           ]}
         >
-          <AppText arabic weight="bold" style={{ color: "#ffffff" }}>
-            {toArabicDigits(label)}
+          <AppText weight="bold" style={{ color: "#ffffff" }}>
+            {num(label)}
           </AppText>
         </Animated.View>
       </View>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { hadiths } from "../_data";
+import { getHadiths, HADITH_COUNT } from "../_data";
 
 const BATCH = 10;
 
@@ -7,8 +7,8 @@ export default function useHadithPagination() {
   const [count, setCount] = useState(BATCH);
   const [loading, setLoading] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const hasMore = count < hadiths.length;
-  const visible = useMemo(() => hadiths.slice(0, count), [count]);
+  const hasMore = count < HADITH_COUNT;
+  const visible = useMemo(() => getHadiths(count), [count]);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -16,7 +16,7 @@ export default function useHadithPagination() {
     if (loading || !hasMore) return;
     setLoading(true);
     timer.current = setTimeout(() => {
-      setCount((c) => Math.min(c + BATCH, hadiths.length));
+      setCount((c) => Math.min(c + BATCH, HADITH_COUNT));
       setLoading(false);
     }, 400);
   }, [loading, hasMore]);

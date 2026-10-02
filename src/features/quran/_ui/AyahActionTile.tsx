@@ -1,6 +1,7 @@
 import AppText from "@/components/ui/AppText";
 import Icon, { IconKey } from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
+import useDirection from "@/hooks/useDirection";
 import usePopupColors from "../_components/usePopupColors";
 
 export default function AyahActionTile({
@@ -15,6 +16,8 @@ export default function AyahActionTile({
   chevron?: boolean;
 }) {
   const c = usePopupColors();
+  const { isRTL } = useDirection();
+
   return (
     <PressableScale
       scaleTo={0.97}
@@ -29,7 +32,11 @@ export default function AyahActionTile({
         </AppText>
       ) : null}
       {chevron ? (
-        <Icon name="chevronLeft" size={18} tintColor={c.gold} />
+        <Icon
+          name={isRTL ? "chevronLeft" : "chevronRight"}
+          size={18}
+          tintColor={c.gold}
+        />
       ) : null}
     </PressableScale>
   );

@@ -66,12 +66,20 @@ export interface ReadingSettings {
   hapticOnComplete: boolean;
   hapticOnTap: boolean;
   hideCompleted: boolean;
+  showPrefix: boolean;
+  showSuffix: boolean;
+  showVirtue: boolean;
+  showSource: boolean;
 }
 
 const DEFAULT_READING: ReadingSettings = {
   hapticOnComplete: true,
   hapticOnTap: true,
   hideCompleted: false,
+  showPrefix: true,
+  showSuffix: true,
+  showVirtue: true,
+  showSource: true,
 };
 
 export interface SettingsState {
@@ -86,6 +94,7 @@ export interface SettingsState {
   ayahColors: Record<string, number>;
   reciter: ReciterId;
   prayerReminders: Partial<Record<PrayerName, boolean>>;
+  reminderHintSeen: boolean;
   adhanSound: AdhanSoundId;
   customAdhan: CustomAdhan | null;
   prayerLocation: PrayerLocation | null;
@@ -108,6 +117,7 @@ const defaultSettings = (
   ayahColors: {},
   reciter: DEFAULT_RECITER,
   prayerReminders: Object.fromEntries(REMINDER_PRAYERS.map((p) => [p, true])),
+  reminderHintSeen: false,
   adhanSound: DEFAULT_ADHAN,
   customAdhan: null,
   prayerLocation: null,
@@ -187,6 +197,7 @@ export const SettingsSlice = createSlice({
     togglePrayerReminder(state, action: PayloadAction<PrayerName>) {
       const name = action.payload;
       state.prayerReminders[name] = !(state.prayerReminders[name] ?? true);
+      state.reminderHintSeen = true;
     },
     setAdhanSound(state, action: PayloadAction<AdhanSoundId>) {
       state.adhanSound = action.payload;

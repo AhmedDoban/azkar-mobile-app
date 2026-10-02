@@ -20,7 +20,8 @@ const RING_CENTER = (165 / 400) * SIZE;
 const FALLBACK_MS = 4000;
 
 export default function AnimatedSplash({ onDone }: { onDone: () => void }) {
-  const { t } = useTranslation(["common", "azkar"]);
+  const { t, i18n } = useTranslation(["common", "azkar"]);
+  const ar = i18n.language === "ar";
   const palette = useSplashPalette();
   const opacity = useSharedValue(1);
   const leaving = useRef(false);
@@ -73,9 +74,11 @@ export default function AnimatedSplash({ onDone }: { onDone: () => void }) {
           style={{ top: RING_CENTER - 40, height: 80 }}
         >
           <AppText
-            variant="quran"
+            variant={ar ? "quran" : "ui"}
             weight="bold"
-            className="text-5xl leading-[80px]"
+            className={
+              ar ? "text-5xl leading-[80px]" : "text-4xl leading-[80px]"
+            }
             style={{ color: palette.main, textAlign: "center" }}
           >
             {t("common:appName")}

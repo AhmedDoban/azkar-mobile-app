@@ -4,7 +4,7 @@ import PressableScale from "@/components/ui/PressableScale";
 import {
   AyahRef,
   ayahText,
-  getSurah,
+  ayahTranslation,
   toArabicDigits,
 } from "@/features/azkar/_data/quran";
 import {
@@ -18,6 +18,7 @@ import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import { Share, View } from "react-native";
 import usePopupColors from "../_components/usePopupColors";
+import useSurahName from "../_components/useSurahName";
 import { todayWirdBounds } from "../_data/khatma";
 import AyahActionTile from "./AyahActionTile";
 import AyahColorPicker from "./AyahColorPicker";
@@ -43,8 +44,10 @@ export default function AyahActions({
   onPlayUntil: () => void;
   onClose: () => void;
 }) {
-  const { t } = useTranslation(["azkar", "common"]);
+  const { t, i18n } = useTranslation(["azkar", "common"]);
+  const ar = i18n.language === "ar";
   const c = usePopupColors();
+  const surahName = useSurahName();
   const dispatch = useAppDispatch();
   const bookmark = useAppSelector((s) => s.settings.quranBookmark);
   const savedAyahs = useAppSelector((s) => s.settings.savedAyahs);
@@ -57,7 +60,9 @@ export default function AyahActions({
   const wird = todayWirdBounds(khatma);
   const endsWird =
     !!wird && wird.last.surah === ayah.surah && wird.last.ayah === ayah.ayah;
-  const shareText = `${ayahText(ayah.surah, ayah.ayah)}\n\n﴿${getSurah(ayah.surah)?.name} ${toArabicDigits(ayah.ayah)}﴾`;
+  const shareText = ar
+    ? `${ayahText(ayah.surah, ayah.ayah)}\n\n﴿${surahName(ayah.surah)} ${toArabicDigits(ayah.ayah)}﴾`
+    : `${ayahText(ayah.surah, ayah.ayah)}\n\n${ayahTranslation(ayah.surah, ayah.ayah)}\n\n(${t("ayahRef", { surah: surahName(ayah.surah), ayah: ayah.ayah })})`;
 
   return (
     <View className="gap-4">

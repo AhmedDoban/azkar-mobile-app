@@ -1,11 +1,14 @@
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import Skeleton from "@/components/ui/Skeleton";
 import { REMINDER_PRAYERS } from "../_data/types";
 
 export default function PrayerTimesCardSkeleton() {
+  const { t } = useTranslation("common");
+
   return (
     <View
-      accessibilityLabel="Loading"
+      accessibilityLabel={t("loading")}
       className="flex-row gap-3 rounded-[28px] bg-surface p-4"
     >
       <View className="flex-1 gap-5">

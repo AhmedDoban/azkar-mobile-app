@@ -1,33 +1,60 @@
-import raw from "./hadiths.json";
-import { Locale } from "@/i18n/config";
 import { normalize } from "@/features/azkar/_data";
+import hadithIds from "./hadithIds";
+import { LocalHadith } from "./types";
 
-export interface LocalHadith {
-  id: string;
-  source: Record<Locale, string>;
-  number: number;
-  chapter: Record<Locale, string>;
-  text: Record<Locale, string>;
+export type { HadithContent, LocalHadith } from "./types";
+
+const PART_SIZE = 50;
+
+const parts: (() => { default: LocalHadith[] })[] = [
+  () => require("./hadiths/part1"),
+  () => require("./hadiths/part2"),
+  () => require("./hadiths/part3"),
+  () => require("./hadiths/part4"),
+  () => require("./hadiths/part5"),
+  () => require("./hadiths/part6"),
+  () => require("./hadiths/part7"),
+  () => require("./hadiths/part8"),
+];
+
+const loaded: LocalHadith[][] = [];
+const positions = new Map(hadithIds.map((id, i) => [id, i]));
+
+export const HADITH_COUNT = hadithIds.length;
+
+function getPart(part: number) {
+  return (loaded[part] ??= parts[part]().default);
 }
 
-export const hadiths = raw as LocalHadith[];
+export function getHadithAt(index: number) {
+  return getPart(Math.floor(index / PART_SIZE))[index % PART_SIZE];
+}
 
-const byId = new Map(hadiths.map((h) => [h.id, h]));
+export function getHadiths(end: number) {
+  const list: LocalHadith[] = [];
+  for (let part = 0; part * PART_SIZE < Math.min(end, HADITH_COUNT); part++) {
+    list.push(...getPart(part));
+  }
+  return list.slice(0, end);
+}
 
-export const getHadith = (id: string) => byId.get(id);
+export function getHadith(id: string) {
+  const index = positions.get(id);
+  return index === undefined ? undefined : getHadithAt(index);
+}
 
 export function getDailyHadith(date = new Date()) {
   const start = new Date(date.getFullYear(), 0, 0).getTime();
   const dayOfYear = Math.floor((date.getTime() - start) / 86_400_000);
-  return hadiths[(dayOfYear + date.getFullYear()) % hadiths.length];
+  return getHadithAt((dayOfYear + date.getFullYear()) % HADITH_COUNT);
 }
 
 export function searchLocalHadiths(query: string) {
   const q = normalize(query.trim());
   if (!q) return [];
-  return hadiths.filter(
+  return getHadiths(HADITH_COUNT).filter(
     (h) =>
-      normalize(h.text.ar).includes(q) || h.text.en.toLowerCase().includes(q),
+      normalize(h.ar.text).includes(q) || h.en.text.toLowerCase().includes(q),
   );
 }
 
