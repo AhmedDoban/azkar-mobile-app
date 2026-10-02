@@ -7,7 +7,8 @@ import {
 } from "expo-audio";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ayahAudioUrl } from "../_data/reciters";
-import { audioSource, cacheAudio } from "./audioCache";
+import isOnline from "@/lib/isOnline";
+import { audioSource, cacheAudio, isAudioCached } from "./audioCache";
 
 let stopOthers: (() => void) | null = null;
 
@@ -20,6 +21,7 @@ export default function useRecitation() {
   const status = useAudioPlayerStatus(player);
   const [current, setCurrent] = useState<AyahRef | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [offline, setOffline] = useState(false);
   const basmala = useRef(false);
   const until = useRef<AyahRef | null>(null);
   const stopSelf = useRef<() => void>(() => {});
@@ -47,8 +49,21 @@ export default function useRecitation() {
     [player, reciter],
   );
 
+  const reachable = useCallback(
+    async (ref: AyahRef) => {
+      const url = needsBasmala(ref)
+        ? ayahAudioUrl(reciter, 1, 1)
+        : ayahAudioUrl(reciter, ref.surah, ref.ayah);
+      if (isAudioCached(url) || (await isOnline())) return true;
+      setOffline(true);
+      return false;
+    },
+    [reciter],
+  );
+
   const play = useCallback(
-    (from: AyahRef, stopAt: AyahRef | null = null) => {
+    async (from: AyahRef, stopAt: AyahRef | null = null) => {
+      if (!(await reachable(from))) return;
       until.current = stopAt;
       if (stopOthers && stopOthers !== stopSelf.current) stopOthers();
       stopOthers = stopSelf.current;
@@ -58,7 +73,7 @@ export default function useRecitation() {
       }).catch(() => {});
       load(from, needsBasmala(from));
     },
-    [load],
+    [load, reachable],
   );
 
   const pause = useCallback(() => {
@@ -100,8 +115,14 @@ export default function useRecitation() {
     const reachedEnd =
       end && end.surah === current.surah && end.ayah === current.ayah;
     const next = reachedEnd ? null : nextAyah(current);
-    if (next) load(next, needsBasmala(next));
-    else stop();
+    if (!next) {
+      stop();
+      return;
+    }
+    reachable(next).then((ok) => {
+      if (ok) load(next, needsBasmala(next));
+      else stop();
+    });
   }, [status.didJustFinish]);
 
   useEffect(() => {
@@ -112,6 +133,8 @@ export default function useRecitation() {
     current,
     playing,
     loading: playing && !status.playing && !status.didJustFinish,
+    offline,
+    dismissOffline: useCallback(() => setOffline(false), []),
     play,
     pause,
     resume,

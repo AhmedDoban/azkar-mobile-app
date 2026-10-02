@@ -29,6 +29,15 @@ export function cacheAudio(url: string) {
   pending.set(url, task);
 }
 
+export function isAudioCached(url: string) {
+  try {
+    const place = target(url);
+    return !!place?.file.exists && place.file.size > 0;
+  } catch {
+    return false;
+  }
+}
+
 export function audioSource(url: string) {
   try {
     const place = target(url);

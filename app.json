@@ -2,7 +2,7 @@
   "expo": {
     "name": "Azkar",
     "slug": "azkar",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "azkar",
@@ -18,7 +18,7 @@
           "en"
         ]
       },
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "package": "com.ahmeddoban.azkar",
@@ -39,7 +39,7 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.RECEIVE_BOOT_COMPLETED"
       ],
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "output": "single",

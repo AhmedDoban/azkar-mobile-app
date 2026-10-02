@@ -33,6 +33,7 @@ import MushafPager from "./_ui/MushafPager";
 import { hitTest } from "./_components/pageHitTest";
 import PageSlider from "./_ui/PageSlider";
 import RecitationPlayer from "./_ui/RecitationPlayer";
+import NoInternetDialog from "@/components/ui/NoInternetDialog";
 import AyahSheet from "./_ui/AyahSheet";
 
 export default function SurahReader({
@@ -266,6 +267,10 @@ export default function SurahReader({
         </View>
       </Animated.View>
       <AyahSheet ayah={sheetAyah} onClose={closeSheet} onPlay={playSheet} />
+      <NoInternetDialog
+        visible={recitation.offline}
+        onClose={recitation.dismissOffline}
+      />
     </View>
   );
 }

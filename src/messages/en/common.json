@@ -15,5 +15,11 @@
   "share": "Share",
   "somethingWrong": "Something went wrong",
   "copy": "Copy",
-  "copied": "Copied"
+  "copied": "Copied",
+  "offline": {
+    "title": "No internet connection",
+    "message": "Recitations need the internet the first time, then they're saved on your device and play offline. Turn on Wi-Fi or mobile data and try again.",
+    "later": "Later",
+    "openSettings": "Open settings"
+  }
 }

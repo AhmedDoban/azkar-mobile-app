@@ -59,6 +59,7 @@ assets/                fonts, images, Quran SVG pages (assets/images/Qoran), sur
 | `BottomSheet` | Any sheet that slides up (drag to close, backdrop fade, safe area) |
 | `SheetHeader` | Title + close button row for sheets |
 | `Dialog` | Centered popup with dimmed backdrop (confirmations, pickers) |
+| `NoInternetDialog` | Offline popup (Lottie + open network settings). Check with `src/lib/isOnline` before network-only actions |
 | `ContentActions` | Share / copy / save row on zikr and hadith cards |
 | `IconCircle` | Round icon badge |
 | `BrandCardBackground` | Palette gradient background for hero-style cards |
