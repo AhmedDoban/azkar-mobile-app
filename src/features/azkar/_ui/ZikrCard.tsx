@@ -12,9 +12,9 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Share, View } from "react-native";
+import { Platform, Share, View } from "react-native";
 import { Zikr } from "../_data";
 import Icon from "@/components/ui/Icon";
 import useDirection from "@/hooks/useDirection";
@@ -25,23 +25,37 @@ type Props = {
   categoryId: string;
   zikr: Zikr;
   counting?: boolean;
-  position?: { index: number; total: number };
+  index?: number;
+  total?: number;
 };
 
 const ORNAMENT_GOLD = "#c9a96e";
 
-export default function ZikrCard({
+const CARD_SHADOW =
+  Platform.OS === "ios"
+    ? { boxShadow: "0 4px 14px rgba(9, 43, 56, 0.07)" }
+    : { elevation: 2, shadowColor: "rgba(9, 43, 56, 0.35)" };
+const BUTTON_SHADOW =
+  Platform.OS === "ios"
+    ? { boxShadow: "0 2px 8px rgba(9, 43, 56, 0.1)" }
+    : { elevation: 2, shadowColor: "rgba(9, 43, 56, 0.4)" };
+
+export default memo(function ZikrCard({
   categoryId,
   zikr,
   counting = true,
-  position,
+  index,
+  total,
 }: Props) {
   const { t } = useTranslation(["azkar", "common"]);
   const colors = useThemeColors();
   const p = useHadithColors();
   const dispatch = useAppDispatch();
   const textStyle = useArabicTextStyle();
-  const reading = useAppSelector((s) => s.settings.reading);
+  const hapticOnTap = useAppSelector((s) => s.settings.reading.hapticOnTap);
+  const hapticOnComplete = useAppSelector(
+    (s) => s.settings.reading.hapticOnComplete,
+  );
   const key = progressKey(categoryId, zikr.id);
   const counted = useAppSelector((s) => s.azkar.progress[key] ?? 0);
   const loved = useAppSelector((s) => s.azkar.favoriteAdhkar.includes(key));
@@ -58,15 +72,14 @@ export default function ZikrCard({
   const onCount = () => {
     if (done) return;
     const finishing = counted + 1 >= zikr.count;
-    if (finishing && reading.hapticOnComplete) {
+    if (finishing && hapticOnComplete) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } else if (reading.hapticOnTap) {
+    } else if (hapticOnTap) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     dispatch(incrementCount({ categoryId, itemId: zikr.id, max: zikr.count }));
   };
 
-  const [size, setSize] = useState({ width: 0, height: 0 });
   const { isRTL } = useDirection();
 
   const actions = [
@@ -105,36 +118,26 @@ export default function ZikrCard({
       style={{
         borderColor: done ? p.accent : p.line,
         backgroundColor: p.card,
-        boxShadow: "0 4px 14px rgba(9, 43, 56, 0.07)",
+        ...CARD_SHADOW,
       }}
-      onLayout={(e) =>
-        setSize({
-          width: e.nativeEvent.layout.width,
-          height: e.nativeEvent.layout.height,
-        })
-      }
     >
-      {size.width > 0 ? (
-        <ZikrCardBackdrop
-          top={p.card}
-          bottom={p.paper}
-          wave={p.chip}
-          ornament={p.accent}
-          cornerX={isRTL ? 0 : size.width}
-          width={size.width}
-          height={size.height}
-        />
-      ) : null}
+      <ZikrCardBackdrop
+        top={p.card}
+        bottom={p.paper}
+        wave={p.chip}
+        ornament={p.accent}
+        rtl={isRTL}
+      />
 
       <View className="flex-row items-center">
         <View className="flex-1 items-start">
-          {position && position.total > 1 ? (
+          {index && total && total > 1 ? (
             <View
               className="rounded-full px-2.5 py-0.5"
               style={{ backgroundColor: p.chip }}
             >
               <AppText className="text-xs" style={{ color: p.muted }}>
-                {`${position.index} / ${position.total}`}
+                {`${index} / ${total}`}
               </AppText>
             </View>
           ) : null}
@@ -197,7 +200,7 @@ export default function ZikrCard({
               className="size-11 rounded-full"
               style={{
                 backgroundColor: p.card,
-                boxShadow: "0 2px 8px rgba(9, 43, 56, 0.1)",
+                ...BUTTON_SHADOW,
               }}
               onPress={action.onPress}
             />
@@ -205,4 +208,4 @@ export default function ZikrCard({
       </View>
     </PressableScale>
   );
-}
+});

@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { View } from "react-native";
 import { AzkarCategory } from "../_data";
 import FeaturedCard from "./FeaturedCard";
 
-export default function CategoryGrid({
+export default memo(function CategoryGrid({
   categories,
   showProgress = true,
 }: {
@@ -18,4 +19,4 @@ export default function CategoryGrid({
       ))}
     </View>
   );
-}
+});

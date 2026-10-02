@@ -5,10 +5,10 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import QuranSizeSetting from "../_ui/QuranSizeSetting";
 import SettingsGroup from "../_ui/SettingsGroup";
 import SettingsSwitchRow from "../_ui/SettingsSwitchRow";
 import TextSizeSetting from "../_ui/TextSizeSetting";
+import SurahFramePicker from "../_ui/SurahFramePicker";
 
 const READING_OPTIONS: (keyof ReadingSettings)[] = [
   "hapticOnComplete",
@@ -26,8 +26,8 @@ export default function ReadingSection() {
       <SettingsGroup title={t("textSize")}>
         <TextSizeSetting />
       </SettingsGroup>
-      <SettingsGroup title={t("quranSize")}>
-        <QuranSizeSetting />
+      <SettingsGroup title={t("surahFrame")}>
+        <SurahFramePicker />
       </SettingsGroup>
       <SettingsGroup title={t("readingOptions")}>
         {READING_OPTIONS.map((key, i) => (

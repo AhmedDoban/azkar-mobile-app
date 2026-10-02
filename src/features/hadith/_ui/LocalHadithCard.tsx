@@ -1,3 +1,4 @@
+import { memo } from "react";
 import AppText from "@/components/ui/AppText";
 import useArabicTextStyle from "@/hooks/useArabicTextStyle";
 import { Locale } from "@/i18n/config";
@@ -11,7 +12,11 @@ import HadithActions from "./HadithActions";
 import HadithNumberMark from "./HadithNumberMark";
 import HadithPaper from "./HadithPaper";
 
-export default function LocalHadithCard({ hadith }: { hadith: LocalHadith }) {
+export default memo(function LocalHadithCard({
+  hadith,
+}: {
+  hadith: LocalHadith;
+}) {
   const { i18n } = useTranslation("hadith");
   const p = useHadithColors();
   const textStyle = useArabicTextStyle(0.85);
@@ -63,4 +68,4 @@ export default function LocalHadithCard({ hadith }: { hadith: LocalHadith }) {
       </View>
     </HadithPaper>
   );
-}
+});

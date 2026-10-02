@@ -12,6 +12,7 @@ export type PrayerLocation = {
   latitude: number;
   longitude: number;
   city: CityName | null;
+  cityLookupAt?: number;
 };
 
 export type PrayerConfig = {

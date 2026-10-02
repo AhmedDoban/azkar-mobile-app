@@ -1,4 +1,5 @@
 import AppText from "@/components/ui/AppText";
+import { memo } from "react";
 import { ImageSourcePropType, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon, { IconKey } from "@/components/ui/Icon";
@@ -42,7 +43,7 @@ export type PageHeroProps = {
   action?: HeroAction;
 };
 
-export default function PageHero({
+export default memo(function PageHero({
   title,
   subtitle,
   source,
@@ -94,4 +95,4 @@ export default function PageHero({
       <HeroCurve />
     </View>
   );
-}
+});

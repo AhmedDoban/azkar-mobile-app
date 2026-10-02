@@ -14,13 +14,23 @@ interface PersistedState {
   azkar?: Partial<AzkarState>;
 }
 
+const persisted = isAnyOf(
+  ...Object.values(SettingsSlice.actions),
+  ...Object.values(AzkarSlice.actions),
+);
+
 export const persistMiddleware = createListenerMiddleware();
 
 persistMiddleware.startListening({
-  matcher: isAnyOf(
-    ...Object.values(SettingsSlice.actions),
-    ...Object.values(AzkarSlice.actions),
-  ),
+  predicate: (action, current, original) => {
+    if (!persisted(action)) return false;
+    if (hydrateSettings.match(action) || hydrateAzkar.match(action)) {
+      return false;
+    }
+    const now = current as Required<PersistedState>;
+    const before = original as Required<PersistedState>;
+    return now.settings !== before.settings || now.azkar !== before.azkar;
+  },
   effect: async (_action, api) => {
     api.cancelActiveListeners();
     await api.delay(400);

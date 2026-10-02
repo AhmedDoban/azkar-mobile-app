@@ -1,11 +1,11 @@
 import useThemeColors from "@/hooks/useThemeColors";
 
 const LIGHT = {
-  page: "#fbf8ef",
+  page: "#ffffff",
   ink: "#1f1a14",
   gold: "#a3875a",
   frame: "#d8c7a3",
-  frameFill: "#f1e8d4",
+  frameFill: "#f4f4f4",
 };
 
 const DARK = {
@@ -17,5 +17,11 @@ const DARK = {
 };
 
 export default function useMushafColors() {
-  return useThemeColors().isDark ? DARK : LIGHT;
+  const { isDark, brand } = useThemeColors();
+  const accent = isDark ? brand.bright : brand.main;
+  return {
+    ...(isDark ? DARK : LIGHT),
+    accent,
+    highlight: `${accent.slice(0, 7)}${isDark ? "40" : "29"}`,
+  };
 }

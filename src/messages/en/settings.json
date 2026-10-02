@@ -68,7 +68,6 @@
     "customNotice": "Plays in the app; notifications use the default adhan"
   },
   "changeFile": "Change file",
-  "quranSize": "Quran font size",
   "prayerTimes": "Prayer times",
   "prayerLocation": "Location",
   "locationUnknown": "Location not set yet",
@@ -113,5 +112,6 @@
     "amber": "Amber",
     "olive": "Olive",
     "slate": "Slate"
-  }
+  },
+  "surahFrame": "Surah title frame"
 }

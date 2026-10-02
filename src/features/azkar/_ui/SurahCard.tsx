@@ -1,3 +1,4 @@
+import { memo } from "react";
 import AppText from "@/components/ui/AppText";
 import Icon from "@/components/ui/Icon";
 import PressableScale from "@/components/ui/PressableScale";
@@ -5,7 +6,7 @@ import useThemeColors from "@/hooks/useThemeColors";
 import { Link } from "expo-router";
 import { View } from "react-native";
 
-export default function SurahCard({
+export default memo(function SurahCard({
   surahId,
   title,
   subtitle,
@@ -40,4 +41,4 @@ export default function SurahCard({
       </PressableScale>
     </Link>
   );
-}
+});

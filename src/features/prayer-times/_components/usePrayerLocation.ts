@@ -7,6 +7,7 @@ import { lookupCityName } from "../_data/cityName";
 export type LocationStatus = "loading" | "ready" | "denied" | "error";
 
 const MOVED_KM = 5;
+const LOOKUP_RETRY = 7 * 24 * 60 * 60 * 1000;
 let refresh: Promise<LocationStatus> | null = null;
 
 const distanceKm = (a: PrayerLocation, b: PrayerLocation) => {
@@ -48,11 +49,13 @@ async function locate(
     };
     const moved = !saved || distanceKm(saved, next) > MOVED_KM;
     const untranslated = !saved?.city || saved.city.ar === saved.city.en;
-    if (moved || untranslated) {
-      const city =
-        (await lookupCityName(next, Location)) ??
-        (moved ? null : (saved?.city ?? null));
-      dispatch(setPrayerLocation({ ...next, city }));
+    const due =
+      !saved?.cityLookupAt || Date.now() - saved.cityLookupAt > LOOKUP_RETRY;
+    if (moved || (untranslated && due)) {
+      const found = await lookupCityName(next, Location);
+      const city = found ?? (moved ? null : (saved?.city ?? null));
+      const base = moved || !saved ? next : saved;
+      dispatch(setPrayerLocation({ ...base, city, cityLookupAt: Date.now() }));
     }
     return "ready";
   } catch {

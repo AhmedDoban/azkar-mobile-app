@@ -1,13 +1,13 @@
 import * as Haptics from "expo-haptics";
-import { useTranslation } from "react-i18next";
-import { Alert } from "react-native";
 import { togglePrayerReminder } from "@/store/Slices/SettingsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import { PrayerName } from "../_data/types";
 import { ensureNotificationPermission } from "./prayerNotifications";
 
-export default function usePrayerReminder(prayer: PrayerName) {
-  const { t } = useTranslation("prayer");
+export default function usePrayerReminder(
+  prayer: PrayerName,
+  onDenied: () => void,
+) {
   const dispatch = useAppDispatch();
   const enabled = useAppSelector(
     (s) => s.settings.prayerReminders[prayer] !== false,
@@ -17,7 +17,7 @@ export default function usePrayerReminder(prayer: PrayerName) {
     Haptics.selectionAsync();
     dispatch(togglePrayerReminder(prayer));
     if (!enabled && !(await ensureNotificationPermission())) {
-      Alert.alert(t("permissionDenied"));
+      onDenied();
     }
   };
 

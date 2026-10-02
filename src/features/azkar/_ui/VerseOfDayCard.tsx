@@ -1,3 +1,4 @@
+import { memo } from "react";
 import AppText from "@/components/ui/AppText";
 import Icon from "@/components/ui/Icon";
 import { Colors } from "@/constants/Colors";
@@ -9,7 +10,7 @@ const BACKGROUND = require("@/assets/images/qoran_bg.webp");
 const LIGHT = Colors.light;
 const CREAM = "#fbfaf4";
 
-export default function VerseOfDayCard() {
+export default memo(function VerseOfDayCard() {
   const { t, i18n } = useTranslation("azkar");
   const verse = getRandomVerse();
   const english = i18n.language === "en";
@@ -70,4 +71,4 @@ export default function VerseOfDayCard() {
       </View>
     </View>
   );
-}
+});

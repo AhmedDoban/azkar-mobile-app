@@ -1,6 +1,5 @@
 import AndroidTabItem from "@/components/AndroidTabItem";
 import type { IconKey } from "@/components/ui/Icon";
-import * as Haptics from "expo-haptics";
 import type { BottomTabBarProps } from "expo-router/js-tabs";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -47,7 +46,6 @@ export default function AndroidTabBar({
                   canPreventDefault: true,
                 });
                 if (!focused && !event.defaultPrevented) {
-                  Haptics.selectionAsync();
                   navigation.navigate(route.name, route.params);
                 }
               }}

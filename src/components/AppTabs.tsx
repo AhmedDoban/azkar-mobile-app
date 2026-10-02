@@ -7,8 +7,13 @@ import usePrayerReset from "@/hooks/usePrayerReset";
 import useTabBarColors from "@/hooks/useTabBarColors";
 import useThemeColors from "@/hooks/useThemeColors";
 import { useLocales } from "expo-localization";
-import { LocaleProvider } from "expo-router";
-import { Tabs, type BottomTabNavigationOptions } from "expo-router/js-tabs";
+import { LocaleProvider, useSegments } from "expo-router";
+import {
+  Tabs,
+  type BottomTabBarProps,
+  type BottomTabNavigationOptions,
+} from "expo-router/js-tabs";
+import { useCallback, useMemo } from "react";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { StatusBarProvider } from "@/components/StatusBarStyle";
 import { useTranslation } from "react-i18next";
@@ -90,16 +95,36 @@ const tabTransition: Pick<
   }),
 };
 
-export default function AppTabs() {
+function AppEffects() {
   useSettingsSync();
   useDailyReset();
   usePrayerReset();
+  return <AdhanReminder />;
+}
+
+export default function AppTabs() {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const { direction, isRTL } = useDirection();
-  const tabs = isRTL ? [...TABS].reverse() : TABS;
+  const tabs = useMemo(() => (isRTL ? [...TABS].reverse() : TABS), [isRTL]);
   const tab = useTabBarColors();
   const systemDirection = useLocales()[0]?.textDirection ?? "ltr";
+  const segments = useSegments() as string[];
+  const hideTabs = segments.includes("mushaf") || segments.includes("surah");
+  const screenOptions = useMemo(
+    () => ({
+      headerShown: false,
+      ...tabTransition,
+      freezeOnBlur: true,
+      sceneStyle: { backgroundColor: colors.bg },
+    }),
+    [colors.bg],
+  );
+  const tabBar = useCallback(
+    (props: BottomTabBarProps) =>
+      hideTabs ? null : <AndroidTabBar {...props} tabs={TABS} />,
+    [hideTabs],
+  );
 
   return (
     <LocaleProvider direction={systemDirection}>
@@ -107,13 +132,8 @@ export default function AppTabs() {
         <StatusBarProvider>
           {Platform.OS === "android" ? (
             <Tabs
-              screenOptions={{
-                headerShown: false,
-                ...tabTransition,
-                freezeOnBlur: true,
-                sceneStyle: { backgroundColor: colors.bg },
-              }}
-              tabBar={(props) => <AndroidTabBar {...props} tabs={TABS} />}
+              screenOptions={screenOptions}
+              tabBar={tabBar}
             >
               {TABS.map((tab) => (
                 <Tabs.Screen key={tab.name} name={tab.name} />
@@ -121,6 +141,7 @@ export default function AppTabs() {
             </Tabs>
           ) : (
             <NativeTabs
+              hidden={hideTabs}
               tintColor={tab.active}
               minimizeBehavior="onScrollDown"
               labelStyle={{
@@ -157,7 +178,7 @@ export default function AppTabs() {
               ))}
             </NativeTabs>
           )}
-          <AdhanReminder />
+          <AppEffects />
         </StatusBarProvider>
       </View>
     </LocaleProvider>

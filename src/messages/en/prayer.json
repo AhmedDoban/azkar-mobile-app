@@ -24,5 +24,7 @@
   "hour": "hr",
   "minute": "min",
   "locationNeeded": "Allow location access to calculate prayer times",
-  "openSettings": "Settings"
+  "openSettings": "Settings",
+  "notificationsTitle": "Turn on notifications",
+  "notNow": "Not now"
 }

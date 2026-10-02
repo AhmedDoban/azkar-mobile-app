@@ -13,6 +13,7 @@ import usePrayerLabels from "./_components/usePrayerLabels";
 import usePrayerSchedule, { toMinutes } from "./_components/usePrayerSchedule";
 import ArchWindow from "./_ui/ArchWindow";
 import NextPrayerHeader from "./_ui/NextPrayerHeader";
+import NotificationPermissionDialog from "./_ui/NotificationPermissionDialog";
 import PrayerCell from "./_ui/PrayerCell";
 import PrayerTimesCardSkeleton from "./_ui/PrayerTimesCardSkeleton";
 
@@ -33,6 +34,7 @@ export default function PrayerTimesCard() {
   const { day, prayers, next, now, isFriday, status, retry } =
     usePrayerSchedule();
   const [size, setSize] = useState({ w: 0, h: 0 });
+  const [askNotifications, setAskNotifications] = useState(false);
   const city = useCityName(day?.city);
 
   if (status === "loading") return <PrayerTimesCardSkeleton />;
@@ -163,12 +165,17 @@ export default function PrayerTimesCard() {
                 label={label(name, isFriday)}
                 time={shortTime(time)}
                 status={status}
+                onDenied={() => setAskNotifications(true)}
               />
             ))}
           </View>
           <View style={{ width: windowW * 0.4 }} />
         </View>
       </View>
+      <NotificationPermissionDialog
+        visible={askNotifications}
+        onClose={() => setAskNotifications(false)}
+      />
     </View>
   );
 }

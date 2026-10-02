@@ -3,14 +3,19 @@ import { useAppSelector } from "@/store/Store";
 import * as Haptics from "expo-haptics";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { InteractionManager } from "react-native";
 import {
   configurePrayerNotifications,
   onPrayerNotificationOpened,
   syncPrayerNotifications,
 } from "./_components/prayerNotifications";
 import usePrayerLabels from "./_components/usePrayerLabels";
-import usePrayerSchedule, {
+import usePrayerLocation from "./_components/usePrayerLocation";
+import {
+  getPrayerStartingNow,
+  useClock,
   usePrayerConfig,
+  usePrayerDay,
 } from "./_components/usePrayerSchedule";
 import { addDays, prayerDates } from "./_data/calculate";
 import { PrayerName, REMINDER_PRAYERS } from "./_data/types";
@@ -18,13 +23,15 @@ import AdhanSplash from "./AdhanSplash";
 
 const ALERT_DAYS = 7;
 
-configurePrayerNotifications();
-
 export default function AdhanReminder() {
   const { t, i18n } = useTranslation("prayer");
   const { label } = usePrayerLabels();
-  const { day, startingNow } = usePrayerSchedule();
+  usePrayerLocation();
   const config = usePrayerConfig();
+  const day = usePrayerDay(config);
+  const startingNow = useClock((now) =>
+    day ? getPrayerStartingNow(day.times, now) : null,
+  );
   const reminders = useAppSelector((s) => s.settings.prayerReminders);
   const sound = useAppSelector((s) => s.settings.adhanSound);
   const [active, setActive] = useState<PrayerName | null>(null);
@@ -37,6 +44,13 @@ export default function AdhanReminder() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setActive(prayer);
   };
+
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      configurePrayerNotifications();
+    });
+    return () => task.cancel();
+  }, []);
 
   useEffect(() => {
     if (startingNow && reminders[startingNow] !== false) show(startingNow);
@@ -54,7 +68,6 @@ export default function AdhanReminder() {
     [],
   );
 
-  const dayKey = day ? new Date().toDateString() : null;
   useEffect(() => {
     if (!config) return;
     const start = new Date();
@@ -72,7 +85,7 @@ export default function AdhanReminder() {
         t("notificationTitle", { prayer: label(prayer, date.getDay() === 5) }),
       body: t("notificationBody"),
     });
-  }, [config, dayKey, reminders, sound, i18n.language]);
+  }, [config, day, reminders, sound, i18n.language]);
 
   return (
     <AdhanSplash

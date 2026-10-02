@@ -1,6 +1,6 @@
 import useDirection from "@/hooks/useDirection";
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { memo, ReactNode, useMemo } from "react";
 import { Text, TextProps } from "react-native";
 
 type Props = TextProps & {
@@ -21,8 +21,6 @@ const FONTS = {
   },
 } as const;
 
-// Hafs draws Arabic punctuation as a filled circle and has no Latin
-// punctuation, so these marks use the UI font instead.
 const PUNCTUATION = /([،؛؟.,:!"«»-]+)/;
 
 function withPunctuation(children: ReactNode) {
@@ -40,7 +38,7 @@ function withPunctuation(children: ReactNode) {
   );
 }
 
-export default function AppText({
+export default memo(function AppText({
   className,
   weight = "regular",
   variant = "ui",
@@ -51,6 +49,10 @@ export default function AppText({
 }: Props) {
   const { isRTL } = useDirection();
   const rtl = variant === "quran" || arabic || isRTL;
+  const content = useMemo(
+    () => (variant === "quran" ? withPunctuation(children) : children),
+    [variant, children],
+  );
 
   return (
     <Text
@@ -62,7 +64,7 @@ export default function AppText({
       style={[{ writingDirection: rtl ? "rtl" : "ltr" }, style]}
       {...props}
     >
-      {variant === "quran" ? withPunctuation(children) : children}
+      {content}
     </Text>
   );
-}
+});

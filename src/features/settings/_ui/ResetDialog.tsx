@@ -52,6 +52,7 @@ export default function ResetDialog({
       transparent
       animationType="fade"
       statusBarTranslucent
+      navigationBarTranslucent
       onRequestClose={onClose}
     >
       <View className="flex-1 items-center justify-center px-8">

@@ -6,22 +6,24 @@ import * as Haptics from "expo-haptics";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useWindowDimensions, View } from "react-native";
-import { normalize180 } from "../_data/qibla";
+import type { SharedValue } from "react-native-reanimated";
 import useCityName from "@/features/prayer-times/_components/useCityName";
 import type { CityName } from "@/features/prayer-times/_data/cityName";
 import Compass from "./Compass";
 
-const ALIGNED_WITHIN = 5;
-
 export default function QiblaView({
   city,
   heading,
+  offset,
+  aligned,
   accuracy,
   bearing,
   distance,
 }: {
   city: CityName | null;
-  heading: number | null;
+  heading: SharedValue<number>;
+  offset: number | null;
+  aligned: boolean;
   accuracy: number;
   bearing: number;
   distance: number;
@@ -31,9 +33,6 @@ export default function QiblaView({
   const colors = useThemeColors();
   const { width } = useWindowDimensions();
   const size = Math.min(width - 72, 300);
-
-  const offset = heading === null ? null : normalize180(bearing - heading);
-  const aligned = offset !== null && Math.abs(offset) <= ALIGNED_WITHIN;
 
   const wasAligned = useRef(false);
   useEffect(() => {
@@ -99,7 +98,7 @@ export default function QiblaView({
         className="px-6 text-xs text-main-gray"
         style={{ textAlign: "center" }}
       >
-        {heading !== null && accuracy < 2 ? t("calibrate") : t("hint")}
+        {offset !== null && accuracy < 2 ? t("calibrate") : t("hint")}
       </AppText>
     </View>
   );

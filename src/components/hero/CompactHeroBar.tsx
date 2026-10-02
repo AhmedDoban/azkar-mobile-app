@@ -2,7 +2,7 @@ import StatusBarBackdrop from "@/components/StatusBarBackdrop";
 import { useStatusBarStyle } from "@/components/StatusBarStyle";
 import AppText from "@/components/ui/AppText";
 import useThemeColors from "@/hooks/useThemeColors";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
   Easing,
@@ -17,7 +17,7 @@ import type { PageHeroProps } from "./PageHero";
 const BUTTON = 42;
 const BAR = 64;
 
-export default function CompactHeroBar({
+export default memo(function CompactHeroBar({
   hero,
   visible,
 }: {
@@ -83,4 +83,4 @@ export default function CompactHeroBar({
       </Animated.View>
     </>
   );
-}
+});

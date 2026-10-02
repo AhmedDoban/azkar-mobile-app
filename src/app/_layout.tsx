@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useCallback, useState } from "react";
 
 SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({ fade: false, duration: 0 });
 
 export const unstable_settings = { initialRouteName: "(azkar)" };
 

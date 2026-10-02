@@ -1,187 +1,271 @@
-import IconButton from "@/components/Buttons/IconButton";
-import EmptyState from "@/components/ui/EmptyState";
-import { getSurah, juzOf } from "@/features/azkar/_data/quran";
-import { useAppSelector } from "@/store/Store";
-import { Stack, useFocusEffect } from "expo-router";
-import * as Haptics from "expo-haptics";
-import { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Platform, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { SlideInLeft, SlideInRight } from "react-native-reanimated";
+import Icon from "@/components/ui/Icon";
+import PressableScale from "@/components/ui/PressableScale";
 import {
-  buildMushaf,
-  positionKey,
-  stretchedLineHeight,
-  verseOffset,
-} from "./_components/buildPages";
-import { lineHeightFor, PAGE } from "./_components/pageLayout";
+  AyahRef,
+  ayahsOnPage,
+  getPage,
+  getSurah,
+  PAGE_COUNT,
+  pageOf,
+} from "@/features/azkar/_data/quran";
+import { setQuranBookmark } from "@/store/Slices/SettingsSlice";
+import { useAppDispatch, useAppSelector } from "@/store/Store";
+import * as Haptics from "expo-haptics";
+import { router, Stack } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { InteractionManager, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import AppText from "@/components/ui/AppText";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useMushafColors from "./_components/useMushafColors";
-import useMushafLines from "./_components/useMushafLines";
-import LineMeasurer from "./_ui/LineMeasurer";
+import useThemeColors from "@/hooks/useThemeColors";
+import useDirection from "@/hooks/useDirection";
+import useRecitation from "./_components/useRecitation";
+import { loadMuyassar } from "./_components/useTafsir";
+import { loadPageSvg } from "./_components/usePageSvg";
 import MushafPage from "./_ui/MushafPage";
-import PageNumber from "./_ui/PageNumber";
+import MushafPager from "./_ui/MushafPager";
+import { hitTest } from "./_components/pageHitTest";
+import PageSlider from "./_ui/PageSlider";
+import RecitationPlayer from "./_ui/RecitationPlayer";
+import AyahSheet from "./_ui/AyahSheet";
 
 export default function SurahReader({
   id,
   ayah,
+  page: startPage,
 }: {
   id: number;
   ayah?: number;
+  page?: number;
 }) {
-  const { t } = useTranslation("common");
-  const mushaf = useMushafColors();
+  const { t } = useTranslation("azkar");
+  const c = useMushafColors();
+  const theme = useThemeColors();
+  const { isRTL, direction } = useDirection();
+  const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
-  const tabBarSpace = Platform.OS === "ios" ? insets.bottom : 0;
-  const surah = getSurah(id);
+  const bookmark = useAppSelector((s) => s.settings.quranBookmark);
+  const recitation = useRecitation();
+
+  const initial = useMemo(
+    () => startPage ?? pageOf(id, ayah ?? 1),
+    [id, ayah, startPage],
+  );
+  const [page, setPage] = useState(initial);
   const [area, setArea] = useState<{ width: number; height: number } | null>(
     null,
   );
-  const savedFontSize = useAppSelector((s) => s.settings.quranSize);
-  const [fontSize, setFontSize] = useState(savedFontSize);
-  useFocusEffect(
-    useCallback(() => setFontSize(savedFontSize), [savedFontSize]),
+  const [selected, setSelected] = useState<AyahRef | null>(
+    ayah ? { surah: id, ayah } : null,
   );
-  const textWidth = area ? area.width - PAGE.paddingX * 2 : 0;
-  const { linesOf, isMeasured, save, version, lineHeight } = useMushafLines(
-    textWidth,
-    fontSize,
-  );
+  const active = recitation.current ?? selected;
+  const [chrome, setChrome] = useState(true);
 
-  const pages = useMemo(
-    () => (area ? buildMushaf(linesOf, area.height, lineHeight) : []),
-    [area, version, linesOf, lineHeight],
-  );
-
-  const [anchor, setAnchor] = useState(() =>
-    surah && ayah
-      ? positionKey(id, verseOffset(surah, ayah))
-      : positionKey(id, -1),
-  );
-  const [direction, setDirection] = useState(1);
-
-  const index = useMemo(() => {
-    let found = 0;
-    pages.forEach((page, i) => {
-      if (page.start <= anchor) found = i;
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      for (const p of [page + 2, page - 2]) {
+        if (p >= 1 && p <= PAGE_COUNT) loadPageSvg(p).catch(() => {});
+      }
     });
-    return found;
-  }, [pages, anchor]);
+    return () => task.cancel();
+  }, [page]);
 
-  const current = pages[index];
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      loadMuyassar();
+    });
+    return () => task.cancel();
+  }, []);
+  const [sheetAyah, setSheetAyah] = useState<AyahRef | null>(null);
+  const fade = useSharedValue(1);
 
-  const pending = useMemo(() => {
-    if (Platform.OS === "web" || !area) return null;
-    const near = [id, id - 1, id + 1];
-    for (const page of pages.slice(Math.max(0, index - 1), index + 2)) {
-      for (const segment of page.segments) near.push(segment.surahId);
-    }
-    return near.find((n) => n >= 1 && n <= 114 && !isMeasured(n)) ?? null;
-  }, [pages, index, id, area, isMeasured]);
+  useEffect(() => {
+    fade.set(withTiming(chrome ? 1 : 0, { duration: 200 }));
+  }, [chrome, fade]);
 
-  if (!surah) return <EmptyState icon="quran" title={t("somethingWrong")} />;
+  const chromeStyle = useAnimatedStyle(() => ({ opacity: fade.get() }));
+  const toggleChrome = useCallback(() => setChrome((v) => !v), []);
 
-  const goTo = (target: number) => {
-    if (target < 0 || target >= pages.length) return;
+  const jump = useCallback((target: number) => {
+    setPage(Math.min(PAGE_COUNT, Math.max(1, target)));
+  }, []);
+
+  useEffect(() => {
+    const current = recitation.current;
+    if (!current) return;
+    const target = pageOf(current.surah, current.ayah);
+    if (target !== page) jump(target);
+  }, [recitation.current]);
+
+  const onAyahLongPress = useCallback((ref: AyahRef) => {
     Haptics.selectionAsync();
-    setDirection(target > index ? 1 : -1);
-    setAnchor(pages[target].start);
+    setSelected(ref);
+    setSheetAyah(ref);
+  }, []);
+
+  const activePage = active ? pageOf(active.surah, active.ayah) : null;
+  const playFrom = recitation.play;
+  const closeSheet = useCallback(() => {
+    setSheetAyah(null);
+    setSelected(null);
+  }, []);
+  const playSheet = useCallback(
+    (from: AyahRef, until: AyahRef | null) => playFrom(from, until),
+    [playFrom],
+  );
+  const onPageLongPress = useCallback(
+    (x: number, y: number) => {
+      const ref = hitTest(page, x, y);
+      if (ref) onAyahLongPress(ref);
+    },
+    [page, onAyahLongPress],
+  );
+  const renderPage = useCallback(
+    (p: number) =>
+      area ? (
+        <MushafPage
+          page={p}
+          width={area.width}
+          height={area.height}
+          active={p === activePage ? active : null}
+        />
+      ) : null,
+    [area, activePage, active],
+  );
+
+  const play = () => {
+    if (recitation.current) recitation.resume();
+    else recitation.play(selected ?? ayahsOnPage(page)[0]);
   };
 
-  const swipe = Gesture.Pan()
-    .runOnJS(true)
-    .activeOffsetX([-24, 24])
-    .failOffsetY([-16, 16])
-    .onEnd((e) => {
-      if (e.translationX > 60) goTo(index + 1);
-      else if (e.translationX < -60) goTo(index - 1);
-    });
+  const bookmarkPage = bookmark ? pageOf(bookmark.surah, bookmark.ayah) : null;
+  const bookmarked = bookmarkPage === page;
+  const toggleBookmark = () => {
+    Haptics.selectionAsync();
+    dispatch(setQuranBookmark(bookmarked ? null : ayahsOnPage(page)[0]));
+  };
 
-  const pageSurah = current ? (getSurah(current.surahId) ?? surah) : surah;
+  const title = getSurah(getPage(page).start.surah)?.name ?? "";
 
   return (
     <View
       className="flex-1"
-      style={{ backgroundColor: mushaf.page, paddingBottom: tabBarSpace }}
-      onLayout={(e) => {
-        const { width } = e.nativeEvent.layout;
-        const height = e.nativeEvent.layout.height - tabBarSpace;
-        if (width !== area?.width || height !== area?.height) {
-          setArea({ width, height });
-        }
-      }}
+      style={{ direction: "rtl", backgroundColor: c.page }}
     >
-      {pending !== null ? (
-        <LineMeasurer
-          surahId={pending}
-          width={textWidth}
-          fontSize={fontSize}
-          onLines={save}
-        />
-      ) : null}
       <Stack.Screen
         options={{
-          title: pageSurah.name,
-          gestureEnabled: false,
-          fullScreenGestureEnabled: false,
-          headerStyle: { backgroundColor: mushaf.page },
-          contentStyle: { backgroundColor: mushaf.page },
+          headerShown: false,
+          contentStyle: { backgroundColor: c.page },
         }}
       />
-      {current ? (
-        <GestureDetector gesture={swipe}>
-          <Animated.View
-            key={current.start}
-            className="flex-1"
-            entering={(direction > 0 ? SlideInLeft : SlideInRight).duration(
-              260,
+
+      <View
+        className="flex-1"
+        style={{ marginTop: insets.top, marginBottom: insets.bottom }}
+        onLayout={(e) => {
+          const { width, height } = e.nativeEvent.layout;
+          if (width !== area?.width || height !== area?.height) {
+            setArea({ width, height });
+          }
+        }}
+      >
+        {area ? (
+          <MushafPager
+            page={page}
+            width={area.width}
+            height={area.height}
+            onChange={setPage}
+            onTap={toggleChrome}
+            onLongPress={onPageLongPress}
+            renderPage={renderPage}
+          />
+        ) : null}
+      </View>
+
+      <Animated.View
+        pointerEvents={chrome ? "box-none" : "none"}
+        className="absolute inset-x-0 top-0 flex-row items-center gap-3 px-3 pb-2"
+        style={[
+          { paddingTop: insets.top + 6, backgroundColor: c.page, direction },
+          chromeStyle,
+        ]}
+      >
+        <PressableScale
+          onPress={() => router.back()}
+          accessibilityLabel={t("close")}
+          hitSlop={10}
+          className="size-10 items-center justify-center"
+        >
+          <Icon
+            name={isRTL ? "chevronRight" : "chevronLeft"}
+            size={26}
+            strokeWidth={2}
+            tintColor={theme.isDark ? "#ffffff" : theme.main}
+          />
+        </PressableScale>
+        <AppText
+          variant="quran"
+          className="flex-1 text-xl"
+          style={{ color: c.ink, textAlign: "center" }}
+          numberOfLines={1}
+        >
+          {`سورة ${title}`}
+        </AppText>
+        <View className="size-10" />
+      </Animated.View>
+
+      <Animated.View
+        pointerEvents={chrome ? "box-none" : "none"}
+        className="absolute inset-x-0 bottom-0 gap-3 px-4 pt-3"
+        style={[
+          { paddingBottom: insets.bottom + 8, backgroundColor: c.page },
+          chromeStyle,
+        ]}
+      >
+        <RecitationPlayer
+          current={recitation.current}
+          playing={recitation.playing}
+          loading={recitation.loading}
+          onPlay={play}
+          onPause={recitation.pause}
+          onStop={recitation.stop}
+        />
+        <View
+          className="flex-row items-center gap-3"
+          style={{ direction: "rtl" }}
+        >
+          <PressableScale
+            onPress={toggleBookmark}
+            accessibilityLabel={t(
+              bookmarked ? "removeBookmark" : "bookmarkPage",
             )}
+            className="size-10 items-center justify-center"
           >
-            <MushafPage
-              segments={current.segments}
-              fontSize={fontSize}
-              lineHeight={
-                (lineHeightFor(fontSize) *
-                  stretchedLineHeight(current, lineHeight)) /
-                lineHeight
-              }
-              surahName={pageSurah.name}
-              juz={juzOf(current.surahId, current.verse)}
-              footer={
-                <View
-                  className="flex-row items-center gap-4"
-                  style={{ direction: "ltr" }}
-                >
-                  <IconButton
-                    icon="chevronLeft"
-                    color={mushaf.gold}
-                    accessibilityLabel={t("nextPage")}
-                    disabled={index === pages.length - 1}
-                    style={{
-                      opacity: index === pages.length - 1 ? 0.3 : 1,
-                      backgroundColor: "transparent",
-                    }}
-                    onPress={() => goTo(index + 1)}
-                  />
-                  <PageNumber page={index + 1} />
-                  <IconButton
-                    icon="chevronRight"
-                    color={mushaf.gold}
-                    accessibilityLabel={t("previousPage")}
-                    disabled={index === 0}
-                    style={{
-                      opacity: index === 0 ? 0.3 : 1,
-                      backgroundColor: "transparent",
-                    }}
-                    onPress={() => goTo(index - 1)}
-                  />
-                </View>
-              }
+            <Icon
+              name={bookmarked ? "bookmarkFill" : "bookmark"}
+              size={24}
+              tintColor={c.accent}
             />
-          </Animated.View>
-        </GestureDetector>
-      ) : null}
+          </PressableScale>
+          <PageSlider page={page} onChange={(p) => jump(p)} />
+          <PressableScale
+            onPress={() => bookmarkPage && jump(bookmarkPage)}
+            disabled={!bookmark || bookmarked}
+            accessibilityLabel={t("goToBookmark")}
+            className="size-10 items-center justify-center"
+            style={{ opacity: !bookmark || bookmarked ? 0.3 : 1 }}
+          >
+            <Icon name="reset" size={22} tintColor={c.accent} />
+          </PressableScale>
+        </View>
+      </Animated.View>
+      <AyahSheet ayah={sheetAyah} onClose={closeSheet} onPlay={playSheet} />
     </View>
   );
 }

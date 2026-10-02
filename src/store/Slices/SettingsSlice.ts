@@ -21,16 +21,37 @@ import {
 } from "@/features/prayer-times/_data/methods";
 
 import { DEFAULT_PALETTE, isPaletteId, PaletteId } from "@/constants/palettes";
+import {
+  DEFAULT_RECITER,
+  isReciterId,
+  ReciterId,
+} from "@/features/quran/_data/reciters";
+
+export type AyahBookmark = { surah: number; ayah: number };
+
+const isAyahBookmark = (value: unknown): value is AyahBookmark =>
+  typeof value === "object" &&
+  value !== null &&
+  typeof (value as AyahBookmark).surah === "number" &&
+  typeof (value as AyahBookmark).ayah === "number";
+
+export type KhatmaPlan = {
+  fromJuz: number;
+  toJuz: number;
+  days: number;
+  startedAt: string;
+  done: number;
+};
+
+const isKhatmaPlan = (value: unknown): value is KhatmaPlan =>
+  typeof value === "object" &&
+  value !== null &&
+  typeof (value as KhatmaPlan).days === "number" &&
+  typeof (value as KhatmaPlan).done === "number";
 
 export type ThemePreference = "system" | "light" | "dark";
 export type TextSize = number;
 export const TEXT_SIZE = { min: 18, max: 40, step: 2, default: 24 } as const;
-export const QURAN_SIZE = { min: 18, max: 34, step: 1, default: 23 } as const;
-
-const clampQuranSize = (value: unknown): number =>
-  typeof value === "number" && Number.isFinite(value)
-    ? Math.min(QURAN_SIZE.max, Math.max(QURAN_SIZE.min, Math.round(value)))
-    : QURAN_SIZE.default;
 
 const LEGACY_TEXT_SIZES: Record<string, number> = { sm: 20, md: 24, lg: 30 };
 
@@ -58,7 +79,12 @@ export interface SettingsState {
   theme: ThemePreference;
   palette: PaletteId;
   textSize: TextSize;
-  quranSize: number;
+  quranBookmark: AyahBookmark | null;
+  savedAyahs: string[];
+  khatma: KhatmaPlan | null;
+  surahFrame: number;
+  ayahColors: Record<string, number>;
+  reciter: ReciterId;
   prayerReminders: Partial<Record<PrayerName, boolean>>;
   adhanSound: AdhanSoundId;
   customAdhan: CustomAdhan | null;
@@ -75,7 +101,12 @@ export const defaultSettings = (
   theme: "system",
   palette: DEFAULT_PALETTE,
   textSize: TEXT_SIZE.default,
-  quranSize: QURAN_SIZE.default,
+  quranBookmark: null,
+  savedAyahs: [],
+  khatma: null,
+  surahFrame: 1,
+  ayahColors: {},
+  reciter: DEFAULT_RECITER,
   prayerReminders: Object.fromEntries(REMINDER_PRAYERS.map((p) => [p, true])),
   adhanSound: DEFAULT_ADHAN,
   customAdhan: null,
@@ -103,8 +134,49 @@ export const SettingsSlice = createSlice({
     setTextSize(state, action: PayloadAction<TextSize>) {
       state.textSize = clampTextSize(action.payload);
     },
-    setQuranSize(state, action: PayloadAction<number>) {
-      state.quranSize = clampQuranSize(action.payload);
+    setQuranBookmark(state, action: PayloadAction<AyahBookmark | null>) {
+      state.quranBookmark = action.payload;
+    },
+    startKhatma(
+      state,
+      action: PayloadAction<Omit<KhatmaPlan, "done" | "startedAt">>,
+    ) {
+      state.khatma = {
+        ...action.payload,
+        startedAt: new Date().toISOString(),
+        done: 0,
+      };
+    },
+    completeWird(state) {
+      if (state.khatma && state.khatma.done < state.khatma.days) {
+        state.khatma.done += 1;
+      }
+    },
+    undoWird(state) {
+      if (state.khatma && state.khatma.done > 0) state.khatma.done -= 1;
+    },
+    setSurahFrame(state, action: PayloadAction<number>) {
+      state.surahFrame = action.payload;
+    },
+    endKhatma(state) {
+      state.khatma = null;
+    },
+    toggleSavedAyah(state, action: PayloadAction<string>) {
+      const key = action.payload;
+      state.savedAyahs = state.savedAyahs.includes(key)
+        ? state.savedAyahs.filter((item) => item !== key)
+        : [key, ...state.savedAyahs];
+    },
+    setAyahColor(
+      state,
+      action: PayloadAction<{ key: string; color: number | null }>,
+    ) {
+      const { key, color } = action.payload;
+      if (color === null) delete state.ayahColors[key];
+      else state.ayahColors[key] = color;
+    },
+    setReciter(state, action: PayloadAction<ReciterId>) {
+      state.reciter = action.payload;
     },
     setReadingOption(
       state,
@@ -136,6 +208,10 @@ export const SettingsSlice = createSlice({
       return {
         ...defaultSettings(state.locale),
         prayerLocation: state.prayerLocation,
+        quranBookmark: state.quranBookmark,
+        savedAyahs: state.savedAyahs,
+        khatma: state.khatma,
+        ayahColors: state.ayahColors,
       };
     },
     hydrateSettings(state, action: PayloadAction<Partial<SettingsState>>) {
@@ -146,8 +222,10 @@ export const SettingsSlice = createSlice({
         palette: isPaletteId(action.payload.palette)
           ? action.payload.palette
           : state.palette,
-        quranSize: clampQuranSize(action.payload.quranSize ?? state.quranSize),
-              adhanSound: isAdhanSound(action.payload.adhanSound)
+        reciter: isReciterId(action.payload.reciter)
+          ? action.payload.reciter
+          : state.reciter,
+        adhanSound: isAdhanSound(action.payload.adhanSound)
           ? action.payload.adhanSound
           : state.adhanSound,
         customAdhan: action.payload.customAdhan ?? state.customAdhan,
@@ -168,6 +246,22 @@ export const SettingsSlice = createSlice({
           ...action.payload.prayerReminders,
         },
         reading: { ...state.reading, ...action.payload.reading },
+        ayahColors: { ...state.ayahColors, ...action.payload.ayahColors },
+        quranBookmark: isAyahBookmark(action.payload.quranBookmark)
+          ? action.payload.quranBookmark
+          : null,
+        surahFrame:
+          typeof action.payload.surahFrame === "number" &&
+          action.payload.surahFrame >= 1 &&
+          action.payload.surahFrame <= 10
+            ? action.payload.surahFrame
+            : state.surahFrame,
+        khatma: isKhatmaPlan(action.payload.khatma)
+          ? action.payload.khatma
+          : state.khatma,
+        savedAyahs: Array.isArray(action.payload.savedAyahs)
+          ? action.payload.savedAyahs
+          : state.savedAyahs,
       };
     },
   },
@@ -178,7 +272,15 @@ export const {
   setTheme,
   setPalette,
   setTextSize,
-  setQuranSize,
+  setQuranBookmark,
+  toggleSavedAyah,
+  startKhatma,
+  completeWird,
+  undoWird,
+  endKhatma,
+  setSurahFrame,
+  setAyahColor,
+  setReciter,
   togglePrayerReminder,
   setAdhanSound,
   setCustomAdhan,

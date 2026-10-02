@@ -15,14 +15,16 @@ export default function PrayerCell({
   label,
   time,
   status,
+  onDenied,
 }: {
   prayer: PrayerName;
   label: string;
   time: string;
   status: PrayerStatus;
+  onDenied: () => void;
 }) {
   const { t } = useTranslation("prayer");
-  const { enabled, toggle } = usePrayerReminder(prayer);
+  const { enabled, toggle } = usePrayerReminder(prayer, onDenied);
   const isNext = status === "next";
   const color = isNext ? INK : "#ffffff";
 

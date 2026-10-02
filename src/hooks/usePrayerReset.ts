@@ -1,18 +1,24 @@
 import { perPrayerCategoryIds } from "@/features/azkar/_data";
-import usePrayerSchedule from "@/features/prayer-times/_components/usePrayerSchedule";
-import { startNewPrayer, today } from "@/store/Slices/AzkarSlice";
+import {
+  getLastPassedPrayer,
+  useClock,
+  usePrayerConfig,
+  usePrayerDay,
+} from "@/features/prayer-times/_components/usePrayerSchedule";
+import { startNewPrayer } from "@/store/Slices/AzkarSlice";
 import { useAppDispatch, useAppSelector } from "@/store/Store";
 import { useEffect } from "react";
 
 export default function usePrayerReset() {
   const dispatch = useAppDispatch();
-  const { prayers } = usePrayerSchedule();
+  const day = usePrayerDay(usePrayerConfig());
   const current = useAppSelector((s) => s.azkar.prayerPeriod);
 
-  const passed = prayers.filter((p) => p.status === "passed");
-  const period = prayers.length
-    ? `${today()}:${passed[passed.length - 1]?.name ?? "night"}`
-    : null;
+  const period = useClock((now) =>
+    day
+      ? `${now.toLocaleDateString("en-CA")}:${getLastPassedPrayer(day, now) ?? "night"}`
+      : null,
+  );
 
   useEffect(() => {
     if (period && period !== current) {

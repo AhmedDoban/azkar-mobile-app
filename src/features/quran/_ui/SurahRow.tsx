@@ -4,8 +4,9 @@ import { SurahSummary, toArabicDigits } from "@/features/azkar/_data/quran";
 import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { memo } from "react";
 
-export default function SurahRow({ surah }: { surah: SurahSummary }) {
+export default memo(function SurahRow({ surah }: { surah: SurahSummary }) {
   const { t } = useTranslation("azkar");
 
   return (
@@ -38,4 +39,4 @@ export default function SurahRow({ surah }: { surah: SurahSummary }) {
       </PressableScale>
     </Link>
   );
-}
+});

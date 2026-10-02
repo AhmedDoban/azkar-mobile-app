@@ -17,6 +17,17 @@ import CrescentDivider from "./_ui/adhan/CrescentDivider";
 import Lantern from "./_ui/adhan/Lantern";
 import { ADHAN_PALETTE } from "./_ui/adhan/palette";
 
+function AdhanAudio({ sound }: { sound: AdhanSoundId }) {
+  const { play, stop } = useAdhanPlayer();
+
+  useEffect(() => {
+    play(sound);
+    return stop;
+  }, []);
+
+  return null;
+}
+
 export default function AdhanSplash({
   prayer,
   time,
@@ -34,104 +45,101 @@ export default function AdhanSplash({
   const insets = useSafeAreaInsets();
   const { label, formatTime } = usePrayerLabels();
   const p = ADHAN_PALETTE[isDark ? "dark" : "light"];
-  const { play, stop } = useAdhanPlayer();
-
-  useEffect(() => {
-    if (!prayer) return;
-    play(sound);
-    return stop;
-  }, [prayer]);
 
   return (
-    <Modal
-      visible={prayer !== null}
-      animationType="fade"
-      statusBarTranslucent
-      onRequestClose={onClose}
-    >
-      <ThemeScope>
-        {prayer && (
-          <View
-            className="flex-1"
-            style={{ direction, backgroundColor: p.bgBottom }}
-          >
-            <AdhanBackdrop palette={p} />
-
-            <Lantern palette={p} left={20} length={insets.top + 24} />
-            <Lantern
-              palette={p}
-              left={64}
-              length={insets.top + 78}
-              size={0.8}
-              delay={500}
-            />
-            <Lantern
-              palette={p}
-              right={20}
-              length={insets.top + 56}
-              delay={250}
-            />
-            <Lantern
-              palette={p}
-              right={66}
-              length={insets.top + 12}
-              size={0.75}
-              delay={750}
-            />
-
-            <Animated.View
-              entering={FadeInDown.duration(600)}
-              style={{ marginTop: insets.top + 150 }}
+    <>
+      {prayer ? <AdhanAudio key={prayer} sound={sound} /> : null}
+      <Modal
+        visible={prayer !== null}
+        animationType="fade"
+        statusBarTranslucent
+        navigationBarTranslucent
+        onRequestClose={onClose}
+      >
+        <ThemeScope>
+          {prayer && (
+            <View
+              className="flex-1"
+              style={{ direction, backgroundColor: p.bgBottom }}
             >
-              <AppText
-                weight="bold"
-                className="font-hafs text-3xl leading-[48px]"
-                style={{ textAlign: "center", color: p.text }}
-              >
-                {t("adhanTime")}
-              </AppText>
-            </Animated.View>
+              <AdhanBackdrop palette={p} />
 
-            <View className="flex-1" />
+              <Lantern palette={p} left={20} length={insets.top + 24} />
+              <Lantern
+                palette={p}
+                left={64}
+                length={insets.top + 78}
+                size={0.8}
+                delay={500}
+              />
+              <Lantern
+                palette={p}
+                right={20}
+                length={insets.top + 56}
+                delay={250}
+              />
+              <Lantern
+                palette={p}
+                right={66}
+                length={insets.top + 12}
+                size={0.75}
+                delay={750}
+              />
 
-            <Animated.View
-              entering={FadeInDown.delay(250).duration(700)}
-              className="items-center gap-4 px-6"
-              style={{ paddingBottom: insets.bottom + 28 }}
-            >
-              <CrescentDivider color={p.text} />
-              <AppText
-                weight="bold"
-                className="font-hafs text-5xl leading-[72px]"
-                style={{ textAlign: "center", color: p.text }}
-              >
-                {label(prayer)}
-              </AppText>
-              <AppText
-                className="text-base leading-6"
-                style={{ textAlign: "center", color: p.textMuted }}
-              >
-                {time ? `${formatTime(time)} · ` : ""}
-                {t("adhanCall")}
-              </AppText>
-
-              <PressableScale
-                onPress={onClose}
-                className="mt-3 w-full flex-row items-center justify-center gap-2 rounded-full py-4"
-                style={{ backgroundColor: p.button }}
+              <Animated.View
+                entering={FadeInDown.duration(600)}
+                style={{ marginTop: insets.top + 150 }}
               >
                 <AppText
                   weight="bold"
-                  className="text-lg"
-                  style={{ color: p.buttonText }}
+                  className="font-hafs text-3xl leading-[48px]"
+                  style={{ textAlign: "center", color: p.text }}
                 >
-                  {t("dismiss")}
+                  {t("adhanTime")}
                 </AppText>
-              </PressableScale>
-            </Animated.View>
-          </View>
-        )}
-      </ThemeScope>
-    </Modal>
+              </Animated.View>
+
+              <View className="flex-1" />
+
+              <Animated.View
+                entering={FadeInDown.delay(250).duration(700)}
+                className="items-center gap-4 px-6"
+                style={{ paddingBottom: insets.bottom + 28 }}
+              >
+                <CrescentDivider color={p.text} />
+                <AppText
+                  weight="bold"
+                  className="font-hafs text-5xl leading-[72px]"
+                  style={{ textAlign: "center", color: p.text }}
+                >
+                  {label(prayer)}
+                </AppText>
+                <AppText
+                  className="text-base leading-6"
+                  style={{ textAlign: "center", color: p.textMuted }}
+                >
+                  {time ? `${formatTime(time)} · ` : ""}
+                  {t("adhanCall")}
+                </AppText>
+
+                <PressableScale
+                  onPress={onClose}
+                  className="mt-3 w-full flex-row items-center justify-center gap-2 rounded-full py-4"
+                  style={{ backgroundColor: p.button }}
+                >
+                  <AppText
+                    weight="bold"
+                    className="text-lg"
+                    style={{ color: p.buttonText }}
+                  >
+                    {t("dismiss")}
+                  </AppText>
+                </PressableScale>
+              </Animated.View>
+            </View>
+          )}
+        </ThemeScope>
+      </Modal>
+    </>
   );
 }

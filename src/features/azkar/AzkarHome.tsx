@@ -1,4 +1,5 @@
 import HeroScreen from "@/components/hero/HeroScreen";
+import { PageHeroProps } from "@/components/hero/PageHero";
 import EmptyState from "@/components/ui/EmptyState";
 import OrnamentHeading from "@/components/ui/OrnamentHeading";
 import { PAGE_MOSQUES } from "@/constants/mosques";
@@ -20,32 +21,37 @@ import VerseOfDayCard from "./_ui/VerseOfDayCard";
 
 const otherCategories = categories.filter((c) => !c.featured);
 
+const openFavorites = () => router.push("/favorites");
+
 export default function AzkarHome() {
   const { t } = useTranslation(["azkar", "common"]);
   const [query, setQuery] = useState("");
   const results = useMemo(() => searchCategories(query), [query]);
   const searching = query.trim().length > 0;
   const friday = isFriday();
-  const daily = dailyCategories();
+  const daily = useMemo(() => dailyCategories(), [friday]);
+
+  const hero = useMemo<PageHeroProps>(
+    () => ({
+      title: t("common:tabs.azkar"),
+      subtitle: t("tagline"),
+      source: PAGE_MOSQUES.home,
+      action: {
+        icon: "heart",
+        label: t("openFavorites"),
+        onPress: openFavorites,
+      },
+      search: {
+        value: query,
+        onChangeText: setQuery,
+        placeholder: t("searchPlaceholder"),
+      },
+    }),
+    [t, query],
+  );
 
   return (
-    <HeroScreen
-      hero={{
-        title: t("common:tabs.azkar"),
-        subtitle: t("tagline"),
-        source: PAGE_MOSQUES.home,
-        action: {
-          icon: "heart",
-          label: t("openFavorites"),
-          onPress: () => router.push("/favorites"),
-        },
-        search: {
-          value: query,
-          onChangeText: setQuery,
-          placeholder: t("searchPlaceholder"),
-        },
-      }}
-    >
+    <HeroScreen hero={hero}>
       {searching ? (
         results.length > 0 ? (
           <CategoryGrid categories={results} />

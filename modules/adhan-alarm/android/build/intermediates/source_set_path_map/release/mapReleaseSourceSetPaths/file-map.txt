@@ -1,0 +1,7 @@
+expo.modules.adhanalarm.adhan-alarm-pngs-0 /Users/ahmeddoban/Desktop/azkar/modules/adhan-alarm/android/build/generated/res/pngs/release
+expo.modules.adhanalarm.adhan-alarm-resValues-1 /Users/ahmeddoban/Desktop/azkar/modules/adhan-alarm/android/build/generated/res/resValues/release
+expo.modules.adhanalarm.adhan-alarm-mergeReleaseResources-2 /Users/ahmeddoban/Desktop/azkar/modules/adhan-alarm/android/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+expo.modules.adhanalarm.adhan-alarm-mergeReleaseResources-3 /Users/ahmeddoban/Desktop/azkar/modules/adhan-alarm/android/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+expo.modules.adhanalarm.adhan-alarm-release-4 /Users/ahmeddoban/Desktop/azkar/modules/adhan-alarm/android/build/intermediates/merged_res/release/mergeReleaseResources
+expo.modules.adhanalarm.adhan-alarm-main-5 /Users/ahmeddoban/Desktop/azkar/modules/adhan-alarm/android/src/main/res
+expo.modules.adhanalarm.adhan-alarm-release-6 /Users/ahmeddoban/Desktop/azkar/modules/adhan-alarm/android/src/release/res

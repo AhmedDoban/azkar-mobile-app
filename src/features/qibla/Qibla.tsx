@@ -14,6 +14,8 @@ export default function Qibla() {
     canAskAgain,
     city,
     heading,
+    offset,
+    aligned,
     accuracy,
     bearing,
     distance,
@@ -45,6 +47,8 @@ export default function Qibla() {
           <QiblaView
             city={city}
             heading={heading}
+            offset={offset}
+            aligned={aligned}
             accuracy={accuracy}
             bearing={bearing}
             distance={distance}

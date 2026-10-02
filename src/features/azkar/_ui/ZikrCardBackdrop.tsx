@@ -1,65 +1,87 @@
-import { StyleSheet } from "react-native";
-import Svg, {
-  Defs,
-  G,
-  LinearGradient,
-  Path,
-  Rect,
-  Stop,
-} from "react-native-svg";
+import { memo, useMemo, useState } from "react";
+import { LayoutChangeEvent, StyleSheet, View } from "react-native";
+import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 
-const petal = (r: number) =>
-  `M 0 0 C ${-r * 0.45} ${-r * 0.5}, ${-r * 0.32} ${-r}, 0 ${-r} C ${r * 0.32} ${-r}, ${r * 0.45} ${-r * 0.5}, 0 0 Z`;
+const fmt = (n: number) => Math.round(n * 10) / 10;
 
-export default function ZikrCardBackdrop({
+const BORDER = 1;
+
+function rosette(radii: number[]) {
+  let d = "";
+  for (let i = 0; i < 8; i++) {
+    const a = (i * Math.PI) / 4;
+    const cos = Math.cos(a);
+    const sin = Math.sin(a);
+    const at = (x: number, y: number) =>
+      `${fmt(x * cos - y * sin)} ${fmt(x * sin + y * cos)}`;
+    for (const r of radii) {
+      d +=
+        `M ${at(0, 0)} C ${at(-r * 0.45, -r * 0.5)}, ${at(-r * 0.32, -r)}, ${at(0, -r)} ` +
+        `C ${at(r * 0.32, -r)}, ${at(r * 0.45, -r * 0.5)}, ${at(0, 0)} Z `;
+    }
+  }
+  return d;
+}
+
+const ROSETTE = rosette([40, 22]);
+
+const FILL = [StyleSheet.absoluteFill, { pointerEvents: "none" as const }];
+
+export default memo(function ZikrCardBackdrop({
   top,
   bottom,
   wave,
   ornament,
-  width,
-  height,
-  cornerX,
+  rtl,
 }: {
   top: string;
   bottom: string;
   wave: string;
   ornament: string;
-  width: number;
-  height: number;
-  cornerX: number;
+  rtl: boolean;
 }) {
-  const start = height * 0.6;
-  const back = `M 0 ${start + 14} C ${width * 0.3} ${start - 10}, ${width * 0.62} ${start + 26}, ${width} ${start - 4} L ${width} ${height} L 0 ${height} Z`;
-  const front = `M 0 ${start + 30} C ${width * 0.35} ${start + 8}, ${width * 0.7} ${start + 40}, ${width} ${start + 16} L ${width} ${height} L 0 ${height} Z`;
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const width = e.nativeEvent.layout.width + BORDER * 2;
+    const height = e.nativeEvent.layout.height + BORDER * 2;
+    setSize((old) =>
+      old.width === width && old.height === height ? old : { width, height },
+    );
+  };
+
+  const { width, height } = size;
+  const waves = useMemo(() => {
+    const start = Math.max(height * 0.6, height - 84);
+    return {
+      back: `M 0 ${start + 14} C ${width * 0.3} ${start - 10}, ${width * 0.62} ${start + 26}, ${width} ${start - 4} L ${width} ${height} L 0 ${height} Z`,
+      front: `M 0 ${start + 30} C ${width * 0.35} ${start + 8}, ${width * 0.7} ${start + 40}, ${width} ${start + 16} L ${width} ${height} L 0 ${height} Z`,
+    };
+  }, [width, height]);
 
   return (
-    <Svg
-      width={width}
-      height={height}
-      style={[StyleSheet.absoluteFill, { pointerEvents: "none" }]}
-    >
-      <Defs>
-        <LinearGradient id="zikrFade" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor={top} />
-          <Stop offset="1" stopColor={bottom} />
-        </LinearGradient>
-      </Defs>
-      <Rect width={width} height={height} fill="url(#zikrFade)" />
-      <Path d={back} fill={wave} opacity={0.35} />
-      <Path d={front} fill={wave} opacity={0.6} />
-      <G opacity={0.08} transform={`translate(${cornerX} 0)`}>
-        {Array.from({ length: 8 }, (_, i) => (
-          <G key={i} transform={`rotate(${i * 45})`}>
-            <Path d={petal(40)} fill="none" stroke={ornament} strokeWidth={1} />
-            <Path
-              d={petal(22)}
-              fill="none"
-              stroke={ornament}
-              strokeWidth={0.8}
-            />
-          </G>
-        ))}
-      </G>
-    </Svg>
+    <View style={FILL} onLayout={onLayout}>
+      {width > 0 ? (
+        <Svg width={width} height={height} style={FILL}>
+          <Defs>
+            <LinearGradient id="zikrFade" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor={top} />
+              <Stop offset="1" stopColor={bottom} />
+            </LinearGradient>
+          </Defs>
+          <Rect width={width} height={height} fill="url(#zikrFade)" />
+          <Path d={waves.back} fill={wave} opacity={0.35} />
+          <Path d={waves.front} fill={wave} opacity={0.6} />
+          <Path
+            d={ROSETTE}
+            x={rtl ? 0 : width}
+            fill="none"
+            stroke={ornament}
+            strokeWidth={1}
+            opacity={0.08}
+          />
+        </Svg>
+      ) : null}
+    </View>
   );
-}
+});

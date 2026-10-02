@@ -24,5 +24,7 @@
   "hour": "ساعة",
   "minute": "دقيقة",
   "locationNeeded": "اسمح بالوصول للموقع لحساب مواقيت الصلاة",
-  "openSettings": "الإعدادات"
+  "openSettings": "الإعدادات",
+  "notificationsTitle": "فعّل الإشعارات",
+  "notNow": "ليس الآن"
 }

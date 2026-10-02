@@ -1,4 +1,10 @@
-import { Pressable, PressableProps, StyleProp, ViewStyle } from "react-native";
+import {
+  Platform,
+  Pressable,
+  PressableProps,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,6 +13,8 @@ import Animated, {
 } from "react-native-reanimated";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const FADE = Platform.OS === "ios" ? 0.2 : 0;
 
 type Props = Omit<PressableProps, "style"> & {
   className?: string;
@@ -23,7 +31,7 @@ export default function PressableScale({
 }: Props) {
   const pressed = useSharedValue(0);
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: 1 - pressed.get() * 0.2,
+    opacity: 1 - pressed.get() * FADE,
     transform: [{ scale: 1 - pressed.get() * (1 - scaleTo) }],
   }));
 

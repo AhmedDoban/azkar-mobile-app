@@ -3,13 +3,15 @@ import { Provider } from "react-redux";
 import { Store } from "@/store/Store";
 import { hydrateAzkar, hydrateSettings, loadPersistedState } from "./persist";
 
+const persisted = loadPersistedState();
+
 type Props = PropsWithChildren<{ onReady?: () => void }>;
 
 function StoreProvider({ children, onReady }: Props) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    loadPersistedState().then(({ settings, azkar }) => {
+    persisted.then(({ settings, azkar }) => {
       if (settings) Store.dispatch(hydrateSettings(settings));
       if (azkar) Store.dispatch(hydrateAzkar(azkar));
       setReady(true);

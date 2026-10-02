@@ -21,7 +21,10 @@ export default function GradeBadge({
       style={{ backgroundColor: background }}
       accessibilityLabel={`${label}: ${grade}`}
     >
-      <View className="size-2 rounded-full" style={{ backgroundColor: color }} />
+      <View
+        className="size-2 rounded-full"
+        style={{ backgroundColor: color }}
+      />
       <AppText className="text-xs text-main-gray">{label}:</AppText>
       <AppText weight="bold" className="shrink text-sm" style={{ color }}>
         {grade}

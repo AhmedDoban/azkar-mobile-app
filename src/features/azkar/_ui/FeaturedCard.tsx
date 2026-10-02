@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { View } from "react-native";
 import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -10,7 +11,7 @@ import useCategoryProgress from "../_components/useCategoryProgress";
 import ProgressRing from "./ProgressRing";
 import PressableScale from "@/components/ui/PressableScale";
 
-export default function FeaturedCard({
+export default memo(function FeaturedCard({
   category,
   showProgress = true,
 }: {
@@ -61,4 +62,4 @@ export default function FeaturedCard({
       </PressableScale>
     </Link>
   );
-}
+});
