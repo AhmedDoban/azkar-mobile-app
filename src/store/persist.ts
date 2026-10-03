@@ -7,7 +7,8 @@ import {
 } from "./Slices/SettingsSlice";
 import { AzkarSlice, AzkarState, hydrateAzkar } from "./Slices/AzkarSlice";
 
-const STORAGE_KEY = "AZKAR_STATE_V1";
+const STORAGE_KEY = "MAAB_STATE_V1";
+const LEGACY_STORAGE_KEY = "AZKAR_STATE_V1";
 
 interface PersistedState {
   settings?: Partial<SettingsState>;
@@ -52,7 +53,9 @@ export async function savePersistedState({ settings, azkar }: PersistedState) {
 
 export async function loadPersistedState(): Promise<PersistedState> {
   try {
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    const raw =
+      (await AsyncStorage.getItem(STORAGE_KEY)) ??
+      (await AsyncStorage.getItem(LEGACY_STORAGE_KEY));
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};

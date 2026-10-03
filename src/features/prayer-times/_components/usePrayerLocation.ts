@@ -1,6 +1,12 @@
 import { setPrayerLocation } from "@/store/Slices/SettingsSlice";
-import { AppDispatch, useAppDispatch, useAppSelector } from "@/store/Store";
+import {
+  AppDispatch,
+  Store,
+  useAppDispatch,
+  useAppSelector,
+} from "@/store/Store";
 import { useCallback, useEffect, useState } from "react";
+import { AppState } from "react-native";
 import type { PrayerLocation } from "../_data/calculate";
 import { lookupCityName } from "../_data/cityName";
 import { distanceKm } from "../_data/geo";
@@ -10,6 +16,23 @@ export type LocationStatus = "loading" | "ready" | "denied" | "error";
 const MOVED_KM = 5;
 const LOOKUP_RETRY = 7 * 24 * 60 * 60 * 1000;
 let refresh: Promise<LocationStatus> | null = null;
+let pending = false;
+
+function startLocate(
+  dispatch: AppDispatch,
+  saved: PrayerLocation | null,
+  force: boolean,
+) {
+  if (!refresh || (force && !pending)) {
+    pending = true;
+    refresh = locate(dispatch, saved).then((status) => {
+      pending = false;
+      if (status !== "ready") refresh = null;
+      return status;
+    });
+  }
+  return refresh;
+}
 
 async function locate(
   dispatch: AppDispatch,
@@ -61,14 +84,20 @@ export default function usePrayerLocation() {
 
   const run = useCallback(
     (force: boolean) => {
-      if (force || !refresh) refresh = locate(dispatch, location);
-      refresh.then(setStatus);
+      startLocate(dispatch, location, force).then(setStatus);
     },
     [dispatch, location],
   );
 
   useEffect(() => {
     run(false);
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state !== "active" || Store.getState().settings.prayerLocation) {
+        return;
+      }
+      startLocate(dispatch, null, true).then(setStatus);
+    });
+    return () => subscription.remove();
   }, []);
 
   const retry = useCallback(() => {

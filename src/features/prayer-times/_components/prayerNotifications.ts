@@ -68,6 +68,11 @@ function createChannels(channelName: (id: AdhanSoundId) => string) {
   return Promise.all(channels).then(() => {});
 }
 
+export async function hasNotificationPermission() {
+  if (!Notifications) return false;
+  return (await Notifications.getPermissionsAsync()).granted;
+}
+
 export async function ensureNotificationPermission() {
   if (!Notifications) return false;
   const current = await Notifications.getPermissionsAsync();

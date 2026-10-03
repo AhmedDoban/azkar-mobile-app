@@ -1,3 +1,9 @@
 {
-  "NSLocationWhenInUseUsageDescription": "يستخدم التطبيق موقعك لتحديد اتجاه القبلة ومواقيت الصلاة."
+  "ios": {
+    "CFBundleDisplayName": "مآب",
+    "NSLocationWhenInUseUsageDescription": "يستخدم التطبيق موقعك لتحديد اتجاه القبلة ومواقيت الصلاة."
+  },
+  "android": {
+    "app_name": "مآب"
+  }
 }

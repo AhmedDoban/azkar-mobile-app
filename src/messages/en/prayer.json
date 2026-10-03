@@ -28,5 +28,22 @@
   "openSettings": "Settings",
   "notificationsTitle": "Turn on notifications",
   "notNow": "Not now",
-  "reminderHint": "Tap any prayer to turn its adhan reminder on or off"
+  "reminderHint": "Tap any prayer to turn its adhan reminder on or off",
+  "widget": {
+    "next": "Next prayer",
+    "today": "Today's prayers",
+    "dhikr": "Dhikr of the day",
+    "dhikrList": [
+      "Glory be to Allah and praise be to Him, glory be to Allah the Almighty",
+      "None has the right to be worshipped but Allah alone, without partner. His is the dominion and His is the praise, and He is over all things capable",
+      "I seek forgiveness from Allah and turn to Him in repentance",
+      "There is no might nor power except with Allah",
+      "O Allah, send prayers and peace upon our Prophet Muhammad",
+      "Glory be to Allah, praise be to Allah, none has the right to be worshipped but Allah, and Allah is the Greatest",
+      "Allah is sufficient for me. None has the right to be worshipped but Him. In Him I put my trust, and He is the Lord of the Mighty Throne",
+      "My Lord, forgive me and accept my repentance. You are the Accepter of repentance, the Most Merciful",
+      "O Ever-Living, O Sustainer, by Your mercy I seek help",
+      "I am pleased with Allah as my Lord, Islam as my religion and Muhammad as my Prophet"
+    ]
+  }
 }

@@ -1,4 +1,4 @@
-# Azkar — project instructions
+# Maab — project instructions
 
 Arabic/English Islamic app: azkar, hadith, Quran mushaf, prayer times with adhan, qibla.
 Expo SDK 57, expo-router, React Native 0.86, Reanimated 4, react-native-svg, Redux Toolkit, NativeWind v5, i18next.
@@ -11,7 +11,7 @@ Expo SDK 57, expo-router, React Native 0.86, Reanimated 4, react-native-svg, Red
 - Android release APK: `npm run build:android` (output opens in `android/app/build/outputs/apk/release/`)
   - If `android/` is missing it runs `expo prebuild` first. `npm run build:android -- --clean` regenerates it from scratch (needed after changing `app.json`, plugins or native modules).
 - Don't run web exports or screenshot checks unless asked.
-- Don't commit or push. The owner commits and pushes themselves.
+- Never run `git commit`, `git push` or anything else that creates commits or sends code to GitHub, even when asked with a short "git commit". The owner commits and pushes themselves. Every time a commit is requested, reply with a summary of the uncommitted changes (grouped by feature/fix, with the main files) and a ready-to-paste commit message, and leave the actual commit to the owner.
 - Packages: install with `npm install <pkg>` (Expo packages with `npx expo install <pkg>`). Run `npm audit` after changing dependencies and fix with `npm audit fix` only. Never `npm audit fix --force` — it downgrades Expo. Pin patched transitive versions through `overrides` in package.json, and only after checking the dependent still loads (ESM-only versions break `require()` callers).
 
 ## Folder structure

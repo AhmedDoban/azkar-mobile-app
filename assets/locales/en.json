@@ -1,3 +1,9 @@
 {
-  "NSLocationWhenInUseUsageDescription": "The app uses your location to find the qibla direction and prayer times."
+  "ios": {
+    "CFBundleDisplayName": "Maab",
+    "NSLocationWhenInUseUsageDescription": "The app uses your location to find the qibla direction and prayer times."
+  },
+  "android": {
+    "app_name": "Maab"
+  }
 }

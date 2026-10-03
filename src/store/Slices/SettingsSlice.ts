@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Locale } from "@/i18n/config";
-import { getDeviceLocale } from "@/i18n";
+import { defaultLocale, Locale } from "@/i18n/config";
 import {
   PrayerName,
   REMINDER_PRAYERS,
@@ -82,6 +81,31 @@ const DEFAULT_READING: ReadingSettings = {
   showSource: true,
 };
 
+export type ReminderKind = "dhikr" | "quran";
+
+export const REMINDER_INTERVALS = [1, 2, 3, 4, 6, 12] as const;
+
+export type ReminderInterval = (typeof REMINDER_INTERVALS)[number];
+
+export interface ReminderSetting {
+  enabled: boolean;
+  every: ReminderInterval;
+}
+
+const DEFAULT_REMINDER: ReminderSetting = { enabled: false, every: 2 };
+
+const isReminderInterval = (value: unknown): value is ReminderInterval =>
+  REMINDER_INTERVALS.includes(value as ReminderInterval);
+
+const toReminder = (
+  value: Partial<ReminderSetting> | undefined,
+  fallback: ReminderSetting,
+): ReminderSetting => ({
+  enabled:
+    typeof value?.enabled === "boolean" ? value.enabled : fallback.enabled,
+  every: isReminderInterval(value?.every) ? value.every : fallback.every,
+});
+
 export interface SettingsState {
   locale: Locale;
   theme: ThemePreference;
@@ -101,11 +125,10 @@ export interface SettingsState {
   prayerMethod: PrayerMethodSetting;
   asrMethod: AsrMethod;
   reading: ReadingSettings;
+  reminders: Record<ReminderKind, ReminderSetting>;
 }
 
-const defaultSettings = (
-  locale: Locale = getDeviceLocale(),
-): SettingsState => ({
+const defaultSettings = (locale: Locale = defaultLocale): SettingsState => ({
   locale,
   theme: "system",
   palette: DEFAULT_PALETTE,
@@ -124,6 +147,7 @@ const defaultSettings = (
   prayerMethod: "auto",
   asrMethod: "auto",
   reading: { ...DEFAULT_READING },
+  reminders: { dhikr: { ...DEFAULT_REMINDER }, quran: { ...DEFAULT_REMINDER } },
 });
 
 const initialState: SettingsState = defaultSettings();
@@ -137,6 +161,16 @@ export const SettingsSlice = createSlice({
     },
     setTheme(state, action: PayloadAction<ThemePreference>) {
       state.theme = action.payload;
+    },
+    setReminder(
+      state,
+      action: PayloadAction<{
+        kind: ReminderKind;
+        patch: Partial<ReminderSetting>;
+      }>,
+    ) {
+      const { kind, patch } = action.payload;
+      state.reminders[kind] = toReminder(patch, state.reminders[kind]);
     },
     setPalette(state, action: PayloadAction<PaletteId>) {
       state.palette = action.payload;
@@ -263,6 +297,16 @@ export const SettingsSlice = createSlice({
           ...action.payload.prayerReminders,
         },
         reading: { ...state.reading, ...action.payload.reading },
+        reminders: {
+          dhikr: toReminder(
+            action.payload.reminders?.dhikr,
+            state.reminders.dhikr,
+          ),
+          quran: toReminder(
+            action.payload.reminders?.quran,
+            state.reminders.quran,
+          ),
+        },
         ayahColors: { ...state.ayahColors, ...action.payload.ayahColors },
         quranBookmark: isAyahBookmark(action.payload.quranBookmark)
           ? action.payload.quranBookmark
@@ -288,6 +332,7 @@ export const {
   setLocale,
   setTheme,
   setPalette,
+  setReminder,
   setTextSize,
   setQuranBookmark,
   toggleSavedAyah,

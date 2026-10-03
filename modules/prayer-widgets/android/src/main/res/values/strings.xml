@@ -1,0 +1,10 @@
+<resources>
+  <string name="widget_next_prayer">Next prayer</string>
+  <string name="widget_prayer_times">Today\'s prayer times</string>
+  <string name="widget_dhikr">Dhikr of the day</string>
+  <string name="widget_next_prayer_hint">The next prayer with a live countdown</string>
+  <string name="widget_prayer_times_hint">All of today\'s prayers</string>
+  <string name="widget_dhikr_hint">A short dhikr that changes every day</string>
+  <string name="widget_open_app">Open the app to load prayer times</string>
+  <string name="widget_dhikr_default">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ</string>
+</resources>

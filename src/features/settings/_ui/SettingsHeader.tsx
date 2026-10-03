@@ -1,11 +1,12 @@
 import AppText from "@/components/ui/AppText";
 import BrandCardBackground from "@/components/ui/BrandCardBackground";
 import PageHeader from "@/components/ui/PageHeader";
+import { APP_ICONS } from "@/constants/appIcons";
+import { useAppSelector } from "@/store/Store";
 import Constants from "expo-constants";
 import { useTranslation } from "react-i18next";
 import { Image, View } from "react-native";
 
-const LOGO = require("@/assets/images/icon.png");
 const GLASS = {
   backgroundColor: "rgba(255, 255, 255, 0.14)",
   borderColor: "rgba(255, 255, 255, 0.22)",
@@ -13,6 +14,7 @@ const GLASS = {
 
 export default function SettingsHeader() {
   const { t } = useTranslation(["common", "settings", "azkar"]);
+  const palette = useAppSelector((s) => s.settings.palette);
 
   return (
     <View className="gap-4">
@@ -29,7 +31,10 @@ export default function SettingsHeader() {
             className="overflow-hidden rounded-xl bg-white"
             style={{ boxShadow: "0 6px 16px rgba(0, 0, 0, 0.25)" }}
           >
-            <Image source={LOGO} style={{ width: 68, height: 68 }} />
+            <Image
+              source={APP_ICONS[palette]}
+              style={{ width: 68, height: 68 }}
+            />
           </View>
 
           <View className="flex-1 gap-1">

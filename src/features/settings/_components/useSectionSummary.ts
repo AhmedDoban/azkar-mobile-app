@@ -14,6 +14,8 @@ export default function useSectionSummary() {
       prayerMethod: s.settings.prayerMethod,
       adhanSound: s.settings.adhanSound,
       customAdhan: s.settings.customAdhan,
+      dhikrReminder: s.settings.reminders.dhikr.enabled,
+      quranReminder: s.settings.reminders.quran.enabled,
     }),
     shallowEqual,
   );
@@ -32,6 +34,13 @@ export default function useSectionSummary() {
         return settings.adhanSound === "custom"
           ? (settings.customAdhan?.name ?? t("sounds.custom"))
           : t(`sounds.${settings.adhanSound}`);
+      case "reminders": {
+        const on = [
+          settings.dhikrReminder ? t("reminders.dhikr.short") : null,
+          settings.quranReminder ? t("reminders.quran.short") : null,
+        ].filter(Boolean);
+        return on.length ? on.join(" · ") : t("reminders.off");
+      }
       default:
         return null;
     }

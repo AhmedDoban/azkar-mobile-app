@@ -12,6 +12,7 @@ export const SETTINGS_SECTIONS = [
     group: "worship",
   },
   { id: "adhan", icon: "volume", title: "adhanSound", group: "worship" },
+  { id: "reminders", icon: "bell", title: "reminders.title", group: "worship" },
   { id: "data", icon: "data", title: "data", group: "data" },
   { id: "sources", icon: "website", title: "sources", group: "data" },
 ] as const satisfies readonly {

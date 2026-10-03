@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Azkar",
-    "slug": "azkar",
-    "version": "1.1.1",
+    "name": "Maab",
+    "slug": "maab",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "azkar",
+    "scheme": "maab",
     "userInterfaceStyle": "automatic",
     "locales": {
       "ar": "./assets/locales/ar.json",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ahmeddoban.azkar",
+      "bundleIdentifier": "com.ahmeddoban.maab",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "ExpoLocalization_supportsRTL": true,
@@ -22,10 +22,10 @@
           "en"
         ]
       },
-      "buildNumber": "4"
+      "buildNumber": "5"
     },
     "android": {
-      "package": "com.ahmeddoban.azkar",
+      "package": "com.ahmeddoban.maab",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-foreground.png",
         "monochromeImage": "./assets/images/android-monochrome.png",
@@ -43,7 +43,7 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.RECEIVE_BOOT_COMPLETED"
       ],
-      "versionCode": 4
+      "versionCode": 5
     },
     "web": {
       "output": "single",
@@ -98,17 +98,98 @@
         }
       ],
       "expo-audio",
-      "./plugins/withNoForceDark"
+      "./plugins/withNoForceDark",
+      [
+        "expo-alternate-app-icons",
+        [
+          {
+            "name": "Teal",
+            "ios": "./assets/images/app-icons/teal.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/teal-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Ocean",
+            "ios": "./assets/images/app-icons/ocean.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/ocean-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Indigo",
+            "ios": "./assets/images/app-icons/indigo.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/indigo-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Violet",
+            "ios": "./assets/images/app-icons/violet.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/violet-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Rose",
+            "ios": "./assets/images/app-icons/rose.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/rose-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Ruby",
+            "ios": "./assets/images/app-icons/ruby.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/ruby-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Amber",
+            "ios": "./assets/images/app-icons/amber.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/amber-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Olive",
+            "ios": "./assets/images/app-icons/olive.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/olive-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          },
+          {
+            "name": "Slate",
+            "ios": "./assets/images/app-icons/slate.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/slate-foreground.png",
+              "backgroundColor": "#FBFAF4"
+            }
+          }
+        ]
+      ],
+      [
+        "./plugins/withDefaultIconAlias",
+        {
+          "name": "Emerald"
+        }
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
     "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "4d289618-9d68-404e-b128-9a5889549e68"
-      }
+      "router": {}
     }
   }
 }

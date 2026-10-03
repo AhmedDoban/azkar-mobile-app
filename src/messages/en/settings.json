@@ -171,5 +171,31 @@
   "dataHint": "Clear saved progress, downloaded recitations and settings. Each option asks for confirmation first, and cleared data can't be restored.",
   "resetOptions": "Reset options",
   "followDeveloper": "Follow the developer",
-  "followDeveloperHint": "Get in touch, share feedback or follow new updates"
+  "followDeveloperHint": "Get in touch, share feedback or follow new updates",
+  "reminders": {
+    "title": "Reminders",
+    "off": "Off",
+    "interval": "Repeat",
+    "window": "Reminders arrive only between 7 AM and 10 PM",
+    "channel": "Dhikr and Quran reminders",
+    "dhikrTitle": "Remember Allah",
+    "quranTitle": "{{surah}} · Ayah {{ayah}}",
+    "every_one": "Every hour",
+    "every_other": "Every {{n}} hours",
+    "dhikr": {
+      "group": "Dhikr reminders",
+      "title": "Dhikr notifications",
+      "hint": "A short dhikr or dua at the interval you choose",
+      "short": "Dhikr"
+    },
+    "quran": {
+      "group": "Quran reminders",
+      "title": "Verse notifications",
+      "hint": "A verse from the Quran at the interval you choose",
+      "short": "Quran"
+    }
+  },
+  "paletteApplying": "Applying color…",
+  "paletteApplyingHint": "Just a moment while the app updates its colors",
+  "paletteIconHint": "The app icon updates when you leave the app, which may close it from your recent apps. This is normal and your color is saved."
 }

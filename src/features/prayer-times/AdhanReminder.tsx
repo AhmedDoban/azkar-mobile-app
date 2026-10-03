@@ -11,6 +11,7 @@ import {
 } from "./_components/prayerNotifications";
 import usePrayerLabels from "./_components/usePrayerLabels";
 import usePrayerLocation from "./_components/usePrayerLocation";
+import usePrayerWidgets from "./_components/usePrayerWidgets";
 import {
   useClock,
   usePrayerConfig,
@@ -30,6 +31,7 @@ export default function AdhanReminder() {
   usePrayerLocation();
   const config = usePrayerConfig();
   const day = usePrayerDay(config);
+  usePrayerWidgets(config, day);
   const startingNow = useClock((now) =>
     day ? getPrayerStartingNow(day.times, now) : null,
   );
