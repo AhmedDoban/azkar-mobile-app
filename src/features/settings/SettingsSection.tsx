@@ -1,5 +1,7 @@
 import EmptyState from "@/components/ui/EmptyState";
 import Screen from "@/components/ui/Screen";
+import Skeleton from "@/components/ui/Skeleton";
+import useTransitionReady from "@/hooks/useTransitionReady";
 import { Stack } from "expo-router";
 import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,6 +34,7 @@ const CONTENT: Record<SettingsSectionId, ComponentType> = {
 
 export default function SettingsSection({ id }: { id: string }) {
   const { t } = useTranslation(["settings", "common"]);
+  const ready = useTransitionReady();
   if (!isSettingsSection(id)) {
     return <EmptyState icon="tabSettings" title={t("common:somethingWrong")} />;
   }
@@ -42,7 +45,7 @@ export default function SettingsSection({ id }: { id: string }) {
   return (
     <Screen>
       <Stack.Screen options={{ title: t(section.title) }} />
-      <Content />
+      {ready ? <Content /> : <Skeleton className="h-40 rounded-3xl" />}
     </Screen>
   );
 }

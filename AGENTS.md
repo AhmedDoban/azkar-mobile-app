@@ -8,7 +8,7 @@ Expo SDK 57, expo-router, React Native 0.86, Reanimated 4, react-native-svg, Red
 - Typecheck (the required check after every change): `npx tsc --noEmit`
 - Format touched files: `npx prettier --write <files>`
 - Dev server: `npm start`
-- Android release APK: `npm run build:android` (output opens in `android/app/build/outputs/apk/release/`)
+- Android release APK: `npm run build:android` (output: `android/app/build/outputs/apk/release/maab.apk`)
   - If `android/` is missing it runs `expo prebuild` first. `npm run build:android -- --clean` regenerates it from scratch (needed after changing `app.json`, plugins or native modules).
 - Don't run web exports or screenshot checks unless asked.
 - Never run `git commit`, `git push` or anything else that creates commits or sends code to GitHub, even when asked with a short "git commit". The owner commits and pushes themselves. Every time a commit is requested, reply with a summary of the uncommitted changes (grouped by feature/fix, with the main files) and a ready-to-paste commit message, and leave the actual commit to the owner.

@@ -41,7 +41,7 @@ object WidgetRenderer {
     val times = ids(context, manager, PrayerTimesWidget::class.java)
     val dhikr = ids(context, manager, DhikrWidget::class.java)
     next.forEach { manager.updateAppWidget(it, nextPrayer(context, manager, it, payload, now)) }
-    times.forEach { manager.updateAppWidget(it, prayerTimes(context, payload, now)) }
+    times.forEach { manager.updateAppWidget(it, prayerTimes(context, manager, it, payload, now)) }
     dhikr.forEach { manager.updateAppWidget(it, dhikr(context, payload, now)) }
     if (next.isNotEmpty() || times.isNotEmpty() || dhikr.isNotEmpty()) {
       WidgetScheduler.schedule(context, payload, now, next.isNotEmpty())
@@ -75,6 +75,17 @@ object WidgetRenderer {
     return (if (w > 0) w.toFloat() else 320f) to (if (h > 0) h.toFloat() else 170f)
   }
 
+  private fun px(context: Context, dp: Int) =
+    (dp * context.resources.displayMetrics.density).toInt()
+
+  private fun padding(context: Context, views: RemoteViews, id: Int, dp: Int) {
+    val value = px(context, dp)
+    views.setViewPadding(id, value, value, value, value)
+  }
+
+  private fun visible(views: RemoteViews, id: Int, show: Boolean) =
+    views.setViewVisibility(id, if (show) View.VISIBLE else View.GONE)
+
   private fun layout(payload: WidgetPayload?, ltr: Int, rtl: Int) =
     if (payload?.rtl == true) rtl else ltr
 
@@ -92,11 +103,20 @@ object WidgetRenderer {
     views.setTextViewText(R.id.city, city)
   }
 
-  private fun stripItem(context: Context, prayer: WidgetPrayer, next: WidgetPrayer?, now: Long): RemoteViews {
+  private fun stripItem(
+    context: Context,
+    prayer: WidgetPrayer,
+    next: WidgetPrayer?,
+    now: Long,
+    showIcon: Boolean
+  ): RemoteViews {
     val item = RemoteViews(context.packageName, R.layout.widget_strip_item)
     item.setTextViewText(R.id.itemName, prayer.label)
     item.setTextViewText(R.id.itemTime, prayer.time)
     item.setImageViewResource(R.id.itemIcon, iconOf(prayer))
+    visible(item, R.id.itemIcon, showIcon)
+    val vertical = px(context, if (showIcon) 5 else 3)
+    item.setViewPadding(R.id.itemBody, 0, vertical, 0, vertical)
     when {
       prayer == next -> {
         item.setViewVisibility(R.id.itemBg, View.VISIBLE)
@@ -127,8 +147,18 @@ object WidgetRenderer {
     )
     background(views, payload)
     val (w, h) = size(manager, id)
-    WidgetArt.arch(context, (w - 12f) * 0.26f, h - 12f)?.let {
-      views.setImageViewBitmap(R.id.arch, it)
+    val wide = w >= 250f
+    val showStrip = h >= 110f
+    val showDate = h >= 165f
+    visible(views, R.id.arch, wide)
+    visible(views, R.id.headerSpace, wide)
+    visible(views, R.id.stripSpace, wide)
+    visible(views, R.id.dateRow, showDate)
+    padding(context, views, R.id.body, if (showStrip) 12 else 8)
+    if (wide) {
+      WidgetArt.arch(context, (w - 12f) * 0.26f, h - 12f)?.let {
+        views.setImageViewBitmap(R.id.arch, it)
+      }
     }
     views.removeAllViews(R.id.strip)
     val next = payload?.next(now)
@@ -139,7 +169,7 @@ object WidgetRenderer {
     } else {
       views.setViewVisibility(R.id.empty, View.GONE)
       views.setViewVisibility(R.id.content, View.VISIBLE)
-      views.setViewVisibility(R.id.stripRow, View.VISIBLE)
+      visible(views, R.id.stripRow, showStrip)
       val minutes = payload.minutesLeft(now)
       views.setTextViewText(R.id.date, payload.dateOf(now))
       city(views, payload.city)
@@ -152,18 +182,33 @@ object WidgetRenderer {
       views.setImageViewResource(R.id.icon, iconOf(next))
       views.setTextViewText(R.id.title, payload.nextTitle)
       views.setTextViewText(R.id.name, next.label)
-      payload.day(now).forEach { views.addView(R.id.strip, stripItem(context, it, next, now)) }
+      if (showStrip) {
+        payload.day(now).forEach {
+          views.addView(R.id.strip, stripItem(context, it, next, now, showDate))
+        }
+      }
     }
     views.setOnClickPendingIntent(R.id.root, openApp(context))
     return views
   }
 
-  private fun prayerTimes(context: Context, payload: WidgetPayload?, now: Long): RemoteViews {
+  private fun prayerTimes(
+    context: Context,
+    manager: AppWidgetManager,
+    id: Int,
+    payload: WidgetPayload?,
+    now: Long
+  ): RemoteViews {
     val views = RemoteViews(
       context.packageName,
       layout(payload, R.layout.widget_prayer_times, R.layout.widget_prayer_times_rtl)
     )
     background(views, payload)
+    val (_, h) = size(manager, id)
+    val showHeader = h >= 100f
+    val showIcons = h >= 130f
+    visible(views, R.id.header, showHeader)
+    padding(context, views, R.id.body, if (showHeader) 14 else 6)
     views.removeAllViews(R.id.row)
     val day = payload?.day(now).orEmpty()
     if (payload == null || day.isEmpty()) {
@@ -176,7 +221,7 @@ object WidgetRenderer {
       views.setTextViewText(R.id.title, payload.todayTitle)
       city(views, payload.city)
       val next = payload.next(now)
-      day.forEach { views.addView(R.id.row, stripItem(context, it, next, now)) }
+      day.forEach { views.addView(R.id.row, stripItem(context, it, next, now, showIcons)) }
     }
     views.setOnClickPendingIntent(R.id.root, openApp(context))
     return views

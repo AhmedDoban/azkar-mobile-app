@@ -22,6 +22,8 @@ status=$?
 pkill -f KotlinCompileDaemon 2>/dev/null
 
 if [ $status -eq 0 ]; then
+  mv -f app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/maab.apk
+  osascript -l JavaScript -e "ObjC.import('AppKit'); \$.NSWorkspace.sharedWorkspace.setIconForFileOptions(\$.NSImage.alloc.initWithContentsOfFile('$ROOT/assets/images/icon.png'), '$ROOT/android/app/build/outputs/apk/release/maab.apk', 0)" >/dev/null 2>&1
   open app/build/outputs/apk/release/
 fi
 exit $status

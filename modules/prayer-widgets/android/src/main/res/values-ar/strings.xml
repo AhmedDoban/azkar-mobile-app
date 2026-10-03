@@ -1,9 +1,9 @@
 <resources>
   <string name="widget_next_prayer">الصلاة القادمة</string>
-  <string name="widget_prayer_times">مواقيت اليوم</string>
+  <string name="widget_prayer_times">مواقيت الصلاة</string>
   <string name="widget_dhikr">ذكر اليوم</string>
   <string name="widget_next_prayer_hint">الصلاة القادمة مع عدّاد تنازلي</string>
-  <string name="widget_prayer_times_hint">كل صلوات اليوم</string>
+  <string name="widget_prayer_times_hint">صلوات اليوم الخمس في سطر واحد</string>
   <string name="widget_dhikr_hint">ذكر قصير يتغير كل يوم</string>
   <string name="widget_open_app">افتح التطبيق لتحميل المواقيت</string>
 </resources>
